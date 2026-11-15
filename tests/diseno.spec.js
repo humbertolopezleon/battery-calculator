@@ -1,5 +1,5 @@
 // Que nada se salga de la pantalla.
-const { test, expect, type } = require('./fixtures');
+const { test, expect, type, setting } = require('./fixtures');
 
 async function overflow(page) {
   return page.evaluate(() => {
@@ -21,8 +21,8 @@ for (const width of [320, 360, 414, 768, 1280]) {
       test(`${width}px ${lang}${big ? ' texto grande' : ''}`, async ({ page, app }) => {
         await page.setViewportSize({ width, height: 900 });
         await app.open();
-        await page.click(`#langGroup [data-lang="${lang}"]`);
-        if (big) await page.click('#textBtn');
+        await setting(page, `#langGroup [data-lang="${lang}"]`);
+        if (big) await setting(page, '#textBtn');
         // valores largos: avisos, días, reserva abierta
         await page.locator('#rsvOn').check();
         await type(page, '#n-watts', '1.200');

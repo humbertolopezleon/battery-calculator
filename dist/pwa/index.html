@@ -20,19 +20,22 @@
 <style>
 :root{
   --bg:#EDF1F5; --surface:#FFFFFF; --ink:#1B2838; --muted:#566476;
-  --line:#CBD4DE; --amber:#E39B2D; --reserve:#C2463B; --ok:#2F7D5B; --field:#F6F8FA;
+  --line:#CBD4DE; --line-strong:#7C8A9B; --amber:#E39B2D; --reserve:#C2463B; --reserve-ink:#B03E34;
+  --ok:#2F7D5B; --ok-soft:#E3F1EA; --reserve-soft:#F9E5E3; --field:#F6F8FA;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0F1A2B; --surface:#17253A; --ink:#E6ECF2; --muted:#9AA8B8;
-    --line:#2C3D55; --amber:#F2B04A; --reserve:#E7685D; --ok:#5CC497; --field:#1E2E46;
+    --line:#2C3D55; --line-strong:#64799A; --amber:#F2B04A; --reserve:#E7685D; --reserve-ink:#E7685D;
+    --ok:#5CC497; --ok-soft:#173A33; --reserve-soft:#3D2228; --field:#1E2E46;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0F1A2B; --surface:#17253A; --ink:#E6ECF2; --muted:#9AA8B8;
-  --line:#2C3D55; --amber:#F2B04A; --reserve:#E7685D; --ok:#5CC497; --field:#1E2E46;
+  --line:#2C3D55; --line-strong:#64799A; --amber:#F2B04A; --reserve:#E7685D; --reserve-ink:#E7685D;
+  --ok:#5CC497; --ok-soft:#173A33; --reserve-soft:#3D2228; --field:#1E2E46;
   color-scheme:dark;
 }
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
@@ -44,25 +47,47 @@ body{
   font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   font-size:1.0625rem;line-height:1.5;
 }
-main{max-width:720px;margin:0 auto;padding:28px 20px 48px;}
-h1{font-size:clamp(1.6rem,4.5vw,2.2rem);line-height:1.15;margin:0 0 6px;font-weight:700;letter-spacing:-0.01em;}
-.lead{color:var(--muted);margin:0 0 22px;max-width:60ch;}
+main{max-width:720px;margin:0 auto;padding:24px 20px 48px;}
+h1{font-size:clamp(1.6rem,4.5vw,2.2rem);line-height:1.15;margin:0;font-weight:700;letter-spacing:-0.01em;}
+.lead{color:var(--muted);margin:0 0 18px;max-width:60ch;}
 h2{font-size:1.1rem;margin:0 0 12px;}
 
-/* Tabs */
-.tabs{display:flex;gap:0;margin:22px 0 22px;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--field);}
-.tabs button{
-  flex:1 1 0;font:inherit;font-weight:700;font-size:1rem;min-height:52px;padding:10px 12px;
-  border:0;background:transparent;color:var(--muted);cursor:pointer;line-height:1.2;
-}
-.tabs button[aria-selected="true"]{background:var(--ink);color:var(--surface);}
-.tabs button + button{border-left:1.5px solid var(--line);}
+/* Encabezado: título + Ajustes */
+.apphead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 12px;}
+.apphead > div{min-width:0;}
+.offline{display:inline-flex;align-items:center;gap:6px;margin:6px 0 0;color:var(--muted);font-size:.88rem;}
+.offline::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--ok);flex:0 0 auto;}
+.btn-settings{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;font:inherit;font-weight:700;font-size:.95rem;min-height:44px;min-width:44px;padding:6px 14px;border:1.5px solid var(--line-strong);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;}
+.btn-settings svg{width:20px;height:20px;color:var(--muted);flex:0 0 auto;}
 
-/* Battery gauge */
-.gauge{margin:0 0 24px;}
-.battery{position:relative;display:flex;align-items:stretch;height:96px;}
+/* Pestañas: navegación con ícono y subrayado */
+.tabs{display:flex;gap:4px;margin:0 0 18px;border-bottom:1.5px solid var(--line-strong);}
+.tabs button{
+  flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:8px;
+  font:inherit;font-weight:400;font-size:1rem;min-height:52px;padding:10px 12px;
+  border:0;border-bottom:4px solid transparent;margin-bottom:-1.5px;background:transparent;color:var(--muted);cursor:pointer;line-height:1.2;
+}
+.tabs button svg{width:20px;height:20px;flex:0 0 auto;}
+.tabs button[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--amber);}
+
+/* Batería: tarjeta que se resume en una línea */
+.bat-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.bat-head h2{margin:0;}
+.bat-sum{display:flex;align-items:center;gap:10px;}
+.bat-sum svg{width:22px;height:22px;color:var(--muted);flex:0 0 auto;}
+.bat-sum span{flex:1 1 auto;color:var(--muted);min-width:0;}
+.bat-sum span b{color:var(--ink);}
+#batCard.min{padding-top:6px;padding-bottom:6px;}
+.btn-link{font:inherit;font-weight:700;font-size:.95rem;min-height:44px;min-width:44px;padding:4px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;flex:0 0 auto;}
+
+/* Medidor: la cifra va fuera de la batería */
+.gauge{margin:0 0 20px;}
+.gauge-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 10px;margin-bottom:8px;}
+.gauge-label{font-size:2.2rem;line-height:1.1;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;}
+.gauge-sub{color:var(--muted);font-size:.92rem;}
+.battery{position:relative;display:flex;align-items:stretch;height:72px;}
 .cell{position:relative;flex:1;border:3px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--surface);}
-.cap{width:12px;margin:26px 0;background:var(--ink);border-radius:0 5px 5px 0;}
+.cap{width:12px;margin:20px 0;background:var(--ink);border-radius:0 5px 5px 0;}
 .reserve{
   position:absolute;left:0;top:0;bottom:0;width:6%;
   background:repeating-linear-gradient(135deg,var(--reserve) 0 4px,transparent 4px 9px);opacity:.55;
@@ -70,13 +95,11 @@ h2{font-size:1.1rem;margin:0 0 12px;}
 .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--amber);transition:width .35s ease;}
 .fill::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--reserve-w,8%);background:var(--reserve);opacity:.75;}
 .target{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--ok);opacity:.38;transition:left .35s ease,width .35s ease;}
-.gauge-label{
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-size:2.4rem;font-weight:700;color:var(--ink);white-space:nowrap;
-  text-shadow:0 0 6px var(--surface),0 0 2px var(--surface);font-variant-numeric:tabular-nums;
-}
 .gauge-legend{display:flex;gap:6px 18px;flex-wrap:wrap;margin-top:10px;font-size:.92rem;color:var(--muted);}
 .swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px;}
+.swatch.amber{background:var(--amber);}
+.swatch.rsv{background:repeating-linear-gradient(135deg,var(--reserve) 0 3px,transparent 3px 6px);box-shadow:inset 0 0 0 1.5px var(--reserve);}
+.swatch.ok{background:var(--ok);opacity:.5;}
 
 /* Form */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px;}
@@ -87,88 +110,140 @@ label,.label{display:block;font-weight:700;margin-bottom:6px;}
 .hint{display:block;color:var(--muted);font-size:.9rem;font-weight:400;margin-top:4px;}
 input.num,input[type=time]{
   font:inherit;font-size:1.15rem;width:100%;max-width:220px;padding:10px 12px;
-  border:1.5px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);
+  border:1.5px solid var(--line-strong);border-radius:10px;background:var(--field);color:var(--ink);
   font-variant-numeric:tabular-nums;min-height:48px;min-width:0;
 }
 .with-unit{display:flex;align-items:center;gap:10px;}
 .with-unit span{color:var(--muted);font-weight:700;}
 .row{display:flex;gap:16px;flex-wrap:wrap;}
 .row .field{flex:1 1 160px;}
-input[type=range]{width:100%;accent-color:var(--amber);height:44px;margin:0;flex:1 1 auto;min-width:0;}
+.time-row{display:flex;align-items:center;gap:8px;max-width:300px;}
+.time-row input[type=time]{max-width:none;flex:1 1 auto;}
+.btn-now{font:inherit;font-weight:700;font-size:.95rem;min-height:48px;min-width:44px;padding:6px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--field);color:var(--ink);cursor:pointer;flex:0 0 auto;}
+.tfmt{display:block;color:var(--muted);font-size:.9rem;margin-top:4px;font-variant-numeric:tabular-nums;}
+/* Slider con los colores de la app */
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;width:100%;height:44px;margin:0;flex:1 1 auto;min-width:0;cursor:pointer;--p:50%;}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(to right,var(--amber) var(--p),var(--line-strong) var(--p));}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--surface);border:2.5px solid var(--ink);}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:var(--line-strong);}
+input[type=range]::-moz-range-progress{height:6px;border-radius:3px;background:var(--amber);}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--surface);border:2.5px solid var(--ink);}
 .pct-row{display:flex;align-items:center;gap:14px;}
 .pct-row .with-unit{flex:0 0 auto;}
-.seg{display:flex;width:100%;max-width:420px;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+.seg{display:flex;width:100%;max-width:420px;border:1.5px solid var(--line-strong);border-radius:10px;overflow:hidden;margin-bottom:10px;}
 .seg button{
   font:inherit;font-size:.95rem;padding:8px 10px;border:0;background:var(--field);color:var(--ink);cursor:pointer;
   flex:1 1 0;min-height:44px;line-height:1.2;
 }
+.seg button + button{border-left:1.5px solid var(--line-strong);}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:700;}
 .check{display:flex;gap:10px;align-items:flex-start;font-weight:400;cursor:pointer;}
 .check input{width:22px;height:22px;margin-top:2px;flex:0 0 auto;accent-color:var(--amber);}
 input:focus-visible,button:focus-visible{outline:3px solid var(--ink);outline-offset:2px;}
-button[aria-selected="true"]:focus-visible,.seg button[aria-pressed="true"]:focus-visible{outline-color:var(--amber);}
+.seg button[aria-pressed="true"]:focus-visible{outline-color:var(--amber);}
 .hidden{display:none !important;}
 
 /* Results */
-.results{margin-top:28px;}
-.headline{font-size:clamp(1.25rem,3.6vw,1.6rem);line-height:1.3;margin:0 0 18px;font-weight:700;}
-.figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
-.fig{background:var(--surface);padding:14px 16px;}
-.fig b{display:block;font-size:1.6rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
-.fig small{color:var(--muted);font-size:.9rem;}
-.verdict{margin-top:18px;padding:14px 16px;border-radius:12px;border-left:5px solid var(--ok);background:var(--surface);}
-.verdict.short{border-left-color:var(--reserve);}
-.steps{margin-top:22px;color:var(--muted);font-size:.95rem;}
+.results{margin-top:24px;}
+.headline{font-size:clamp(1.25rem,3.6vw,1.6rem);line-height:1.3;margin:0 0 14px;font-weight:700;}
+.figures{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.fig{background:var(--surface);padding:12px 16px;min-width:0;}
+.fig b{display:block;font-size:1.3rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.fig small{display:block;color:var(--muted);font-size:.9rem;}
+.fig.hero{order:-1;grid-column:1 / -1;padding:14px 16px;}
+.fig.hero b{font-size:clamp(1.9rem,6vw,2.4rem);line-height:1.15;}
+.verdict{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--ok-soft);border:1.5px solid var(--ok);}
+.verdict.short{background:var(--reserve-soft);border-color:var(--reserve);}
+.verdict.info{background:var(--surface);border-color:var(--line-strong);}
+.verdict svg{flex:0 0 22px;width:22px;height:22px;margin-top:2px;color:var(--ok);}
+.verdict.short svg{color:var(--reserve);}
+.verdict.info svg{color:var(--muted);}
+.btn-sec[hidden]{display:none;}
+.btn-sec{display:block;width:100%;max-width:420px;font:inherit;font-weight:700;font-size:1rem;min-height:48px;margin-top:10px;padding:8px 14px;border:1.5px solid var(--line-strong);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer;}
+.steps{margin-top:20px;color:var(--muted);font-size:.95rem;}
 .steps p{margin:4px 0;}
 .steps strong{color:var(--ink);}
-.error{color:var(--reserve);font-weight:700;}
-.actions{margin-top:24px;}
+.error{color:var(--reserve-ink);font-weight:700;}
+.actions{margin-top:22px;}
 .btn-save{
   font:inherit;font-weight:700;font-size:1.05rem;width:100%;max-width:420px;min-height:52px;
   padding:12px 18px;border:0;border-radius:12px;background:var(--amber);color:#1B2838;cursor:pointer;
 }
 .btn-save:disabled{opacity:.5;cursor:not-allowed;}
 .save-msg{margin:10px 0 0;color:var(--muted);font-size:.92rem;min-height:1.2em;}
-.save-msg.err{color:var(--reserve);font-weight:700;}
+.save-msg.err{color:var(--reserve-ink);font-weight:700;}
 .preview{margin-top:16px;}
 .preview img{display:block;width:100%;max-width:420px;height:auto;border:1px solid var(--line);border-radius:12px;}
 .preview p{margin:0 0 8px;font-weight:700;}
-.note{margin-top:28px;color:var(--muted);font-size:.88rem;max-width:60ch;}
+.note{margin-top:24px;color:var(--muted);font-size:.88rem;max-width:60ch;}
+
+/* Orden en el teléfono: medidor, datos, resultados */
+.view{display:flex;flex-direction:column;margin-top:16px;}
+.out{display:contents;}
+.view > .lead{order:1;}
+.view .gauge{order:2;}
+.view > .panel{order:3;}
+.view .results{order:4;}
+.view > .note{order:5;}
+
+/* Respuesta fija abajo (solo teléfono y tableta) */
+.answer{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1.5px solid var(--line-strong);box-shadow:0 -6px 20px rgba(11,18,32,.12);pointer-events:none;}
+.answer[hidden]{display:none;}
+.answer b{flex:1 1 auto;min-width:0;font-size:1.02rem;line-height:1.3;}
+.answer .tag{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto;padding:4px 10px;border-radius:999px;background:var(--field);border:1px solid var(--line-strong);font-weight:700;font-size:.9rem;white-space:nowrap;}
+.answer .tag.ok{background:var(--ok-soft);border-color:var(--ok);}
+.answer .tag.bad{background:var(--reserve-soft);border-color:var(--reserve);}
+.answer .tag svg{width:16px;height:16px;}
+.answer .tag.ok svg{color:var(--ok);}
+.answer .tag.bad svg{color:var(--reserve);}
+
+/* Ajustes */
+.sheet-wrap{position:fixed;inset:0;z-index:10;}
+.sheet-wrap[hidden]{display:none;}
+.scrim{position:absolute;inset:0;background:rgba(11,18,32,.5);}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:100%;overflow:auto;background:var(--surface);border-radius:22px 22px 0 0;padding:14px 20px calc(24px + env(safe-area-inset-bottom,0px));}
+.sheet:focus{outline:none;}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.sheet-head h2{margin:0;font-size:1.25rem;}
+.sheet .seg{max-width:none;margin-bottom:18px;}
+.btn-x{font:inherit;font-size:1.5rem;line-height:1;min-width:44px;min-height:44px;border:0;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;font:inherit;font-size:1rem;min-height:48px;margin-bottom:18px;padding:8px 14px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--field);color:var(--ink);cursor:pointer;text-align:left;}
+.toggle::after{content:"";flex:0 0 auto;width:40px;height:24px;border-radius:12px;border:2px solid var(--line-strong);background:radial-gradient(circle 8px at 11px 50%,var(--line-strong) 98%,transparent) var(--surface);}
+.toggle[aria-pressed="true"]{font-weight:700;}
+.toggle[aria-pressed="true"]::after{border-color:var(--ink);background:radial-gradient(circle 8px at 25px 50%,var(--surface) 98%,transparent) var(--ink);}
+.btn-done{display:block;width:100%;font:inherit;font-weight:700;font-size:1.05rem;min-height:52px;padding:12px 18px;border:0;border-radius:12px;background:var(--ink);color:var(--surface);cursor:pointer;}
+.sheet .ver{margin:12px 0 0;text-align:center;color:var(--muted);font-size:.88rem;}
 
 @media (max-width:480px){
   body{font-size:1rem;}
-  main{padding:18px 14px 32px;}
-  .tabs{margin:18px 0;}
-  .tabs button{font-size:.95rem;padding:8px 8px;}
-  .gauge{margin-bottom:20px;}
-  .battery{height:74px;}
+  main{padding:16px 14px 32px;}
+  h1{font-size:1.45rem;}
+  .tabs button{flex-direction:column;gap:2px;padding:6px 4px;min-height:60px;font-size:.95rem;}
+  .battery{height:56px;}
   .cell{border-width:2.5px;border-radius:12px;}
-  .cap{width:9px;margin:21px 0;}
+  .cap{width:9px;margin:15px 0;}
   .gauge-label{font-size:1.9rem;}
   .gauge-legend{gap:6px 14px;font-size:.86rem;}
   .panel{padding:18px 14px;border-radius:14px;}
   .field{margin-bottom:18px;}
   .with-unit input.num{max-width:none;flex:1 1 auto;}
   .with-unit{max-width:100%;}
-  .pct-row .with-unit input.num{width:96px;flex:0 0 auto;}
-  input[type=time]{max-width:none;}
+  .pct-row .with-unit input.num{width:88px;flex:0 0 auto;}
+  .time-row{max-width:none;}
   .row{gap:12px;}
   .row .field{flex:1 1 130px;}
-  .results{margin-top:22px;}
-  .headline{margin-bottom:14px;}
-  .figures{grid-template-columns:1fr;border-radius:12px;}
-  .fig{display:flex;flex-direction:row-reverse;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 14px;}
-  .fig b{font-size:1.4rem;text-align:right;}
-  .fig small{flex:0 0 auto;max-width:55%;}
+  .results{margin-top:20px;}
+  .fig{padding:12px 14px;}
   .verdict{padding:12px 14px;}
-  .btn-save{max-width:none;}
+  .btn-save,.btn-sec{max-width:none;}
   .preview img{max-width:none;}
   .note{margin-top:22px;}
 }
 @media (max-width:360px){
-  h1{font-size:1.4rem;}
+  h1{font-size:1.3rem;}
   main{padding:14px 10px 28px;}
   .panel{padding:16px 12px;}
+  .btn-settings{padding:6px 10px;}
   .tabs button{font-size:.88rem;}
   .gauge-label{font-size:1.6rem;}
   .seg button{font-size:.86rem;padding:8px 6px;}
@@ -176,37 +251,37 @@ button[aria-selected="true"]:focus-visible,.seg button[aria-pressed="true"]:focu
   .pct-row input[type=range]{flex-basis:100%;}
   .pct-row .with-unit input.num{width:110px;}
   .row .field{flex-basis:100%;}
-  .fig b{font-size:1.25rem;}
+  .figures{grid-template-columns:1fr;}
+  .fig b{font-size:1.2rem;}
 }
 @media (max-height:480px) and (orientation:landscape){
-  .battery{height:60px;}
-  .cap{margin:16px 0;}
-  .gauge-label{font-size:1.6rem;}
+  .battery{height:52px;}
+  .cap{margin:14px 0;}
 }
-/* Idioma */
-.topbar{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 14px;}
-.lang,.pill{display:inline-flex;align-items:center;gap:0;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;}
-.lang svg,.pill svg{width:22px;height:22px;margin:0 6px 0 8px;color:var(--muted);flex:0 0 auto;}
-.lang button,.pill button{font:inherit;font-weight:700;font-size:1rem;min-height:44px;min-width:44px;padding:6px 16px;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;}
-.lang button[aria-pressed="true"],.pill button[aria-pressed="true"]{background:var(--ink);color:var(--surface);}
+/* Escritorio: datos a la izquierda, respuesta fija a la derecha */
+@media (min-width:960px){
+  main{max-width:1120px;padding:32px 40px 56px;}
+  .tabs{max-width:560px;}
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:40px;align-items:start;}
+  .layout > *, .view > *{grid-column:1;}
+  .view{display:contents;}
+  .view > .lead{margin-top:16px;}
+  #batCard{grid-row:1;}
+  .out{display:block;grid-column:2;grid-row:1 / span 6;position:sticky;top:20px;}
+  .out .results{margin-top:20px;}
+  .answer{display:none !important;}
+  .sheet{left:50%;right:auto;bottom:auto;top:50%;width:440px;transform:translate(-50%,-50%);border-radius:18px;padding-bottom:24px;}
+}
 
 /* Instalar (solo en la versión instalable) */
-.install{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 18px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:12px;background:var(--surface);}
+.install{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 18px;padding:12px 14px;border:1.5px dashed var(--line-strong);border-radius:12px;background:var(--surface);}
 .install p{margin:0;flex:1 1 200px;font-size:.95rem;color:var(--muted);}
 .install p strong{color:var(--ink);}
 .btn-install{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border:0;border-radius:10px;background:var(--ink);color:var(--surface);cursor:pointer;}
 .install .close{font:inherit;min-height:44px;min-width:44px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:1.3rem;line-height:1;}
-@media (max-width:480px){
-  .topbar{margin-bottom:12px;}
-  .lang button,.pill button{padding:6px 12px;}
-}
-@media (max-width:400px){ .pill svg{display:none;} .pill{padding-left:3px;} }
-.btn-aa{font:inherit;font-weight:700;font-size:1.05rem;min-height:50px;min-width:50px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer;line-height:1;}
-.btn-aa[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);}
-.offline{margin:-14px 0 22px;color:var(--muted);font-size:.9rem;}
 .presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px;}
 .presets-lbl{flex:1 0 100%;color:var(--muted);font-size:.9rem;}
-.presets button{font:inherit;font-size:.95rem;font-weight:700;min-height:44px;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);cursor:pointer;white-space:nowrap;}
+.presets button{font:inherit;font-size:.95rem;font-weight:700;min-height:44px;padding:8px 12px;border:1.5px solid var(--line-strong);border-radius:10px;background:var(--field);color:var(--ink);cursor:pointer;white-space:nowrap;}
 .presets button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);}
 .more summary{font-weight:700;cursor:pointer;padding:10px 0;border-radius:8px;}
 .more[open] summary{margin-bottom:10px;}
@@ -217,46 +292,51 @@ button[aria-selected="true"]:focus-visible,.seg button[aria-pressed="true"]:focu
 .fmsg:empty{display:none;}
 .fmsg span{display:block;}
 .fmsg span + span{margin-top:4px;}
-.fmsg .info{color:var(--ink);padding-left:10px;border-left:4px solid var(--line);}
+.fmsg .info{color:var(--ink);padding-left:10px;border-left:4px solid var(--line-strong);}
 .fmsg .warn{color:var(--ink);padding-left:10px;border-left:4px solid var(--amber);}
-.fmsg .err{color:var(--reserve);font-weight:700;}
+.fmsg .err{color:var(--reserve-ink);font-weight:700;}
 input[aria-invalid="true"]{border-color:var(--reserve);}
 .foot{max-width:720px;margin:0 auto;padding:0 20px 28px;color:var(--muted);font-size:.85rem;}
 .foot p{margin:0;}
+@media (min-width:960px){ .foot{max-width:1120px;padding:0 40px 32px;} }
 @media (max-width:480px){ .foot{padding:0 14px 24px;} }
 @media (max-width:360px){ .presets button{padding:8px 8px;font-size:.9rem;} .foot{padding:0 10px 20px;} }
 @media (prefers-reduced-motion: reduce){.fill,.target{transition:none;}}
 </style>
 </head>
 <body>
-<main>
-  <div class="topbar">
-    <div class="pill" role="group" id="themeGroup" data-i18n-aria="themeAria">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
-      <button type="button" data-theme-set="auto" aria-pressed="true" data-i18n="thAuto"></button>
-      <button type="button" data-theme-set="light" aria-pressed="false" data-i18n="thLight"></button>
-      <button type="button" data-theme-set="dark" aria-pressed="false" data-i18n="thDark"></button>
+<main id="main">
+  <header class="apphead">
+    <div>
+      <h1 data-i18n="title">Calculadora de Batería</h1>
+      <p class="offline" data-i18n="offline"></p>
     </div>
-    <button type="button" class="btn-aa" id="textBtn" aria-pressed="false" data-i18n-aria="textAria"><span aria-hidden="true">Aa</span></button>
-    <div class="lang" role="group" id="langGroup" aria-label="Idioma / Language">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5z"/></svg>
-      <button type="button" data-lang="es" lang="es" aria-pressed="true">Español</button>
-      <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
-    </div>
-  </div>
-
-  <h1 data-i18n="title">Calculadora de Batería</h1>
+    <button type="button" class="btn-settings" id="settingsBtn" aria-haspopup="dialog" aria-controls="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span data-i18n="settings"></span></button>
+  </header>
   <p class="lead" data-i18n="lead"></p>
-  <p class="offline" data-i18n="offline"></p>
     <div class="install hidden" id="installBox">
     <p id="installText"></p>
     <button type="button" class="btn-install hidden" id="installBtn" data-i18n="installBtn"></button>
     <button type="button" class="close" id="installClose" data-i18n-aria="installClose">×</button>
   </div>
 
-  <section class="panel" data-i18n-aria="yourBattery">
-    <div class="field">
-      <h2 data-i18n="batTitle"></h2>
+  <div class="tabs" role="tablist" data-i18n-aria="tabsAria">
+    <button type="button" role="tab" id="tab-noche" aria-controls="view-noche" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span data-i18n="tabNight"></span></button>
+    <button type="button" role="tab" id="tab-carga" aria-controls="view-carga" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/></svg><span data-i18n="tabCharge"></span></button>
+  </div>
+
+  <div class="layout">
+  <section class="panel" id="batCard" data-i18n-aria="yourBattery">
+    <div class="bat-sum hidden" id="batSum">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2M6 10v4M9.5 10v4"/></svg>
+      <span><span data-i18n="batSumL"></span> <b id="batSumVal"></b></span>
+      <button type="button" class="btn-link" id="batEdit" aria-expanded="false" aria-controls="batFull" data-i18n="batEdit"></button>
+    </div>
+    <div class="field" id="batFull">
+      <div class="bat-head">
+        <h2 data-i18n="batTitle"></h2>
+        <button type="button" class="btn-link" id="batDone" data-i18n="ok"></button>
+      </div>
       <div class="seg" role="group" data-i18n-aria="batHow">
         <button type="button" id="modeKwh" aria-pressed="true" data-i18n="modeKwh"></button>
         <button type="button" id="modeAh" aria-pressed="false" data-i18n="modeAh"></button>
@@ -281,28 +361,9 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     </div>
   </section>
 
-  <div class="tabs" role="tablist" data-i18n-aria="tabsAria">
-    <button type="button" role="tab" id="tab-noche" aria-controls="view-noche" aria-selected="true" data-i18n="tabNight"></button>
-    <button type="button" role="tab" id="tab-carga" aria-controls="view-carga" aria-selected="false" data-i18n="tabCharge"></button>
-  </div>
-
   <!-- ============ TAB 1: NOCHE ============ -->
-  <section id="view-noche" role="tabpanel" aria-labelledby="tab-noche">
+  <section id="view-noche" class="view" role="tabpanel" aria-labelledby="tab-noche">
     <p class="lead" data-i18n-html="nLead"></p>
-    <div class="gauge" aria-hidden="true">
-      <div class="battery">
-        <div class="cell">
-          <div class="fill" id="n-fill"></div>
-          <div class="reserve"></div>
-          <div class="gauge-label" id="n-label">75%</div>
-        </div>
-        <div class="cap"></div>
-      </div>
-      <div class="gauge-legend">
-        <span><span class="swatch" style="background:var(--amber)"></span><span data-i18n="legUsable"></span></span>
-        <span><span class="swatch" style="background:var(--reserve);opacity:.75"></span><span data-i18n-html="legReserve"></span></span>
-      </div>
-    </div>
 
     <section class="panel" data-i18n-aria="nightData">
       <div class="field">
@@ -320,11 +381,13 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       <div class="row">
         <div class="field">
           <label for="n-now" data-i18n="timeNow"></label>
-          <input id="n-now" type="time">
+          <div class="time-row"><input id="n-now" type="time"><button type="button" class="btn-now" data-now="n-now" data-i18n="nowBtn"></button></div>
+          <span class="tfmt" id="n-now-fmt" aria-hidden="true"></span>
         </div>
         <div class="field">
           <label for="n-sunrise" data-i18n="sunrise"></label>
           <input id="n-sunrise" type="time" value="07:00">
+          <span class="tfmt" id="n-sunrise-fmt" aria-hidden="true"></span>
           <span class="hint" data-i18n="sunriseHint"></span>
         </div>
       </div>
@@ -347,44 +410,48 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       </details>
     </section>
 
-    <section class="results">
-      <p class="headline" id="n-headline" aria-live="polite"></p>
-      <div class="figures">
-        <div class="fig"><b id="n-f1">–</b><small data-i18n="fUsable"></small></div>
-        <div class="fig"><b id="n-f2">–</b><small data-i18n="fDuration"></small></div>
-        <div class="fig"><b id="n-f3">–</b><small data-i18n="fPerPct"></small></div>
-      </div>
-      <div class="verdict" id="n-verdict" aria-live="polite"></div>
-      <div class="steps" id="n-steps"></div>
-      <div class="actions">
-        <button type="button" class="btn-save" id="n-save" data-i18n="save"></button>
-        <p class="save-msg" id="n-msg"></p>
-        <div class="preview" id="n-preview" hidden>
-          <p data-i18n="previewHint"></p>
-          <img id="n-previewImg" data-i18n-alt="nPreviewAlt" alt="">
+    <div class="out">
+      <div class="gauge" aria-hidden="true">
+        <div class="gauge-head"><span class="gauge-label" id="n-label">75%</span><span class="gauge-sub" id="n-sub"></span></div>
+        <div class="battery">
+          <div class="cell">
+            <div class="fill" id="n-fill"></div>
+            <div class="reserve"></div>
+          </div>
+          <div class="cap"></div>
+        </div>
+        <div class="gauge-legend">
+          <span><span class="swatch amber"></span><span data-i18n="legUsable"></span></span>
+          <span><span class="swatch rsv"></span><span data-i18n-html="legReserve"></span></span>
         </div>
       </div>
-    </section>
+
+      <section class="results" id="n-results">
+        <p class="headline" id="n-headline" aria-live="polite"></p>
+        <div class="figures">
+          <div class="fig"><b id="n-f1">–</b><small data-i18n="fUsable"></small></div>
+          <div class="fig hero"><b id="n-f2">–</b><small data-i18n="fDuration"></small></div>
+          <div class="fig"><b id="n-f3">–</b><small data-i18n="fPerPct"></small></div>
+        </div>
+        <div class="verdict" id="n-verdict" aria-live="polite" tabindex="-1"></div>
+        <button type="button" class="btn-sec" id="n-try" hidden></button>
+        <div class="steps" id="n-steps"></div>
+        <div class="actions">
+          <button type="button" class="btn-save" id="n-save" data-i18n="save"></button>
+          <p class="save-msg" id="n-msg"></p>
+          <div class="preview" id="n-preview" hidden>
+            <p data-i18n="previewHint"></p>
+            <img id="n-previewImg" data-i18n-alt="nPreviewAlt" alt="">
+          </div>
+        </div>
+      </section>
+    </div>
     <p class="note" data-i18n="nNote"></p>
   </section>
 
   <!-- ============ TAB 2: CARGA CON LA RED ============ -->
-  <section id="view-carga" role="tabpanel" aria-labelledby="tab-carga" class="hidden">
+  <section id="view-carga" role="tabpanel" aria-labelledby="tab-carga" class="view hidden">
     <p class="lead" data-i18n="cLead"></p>
-    <div class="gauge" aria-hidden="true">
-      <div class="battery">
-        <div class="cell">
-          <div class="fill" id="c-fill"></div>
-          <div class="target" id="c-target"></div>
-          <div class="gauge-label" id="c-label">30% → 100%</div>
-        </div>
-        <div class="cap"></div>
-      </div>
-      <div class="gauge-legend">
-        <span><span class="swatch" style="background:var(--amber)"></span><span data-i18n="legNow"></span></span>
-        <span><span class="swatch" style="background:var(--ok);opacity:.5"></span><span data-i18n="legToCharge"></span></span>
-      </div>
-    </div>
 
     <section class="panel" data-i18n-aria="chargeData">
       <div class="field">
@@ -421,32 +488,78 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       </div>
       <div class="field">
         <label for="c-now" data-i18n="timeNow"></label>
-        <input id="c-now" type="time">
+        <div class="time-row"><input id="c-now" type="time"><button type="button" class="btn-now" data-now="c-now" data-i18n="nowBtn"></button></div>
+        <span class="tfmt" id="c-now-fmt" aria-hidden="true"></span>
       </div>
     </section>
 
-    <section class="results">
-      <p class="headline" id="c-headline" aria-live="polite"></p>
-      <div class="figures">
-        <div class="fig"><b id="c-f1">–</b><small data-i18n="fChargeTime"></small></div>
-        <div class="fig"><b id="c-f2">–</b><small data-i18n="fToCharge"></small></div>
-        <div class="fig"><b id="c-f3">–</b><small data-i18n="fPerHour"></small></div>
-      </div>
-      <div class="verdict" id="c-verdict" aria-live="polite"></div>
-      <div class="steps" id="c-steps"></div>
-      <div class="actions">
-        <button type="button" class="btn-save" id="c-save" data-i18n="save"></button>
-        <p class="save-msg" id="c-msg"></p>
-        <div class="preview" id="c-preview" hidden>
-          <p data-i18n="previewHint"></p>
-          <img id="c-previewImg" data-i18n-alt="cPreviewAlt" alt="">
+    <div class="out">
+      <div class="gauge" aria-hidden="true">
+        <div class="gauge-head"><span class="gauge-label" id="c-label">30% → 100%</span><span class="gauge-sub" id="c-sub"></span></div>
+        <div class="battery">
+          <div class="cell">
+            <div class="fill" id="c-fill"></div>
+            <div class="target" id="c-target"></div>
+          </div>
+          <div class="cap"></div>
+        </div>
+        <div class="gauge-legend">
+          <span><span class="swatch amber"></span><span data-i18n="legNow"></span></span>
+          <span><span class="swatch ok"></span><span data-i18n="legToCharge"></span></span>
         </div>
       </div>
-    </section>
+
+      <section class="results" id="c-results">
+        <p class="headline" id="c-headline" aria-live="polite"></p>
+        <div class="figures">
+          <div class="fig hero"><b id="c-f1">–</b><small data-i18n="fChargeTime"></small></div>
+          <div class="fig"><b id="c-f2">–</b><small data-i18n="fToCharge"></small></div>
+          <div class="fig"><b id="c-f3">–</b><small data-i18n="fPerHour"></small></div>
+        </div>
+        <div class="verdict" id="c-verdict" aria-live="polite"></div>
+        <div class="steps" id="c-steps"></div>
+        <div class="actions">
+          <button type="button" class="btn-save" id="c-save" data-i18n="save"></button>
+          <p class="save-msg" id="c-msg"></p>
+          <div class="preview" id="c-preview" hidden>
+            <p data-i18n="previewHint"></p>
+            <img id="c-previewImg" data-i18n-alt="cPreviewAlt" alt="">
+          </div>
+        </div>
+      </section>
+    </div>
     <p class="note" data-i18n="cNote"></p>
   </section>
+  </div>
 </main>
 <footer class="foot"><p id="appVer"></p></footer>
+
+<div class="answer" id="answer" aria-hidden="true" hidden><b id="answerText"></b><span class="tag" id="answerTag"></span></div>
+
+<div class="sheet-wrap" id="settings" hidden>
+  <div class="scrim" id="settingsScrim"></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" tabindex="-1">
+    <div class="sheet-head">
+      <h2 id="settingsTitle" data-i18n="settings"></h2>
+      <button type="button" class="btn-x" id="settingsClose" data-i18n-aria="closeSettings">×</button>
+    </div>
+    <span class="label" id="themeLbl" data-i18n="themeAria"></span>
+    <div class="seg" role="group" id="themeGroup" aria-labelledby="themeLbl">
+      <button type="button" data-theme-set="auto" aria-pressed="true" data-i18n="thAuto"></button>
+      <button type="button" data-theme-set="light" aria-pressed="false" data-i18n="thLight"></button>
+      <button type="button" data-theme-set="dark" aria-pressed="false" data-i18n="thDark"></button>
+    </div>
+    <span class="label" id="textLbl" data-i18n="textSize"></span>
+    <button type="button" class="toggle" id="textBtn" aria-pressed="false" aria-describedby="textLbl"><span data-i18n="textAria"></span></button>
+    <span class="label" id="langLbl">Idioma · Language</span>
+    <div class="seg" role="group" id="langGroup" aria-labelledby="langLbl">
+      <button type="button" data-lang="es" lang="es" aria-pressed="true">Español</button>
+      <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
+    </div>
+    <button type="button" class="btn-done" id="settingsDone" data-i18n="ok"></button>
+    <p class="ver" id="appVer2"></p>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -537,7 +650,13 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       preparing:'Preparando la imagen…', savedAs:n=>`Reporte guardado como ${n}.`, cancelled:'Descarga cancelada.',
       wait:'Espera un momento y vuelve a intentar.', cantHere:'No se pudo descargar aquí. Guarda la imagen desde la vista previa.',
       fromPreview:'Guarda la imagen desde la vista previa.', failed:'No se pudo crear la imagen. Revisa los datos e intenta de nuevo.',
-      done:'Listo.', downloaded:n=>`Reporte descargado en Descargas: ${n}.`
+      done:'Listo.', downloaded:n=>`Reporte descargado en Descargas: ${n}.`,
+      settings:'Ajustes', closeSettings:'Cerrar ajustes', textSize:'Tamaño de la letra', ok:'Listo',
+      batSumL:'Tu batería:', batEdit:'Cambiar', nowBtn:'Ahora',
+      gSubN:(u,r)=>`${u}% útil · reserva ${r}%`, gSubC:d=>`${d}% por cargar`,
+      barUntil:c=>`Dura hasta ${c}`, barFor:d=>`Dura ${d}`, barOk:'Llegas', barBad:'No llegas',
+      cBarUntil:(t,c)=>`Al ${t}% a ${c}`, cBarFor:(t,d)=>`Al ${t}% en ${d}`,
+      tryW:w=>`Probar con ${w} W`
     },
     en: {
       title:'Battery Calculator',
@@ -622,12 +741,18 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       preparing:'Preparing the image…', savedAs:n=>`Report saved as ${n}.`, cancelled:'Download cancelled.',
       wait:'Please wait a moment and try again.', cantHere:'The download didn’t work here. Save the image from the preview.',
       fromPreview:'Save the image from the preview.', failed:'The image couldn’t be created. Check the data and try again.',
-      done:'Done.', downloaded:n=>`Report downloaded to Downloads: ${n}.`
+      done:'Done.', downloaded:n=>`Report downloaded to Downloads: ${n}.`,
+      settings:'Settings', closeSettings:'Close settings', textSize:'Text size', ok:'Done',
+      batSumL:'Your battery:', batEdit:'Change', nowBtn:'Now',
+      gSubN:(u,r)=>`${u}% usable · ${r}% reserve`, gSubC:d=>`${d}% to charge`,
+      barUntil:c=>`Lasts until ${c}`, barFor:d=>`Lasts ${d}`, barOk:'You make it', barBad:'Falls short',
+      cBarUntil:(t,c)=>`${t}% at ${c}`, cBarFor:(t,d)=>`${t}% in ${d}`,
+      tryW:w=>`Try ${w} W`
     }
   };
 
   /* ---------- versión ---------- */
-  const APP_VERSION = "1.3";
+  const APP_VERSION = "1.4";
 
   /* ---------- idioma ---------- */
   let LANG = 'es';
@@ -764,7 +889,8 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     document.querySelectorAll('[data-i18n-alt]').forEach(el => el.setAttribute('alt', T(el.dataset.i18nAlt)));
     document.querySelectorAll('#langGroup button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang===LANG));
     document.querySelectorAll('[data-kwh]').forEach(b => b.textContent = nf(parseFloat(b.dataset.kwh),2)+' kWh');
-    $('appVer').textContent = T('version', APP_VERSION);
+    $('appVer').textContent = $('appVer2').textContent = T('version', APP_VERSION);
+    updBatSum(); updTimeFmt();
     const it = $('installText'); if(it) it.innerHTML = T(it.dataset.mode==='ios' ? 'installIOS' : 'installText');
   }
   document.querySelectorAll('#langGroup button').forEach(b => b.addEventListener('click', () => {
@@ -883,18 +1009,27 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       $('c-target').style.left = gp+'%';
       $('c-target').style.width = Math.max(0, gt-gp)+'%';
       $(prefix+'-label').textContent = p1(gp)+'% → '+p1(gt)+'%';
+      $(prefix+'-sub').textContent = T('gSubC', p1(Math.max(0, gt-gp)));
     } else {
       $(prefix+'-label').textContent = p1(gp)+'%';
+      $(prefix+'-sub').textContent = T('gSubN', p1(Math.max(0, gp-RESERVE)), p1(RESERVE));
     }
     return gp;
   }
+  const ICON = {
+    ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>',
+    short:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/></svg>'
+  };
+  // Veredicto: fondo, borde e ícono según el estado (no solo el color)
   function setVerdict(el, v){
-    el.classList.remove('short'); el.style.display = '';
+    el.classList.remove('short','info'); el.style.display = '';
     if(!v){ el.style.display = 'none'; return; }
-    el.classList.toggle('short', !v.ok);
-    el.innerHTML = '';
-    const st = document.createElement('strong'); st.textContent = v.title;
-    el.append(st, ' '+v.text);
+    const kind = v.kind || (v.ok ? 'ok' : 'short');
+    if(kind!=='ok') el.classList.add(kind);
+    el.innerHTML = ICON[kind];
+    const box = document.createElement('div'), st = document.createElement('strong'); st.textContent = v.title;
+    box.append(st, ' '+v.text); el.appendChild(box);
   }
   function setSteps(el, lines){
     el.innerHTML = '';
@@ -908,7 +1043,45 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     $(p+'-f1').textContent = $(p+'-f2').textContent = $(p+'-f3').textContent = '–';
     setVerdict($(p+'-verdict'), null); $(p+'-steps').innerHTML = '';
     reports[p] = null; $(p+'-save').disabled = true;
+    bar[p] = null; if(p==='n') setTry(null);
   }
+
+  /* ---------- barra fija con la respuesta (teléfono) ---------- */
+  const bar = {n:null, c:null};
+  function activeView(){ return $('view-noche').classList.contains('hidden') ? 'c' : 'n'; }
+  function updBar(){
+    const box = $('answer'); if(!box) return;
+    const p = activeView(), b = bar[p], res = $(p+'-results');
+    // Se ve solo si la respuesta queda más abajo de la pantalla
+    const below = res && res.getBoundingClientRect().top > window.innerHeight - 40;
+    if(!b || !below || !$('settings').hidden){ box.hidden = true; return; }
+    $('answerText').textContent = b.text;
+    const tag = $('answerTag');
+    tag.className = 'tag'; tag.innerHTML = '';
+    if(p==='n' && b.tag){
+      tag.classList.add(b.tag); tag.innerHTML = ICON[b.tag==='ok' ? 'ok' : 'short'];
+      tag.append(T(b.tag==='ok' ? 'barOk' : 'barBad'));
+    } else if(p==='c') tag.textContent = b.dur;
+    tag.hidden = !tag.textContent;
+    box.hidden = false;
+  }
+  let barRaf = 0;
+  const barSoon = () => { if(!barRaf) barRaf = requestAnimationFrame(() => { barRaf = 0; updBar(); }); };
+  window.addEventListener('scroll', barSoon, {passive:true});
+  window.addEventListener('resize', barSoon);
+
+  /* ---------- "Probar con N W" cuando no se llega al amanecer ---------- */
+  let tryW = null;
+  function setTry(w){
+    tryW = w; const b = $('n-try');
+    b.hidden = w===null;
+    if(w!==null) b.textContent = T('tryW', nf(w,0));
+  }
+  $('n-try').addEventListener('click', () => {
+    if(tryW===null) return;
+    $('n-watts').value = fmtIn(tryW); calcAll();
+    $('n-verdict').focus();
+  });
 
   function calcNoche(){
     const cap = capacity();
@@ -940,7 +1113,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     headline = endDot(headline);
     $('n-headline').textContent = headline;
 
-    let verdict = null;
+    let verdict = null, tip = 0;
     if(nowMin!==null && sunMin!==null && usablePct>0){
       let gap = sunMin-nowMin; if(gap<0) gap += 1440;
       if(gap>0){ // si ya es la hora del sol, no hay noche que cubrir
@@ -949,12 +1122,17 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
           const spare = Math.max(0, kwh-need), sparePct = spare/(cap*eff)*100;
           verdict = {ok:true, title:T('okDawnT'), text:endDot(spare < 0.001 ? T('okJust', clockAt(sunMin)) : T('okDawn', fmtE(spare), Math.round(RESERVE+sparePct), clockAt(sunMin)))};
         } else {
-          const maxW = kwh/gapH*1000, tip = maxW>=10 ? Math.floor(maxW/10)*10 : Math.floor(maxW);
+          const maxW = kwh/gapH*1000; tip = maxW>=10 ? Math.floor(maxW/10)*10 : Math.floor(maxW);
           verdict = {ok:false, title:T('badDawnT'), text:endDot(tip>0 ? T('badDawn', fmtE(need-kwh), clockAt(sunMin), nf(tip,0)) : T('badDawnLow', fmtE(need-kwh)))};
         }
       }
     }
     setVerdict($('n-verdict'), verdict);
+    setTry(verdict && !verdict.ok && tip>0 && tip<watts ? tip : null);
+    // Barra fija: la respuesta corta
+    let bt = null;
+    if(usablePct>0 && kw>0 && mins>=1) bt = nowMin!==null && !isLong(hours) ? T('barUntil', clockAt(nowMin+hours*60)) : T('barFor', duration(hours));
+    bar.n = bt ? {text:bt, tag: verdict ? (verdict.ok ? 'ok' : 'bad') : null} : null;
 
     const small = (kw>0 && kw<1) || kwh<0.1;
     const lines = usablePct===0 ? [T('lBelow', p1(pct), R)]
@@ -965,7 +1143,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     reports.n = {
       title:T('nTitle'), file:T('nFile'),
       pct:gp, reserve:RESERVE, legend:[['amber',T('legUsable')],['reserve',T('repReserve',R)]],
-      headline, figures:[[f[0],T('fUsable')],[f[1],T('fDuration')],[f[2],T('fPerPct')]],
+      headline, figures:[[f[0],T('fUsable')],[f[1],T('fDuration')],[f[2],T('fPerPct')]], hero:1,
       verdict, lines,
       data:[[T('dBattery'),capText(cap)],[T('dLevel'),p1(pct)+'%'],[T('dLoad'),W+' W'],
         [T('timeNow'), nowMin!==null ? clockFrom(nowMin) : '—'],[T('dSun'), sunMin!==null ? clockFrom(sunMin) : '—'],
@@ -1024,7 +1202,8 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     headline = endDot(headline);
     $('c-headline').textContent = headline;
 
-    const verdict = {ok:true, title:T('gridT'), text:T('grid', nf(gridKwh,2))};
+    const verdict = {ok:true, kind:'info', title:T('gridT'), text:T('grid', nf(gridKwh,2))};
+    bar.c = {text: nowMin!==null && !isLong(hours) ? T('cBarUntil', p1(tgt), clockAt(nowMin+hours*60)) : T('cBarFor', p1(tgt), duration(hours)), dur: duration(hours)};
     setVerdict($('c-verdict'), verdict);
 
     const lines = [];
@@ -1047,7 +1226,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       title:T('cTitle'), file:T('cFile'),
       pct:gp, target:Math.min(100,Math.max(0,tgt)),
       legend:[['amber',T('legNow')],['ok',T('legToCharge')]],
-      headline, figures:[[f[0],T('fChargeTime')],[f[1],T('fToCharge')],[f[2],T('fPerHour')]],
+      headline, figures:[[f[0],T('fChargeTime')],[f[1],T('fToCharge')],[f[2],T('fPerHour')]], hero:0,
       verdict, lines,
       data:[[T('dBattery'),capText(cap)],[T('dLevel'),p1(pct)+'%'],[T('dTarget'),p1(tgt)+'%'],
         [T('dPower'),pw],[T('timeNow'), nowMin!==null ? clockFrom(nowMin) : '—']],
@@ -1095,6 +1274,8 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     (cMode==='w' ? ['c-watts'] : ['c-amps','c-volt']).forEach(id => need(id, 'gt0'));
     document.querySelectorAll('[data-kwh]').forEach(b => b.setAttribute('aria-pressed', mode==='kwh' && cap===parseFloat(b.dataset.kwh)));
     calcNoche(); calcCarga(); renderNotes(); persist();
+    ['n-pctRange','c-pctRange','c-tgtRange'].forEach(id => $(id).style.setProperty('--p', $(id).value+'%'));
+    updBatSum(); updTimeFmt(); updBar();
   }
 
   /* ---------- pestañas (#noche / #carga) ---------- */
@@ -1107,6 +1288,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       $('tab-'+v).tabIndex = on ? 0 : -1;
       $('view-'+v).classList.toggle('hidden', !on);
     });
+    updBar();
   }
   // Cambia de pestaña sin llenar el historial (el botón Atrás sale de la app)
   function go(v){ try{ history.replaceState(null, '', '#'+v); }catch(e){} showView(v); }
@@ -1123,8 +1305,73 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
   window.addEventListener('hashchange', () => showView(location.hash.slice(1)));
   showView(location.hash.slice(1));
 
+  /* ---------- tarjeta de batería: se resume en una línea con "Listo" ---------- */
+  function batValue(){
+    const v = mode==='kwh' ? parseNum($('cap').value).v : parseNum($('volt').value).v*parseNum($('ah').value).v/1000;
+    return isFinite(v) && v>0 ? v : NaN;
+  }
+  function updBatSum(){ const v = batValue(); $('batSumVal').textContent = isFinite(v) ? nf(v,2)+' kWh' : '–'; }
+  function setBat(min, focus){
+    if(min && !isFinite(batValue())) min = false; // con un tamaño inválido la tarjeta queda abierta
+    $('batSum').classList.toggle('hidden', !min);
+    $('batFull').classList.toggle('hidden', min);
+    $('batCard').classList.toggle('min', min);
+    $('batEdit').setAttribute('aria-expanded', String(!min));
+    try{ localStorage.setItem('calc-bateria-bat', min ? 'min' : 'open'); }catch(e){}
+    if(focus) (min ? $('batEdit') : $(mode==='kwh' ? 'cap' : 'volt')).focus();
+    updBar();
+  }
+  $('batDone').addEventListener('click', () => {
+    if(!isFinite(batValue())){ $(mode==='kwh' ? 'cap' : 'volt').focus(); return; }
+    setBat(true, true);
+  });
+  $('batEdit').addEventListener('click', () => setBat(false, true));
+
+  /* ---------- hora: botón "Ahora" y la hora en el formato de la app ---------- */
+  function updTimeFmt(){
+    ['n-now','n-sunrise','c-now'].forEach(id => {
+      const v = $(id).value, m = /^(\d{1,2}):(\d{2})/.exec(v||'');
+      $(id+'-fmt').textContent = m ? clockFrom(+m[1]*60 + +m[2]) : '';
+    });
+  }
+  document.querySelectorAll('[data-now]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.now, d = new Date();
+    nowTouched[id] = false; // vuelve a seguir la hora sola
+    $(id).value = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    calcAll();
+  }));
+
+  /* ---------- Ajustes: tema, letra grande e idioma ---------- */
+  let settingsFrom = null;
+  function openSettings(){
+    settingsFrom = document.activeElement;
+    $('settings').hidden = false;
+    $('main').inert = true; document.querySelector('.foot').inert = true;
+    document.documentElement.style.overflow = 'hidden';
+    updBar();
+    ($('themeGroup').querySelector('[aria-pressed="true"]') || $('settingsClose')).focus();
+  }
+  function closeSettings(){
+    if($('settings').hidden) return;
+    $('settings').hidden = true;
+    $('main').inert = false; document.querySelector('.foot').inert = false;
+    document.documentElement.style.overflow = '';
+    updBar();
+    (settingsFrom && settingsFrom.isConnected ? settingsFrom : $('settingsBtn')).focus();
+  }
+  $('settingsBtn').addEventListener('click', openSettings);
+  ['settingsClose','settingsDone','settingsScrim'].forEach(id => $(id).addEventListener('click', closeSettings));
+  $('settings').addEventListener('keydown', e => {
+    if(e.key==='Escape'){ e.preventDefault(); closeSettings(); return; }
+    if(e.key!=='Tab') return;
+    const f = [...$('settings').querySelectorAll('button')].filter(b => b.offsetParent!==null);
+    const first = f[0], last = f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+  });
+
   /* ---------- imagen del reporte ---------- */
-  const C = {bg:'#EDF1F5', card:'#FFFFFF', ink:'#1B2838', muted:'#566476', line:'#CBD4DE', amber:'#E39B2D', reserve:'#C2463B', ok:'#2F7D5B', field:'#F6F8FA'};
+  const C = {bg:'#EDF1F5', card:'#FFFFFF', ink:'#1B2838', muted:'#566476', line:'#CBD4DE', lineStrong:'#7C8A9B', amber:'#E39B2D', reserve:'#C2463B', ok:'#2F7D5B', field:'#F6F8FA', okSoft:'#E3F1EA', rsvSoft:'#F9E5E3'};
   const FONT = '"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
   function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,y,w,h,r) : ctx.rect(x,y,w,h); }
   function wrap(ctx, text, x, y, maxW, lh){
@@ -1192,27 +1439,32 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     y = wrap(ctx, r.headline, X, y, IW, 54);
 
     // cifras
+    // cifras: la principal (duración o tiempo de carga) ocupa todo el ancho
     y += 14;
-    const gap = 16, fwb = (IW-2*gap)/3, fh = 168;
-    r.figures.forEach((f,i)=>{
-      const fx = X+i*(fwb+gap);
-      ctx.fillStyle = C.field; rr(ctx,fx,y,fwb,fh,18); ctx.fill();
-      ctx.strokeStyle = C.line; ctx.lineWidth = 2; rr(ctx,fx,y,fwb,fh,18); ctx.stroke();
-      ctx.fillStyle = C.ink; let size = 56; ctx.font = '700 '+size+'px '+FONT;
-      while(ctx.measureText(f[0]).width > fwb-40 && size>16){ size -= 2; ctx.font = '700 '+size+'px '+FONT; }
-      ctx.fillText(f[0], fx+22, y+82);
+    const gap = 16, hi = r.hero||0;
+    const fig = (f, fx, fy, fw, fh, big) => {
+      ctx.fillStyle = C.field; rr(ctx,fx,fy,fw,fh,18); ctx.fill();
+      ctx.strokeStyle = C.line; ctx.lineWidth = 2; rr(ctx,fx,fy,fw,fh,18); ctx.stroke();
+      ctx.fillStyle = C.ink; let size = big ? 80 : 52; ctx.font = '700 '+size+'px '+FONT;
+      while(ctx.measureText(f[0]).width > fw-44 && size>16){ size -= 2; ctx.font = '700 '+size+'px '+FONT; }
+      ctx.fillText(f[0], fx+24, fy+(big ? 102 : 78));
       ctx.fillStyle = C.muted; ctx.font = '400 26px '+FONT;
-      wrap(ctx, f[1], fx+22, y+128, fwb-40, 30);
-    });
-    y += fh;
+      wrap(ctx, f[1], fx+24, fy+(big ? 146 : 122), fw-44, 30);
+    };
+    fig(r.figures[hi], X, y, IW, 184, true);
+    y += 184 + gap;
+    const rest = r.figures.filter((_,i) => i!==hi), fwb = (IW-gap)/2;
+    rest.forEach((f,i) => fig(f, X+i*(fwb+gap), y, fwb, 160, false));
+    y += 160;
 
     // veredicto
     if(r.verdict){
       y += 32;
       ctx.font = '400 32px '+FONT;
       const vh = measureWrap(ctx, r.verdict.text, IW-60, 44) + 84;
-      ctx.fillStyle = C.field; rr(ctx,X,y,IW,vh,16); ctx.fill();
-      ctx.fillStyle = r.verdict.ok ? C.ok : C.reserve; rr(ctx,X,y,10,vh,[16,0,0,16]); ctx.fill();
+      const vk = r.verdict.kind || (r.verdict.ok ? 'ok' : 'short');
+      ctx.fillStyle = vk==='ok' ? C.okSoft : vk==='short' ? C.rsvSoft : C.field; rr(ctx,X,y,IW,vh,16); ctx.fill();
+      ctx.strokeStyle = vk==='ok' ? C.ok : vk==='short' ? C.reserve : C.lineStrong; ctx.lineWidth = 3; rr(ctx,X,y,IW,vh,16); ctx.stroke();
       ctx.fillStyle = C.ink; ctx.font = '700 32px '+FONT;
       ctx.fillText(r.verdict.title, X+36, y+56);
       ctx.font = '400 32px '+FONT;
@@ -1374,6 +1626,8 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
   $('c-modeW').setAttribute('aria-pressed', cMode==='w'); $('c-modeA').setAttribute('aria-pressed', cMode==='a');
   $('c-wBox').classList.toggle('hidden', cMode!=='w'); $('c-aBox').classList.toggle('hidden', cMode!=='a');
   setMode(mode);
+  try{ if(localStorage.getItem('calc-bateria-bat')==='min') setBat(true); }catch(e){}
+  updBar();
 })();
 </script>
 </body>

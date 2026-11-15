@@ -296,7 +296,7 @@ test.describe('textos y paso a paso', () => {
     });
     test('versión y aviso sin internet', async ({ page, app }) => {
       await app.open();
-      await expect(page.locator('#appVer')).toHaveText('Versión 1.3 · noviembre 2026');
+      await expect(page.locator('#appVer')).toHaveText('Versión 1.4 · noviembre 2026');
       await expect(page.locator('.offline')).toHaveText('Funciona sin internet.');
     });
   });
@@ -306,7 +306,7 @@ test.describe('textos y paso a paso', () => {
     test('etiquetas, versión y botones', async ({ page, app }) => {
       await app.open();
       await expect(page.locator('#view-noche .fig small').nth(2)).toHaveText('usable per 1%');
-      await expect(page.locator('#appVer')).toHaveText('Version 1.3 · November 2026');
+      await expect(page.locator('#appVer')).toHaveText('Version 1.4 · November 2026');
       await expect(page.locator('.offline')).toHaveText('Works without internet.');
       await expect(page.locator('[data-kwh]')).toHaveText(['5.12 kWh', '10.24 kWh', '15 kWh']);
       await type(page, '#n-watts', '1,200');

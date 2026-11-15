@@ -1,5 +1,5 @@
 // Idioma, tema y letra grande: cambian y se recuerdan al recargar.
-const { test, expect } = require('./fixtures');
+const { test, expect, setting } = require('./fixtures');
 
 test.describe('idioma del dispositivo', () => {
   test.describe('es', () => {
@@ -25,13 +25,13 @@ test.describe('se recuerda al recargar', () => {
 
   test('cambio de idioma', async ({ page, app }) => {
     await app.open();
-    await page.click('#langGroup [data-lang="en"]');
+    await setting(page, '#langGroup [data-lang="en"]');
     await expect(page.locator('h1')).toHaveText('Battery Calculator');
     await expect(page.locator('#volt')).toHaveValue('51.2'); // el número cambia al formato del idioma
     await page.reload();
     await expect(page.locator('h1')).toHaveText('Battery Calculator');
     await expect(page.locator('#langGroup [data-lang="en"]')).toHaveAttribute('aria-pressed', 'true');
-    await page.click('#langGroup [data-lang="es"]');
+    await setting(page, '#langGroup [data-lang="es"]');
     await page.reload();
     await expect(page.locator('h1')).toHaveText('Calculadora de Batería');
     await expect(page.locator('#volt')).toHaveValue('51,2');
@@ -44,7 +44,7 @@ test.describe('se recuerda al recargar', () => {
     const light = 'rgb(237, 241, 245)', dark = 'rgb(15, 26, 43)';
     await expect(page.locator('#themeGroup [data-theme-set="auto"]')).toHaveAttribute('aria-pressed', 'true');
     await expect.poll(bg).toBe(light);
-    await page.click('#themeGroup [data-theme-set="dark"]');
+    await setting(page, '#themeGroup [data-theme-set="dark"]');
     await expect.poll(bg).toBe(dark);
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -52,11 +52,11 @@ test.describe('se recuerda al recargar', () => {
     await expect.poll(bg).toBe(dark);
     // Claro gana aunque el teléfono esté en oscuro
     await page.emulateMedia({ colorScheme: 'dark' });
-    await page.click('#themeGroup [data-theme-set="light"]');
+    await setting(page, '#themeGroup [data-theme-set="light"]');
     await page.reload();
     await expect.poll(bg).toBe(light);
     // Auto sigue al teléfono
-    await page.click('#themeGroup [data-theme-set="auto"]');
+    await setting(page, '#themeGroup [data-theme-set="auto"]');
     await page.reload();
     await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/);
     await expect.poll(bg).toBe(dark);
@@ -66,14 +66,14 @@ test.describe('se recuerda al recargar', () => {
     await app.open();
     const size = sel => page.evaluate(s => parseFloat(getComputedStyle(document.querySelector(s)).fontSize), sel);
     const body0 = await size('body'), h10 = await size('h1');
-    await page.click('#textBtn');
+    await setting(page, '#textBtn');
     await expect(page.locator('#textBtn')).toHaveAttribute('aria-pressed', 'true');
     expect((await size('body')) / body0).toBeCloseTo(1.2, 2);
     expect((await size('h1')) / h10).toBeGreaterThan(1.1);
     await page.reload();
     await expect(page.locator('#textBtn')).toHaveAttribute('aria-pressed', 'true');
     expect((await size('body')) / body0).toBeCloseTo(1.2, 2);
-    await page.click('#textBtn');
+    await setting(page, '#textBtn');
     await page.reload();
     expect(await size('body')).toBeCloseTo(body0, 2);
   });
@@ -93,7 +93,7 @@ test.describe('botones de al menos 44 px', () => {
     test(`texto grande: ${big}`, async ({ page, app }) => {
       await page.setViewportSize({ width: 320, height: 800 });
       await app.open();
-      if (big) await page.click('#textBtn');
+      if (big) await setting(page, '#textBtn');
       for (const b of await page.locator('button:visible').all()) {
         const box = await b.boundingBox();
         expect(box.height, await b.textContent()).toBeGreaterThanOrEqual(44);

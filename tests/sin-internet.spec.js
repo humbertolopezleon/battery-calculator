@@ -1,5 +1,5 @@
 // Carga sin internet y sin peticiones externas.
-const { test, expect, readNum } = require('./fixtures');
+const { test, expect, readNum, setting } = require('./fixtures');
 
 test('cero peticiones externas', async ({ page, app }) => {
   const externas = [];
@@ -37,10 +37,10 @@ test('instalable: se abre sin internet después de la primera visita', async ({ 
     const keys = await caches.keys();
     return { scope: reg.scope, keys };
   });
-  await expect.poll(() => page.evaluate(async () => (await caches.keys()).some(k => /^battery-1\.3-[0-9a-f]{8}$/.test(k)))).toBe(true);
+  await expect.poll(() => page.evaluate(async () => (await caches.keys()).some(k => /^battery-1\.4-[0-9a-f]{8}$/.test(k)))).toBe(true);
   await context.setOffline(true);
   await page.reload();
-  await expect(page.locator('#appVer')).toContainText('1.3');
+  await expect(page.locator('#appVer')).toContainText('1.4');
   await expect(page.locator('#n-f1')).not.toHaveText('–');
 });
 
@@ -88,10 +88,10 @@ test.describe('el archivo único es 100% autónomo', () => {
     await expect(page.locator('#n-f1')).not.toHaveText('–');
     await page.click('#tab-carga');
     await expect(page.locator('#c-f1')).not.toHaveText('–');
-    await page.click('#langGroup [data-lang="en"]');
+    await setting(page, '#langGroup [data-lang="en"]');
     await expect(page.locator('h1')).toHaveText('Battery Calculator');
-    await page.click('#themeGroup [data-theme-set="dark"]');
-    await page.click('#textBtn');
+    await setting(page, '#themeGroup [data-theme-set="dark"]');
+    await setting(page, '#textBtn');
     // Reporte PNG (usa las fuentes incrustadas)
     const [d] = await Promise.all([page.waitForEvent('download'), page.click('#c-save')]);
     const buf = fs.readFileSync(await d.path());

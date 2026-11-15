@@ -1,5 +1,5 @@
 // Accesibilidad con axe-core en tema claro y oscuro: cero fallas.
-const { test, expect, type } = require('./fixtures');
+const { test, expect, type, setting } = require('./fixtures');
 const AXE = require.resolve('axe-core/axe.min.js');
 
 async function axe(page) {
@@ -20,8 +20,8 @@ for (const m of modos) {
     test(`${m.name} ${lang}`, async ({ page, app }) => {
       await page.emulateMedia({ colorScheme: m.scheme });
       await app.open();
-      await page.click(`#langGroup [data-lang="${lang}"]`);
-      if (m.theme) await page.click(`#themeGroup [data-theme-set="${m.theme}"]`);
+      await setting(page, `#langGroup [data-lang="${lang}"]`);
+      if (m.theme) await setting(page, `#themeGroup [data-theme-set="${m.theme}"]`);
       // Noche, con aviso de "se entendió", aviso raro y error de reserva visibles
       await type(page, '#n-watts', '1.200');
       await type(page, '#cap', '150');
@@ -35,7 +35,7 @@ for (const m of modos) {
       await type(page, '#c-watts', '12000');
       expect(await axe(page)).toEqual([]);
       // Texto grande
-      await page.click('#textBtn');
+      await setting(page, '#textBtn');
       expect(await axe(page)).toEqual([]);
     });
   }

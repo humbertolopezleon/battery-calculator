@@ -40,4 +40,11 @@ async function type(page, sel, text) {
   if (text) await el.pressSequentially(text);
 }
 
-module.exports = { test, expect: base.expect, readNum, readMinutes, type };
+// Tema, letra grande e idioma viven en la hoja de Ajustes: se abre, se toca y se cierra
+async function setting(page, sel) {
+  await page.click('#settingsBtn');
+  await page.click(sel);
+  await page.click('#settingsDone');
+}
+
+module.exports = { test, expect: base.expect, readNum, readMinutes, type, setting };

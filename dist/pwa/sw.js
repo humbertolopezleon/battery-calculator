@@ -1,6 +1,6 @@
 /* Guarda la app en el dispositivo para que funcione sin internet.
    Al publicar una versión nueva, cambia el número de VERSION. */
-const VERSION = 'battery-1.3-c5332b62';
+const VERSION = 'battery-1.4-4f6210c3';
 const FILES = [
   './',
   './index.html',

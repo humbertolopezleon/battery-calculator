@@ -1,5 +1,5 @@
 // Casos encontrados en las rondas de QA.
-const { test, expect, type } = require('./fixtures');
+const { test, expect, type, setting } = require('./fixtures');
 
 test.describe('QA ronda 1', () => {
   test.use({ locale: 'es-ES' });
@@ -379,7 +379,7 @@ test.describe('QA ronda 4 (verificación final)', () => {
   test('cifras enormes no se salen de su tarjeta', async ({ page, app }) => {
     await page.setViewportSize({ width: 320, height: 800 });
     await app.open();
-    await page.click('#textBtn');
+    await setting(page, '#textBtn');
     await type(page, '#cap', '999999999999');
     await type(page, '#n-watts', '1');
     for (const tab of ['noche', 'carga']) {
