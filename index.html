@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora de Watts · Watt Calculator</title>
+<meta name="description" content="Calculadora de Watts · Watt Calculator">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1B2838">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Calc. de Watts">
+<style>
+@font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-400-normal.woff2) format("woff2");}
+@font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-700-normal.woff2) format("woff2");}
+</style>
+<script>try{var d=document.documentElement,t=localStorage.getItem("calc-bateria-theme");if(t==="light"||t==="dark")d.setAttribute("data-theme",t);if(localStorage.getItem("calc-bateria-text")==="lg")d.setAttribute("data-text","lg")}catch(e){}</script>
+<style>
+:root{
+  --bg:#EDF1F5; --surface:#FFFFFF; --ink:#1B2838; --muted:#566476;
+  --line:#CBD4DE; --amber:#E39B2D; --reserve:#C2463B; --ok:#2F7D5B; --field:#F6F8FA;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1A2B; --surface:#17253A; --ink:#E6ECF2; --muted:#9AA8B8;
+    --line:#2C3D55; --amber:#F2B04A; --reserve:#E7685D; --ok:#5CC497; --field:#1E2E46;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1A2B; --surface:#17253A; --ink:#E6ECF2; --muted:#9AA8B8;
+  --line:#2C3D55; --amber:#F2B04A; --reserve:#E7685D; --ok:#5CC497; --field:#1E2E46;
+  color-scheme:dark;
+}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+:root[data-text="lg"]{font-size:120%;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+*,*::before,*::after{box-sizing:inherit;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:1.0625rem;line-height:1.5;
+}
+main{max-width:720px;margin:0 auto;padding:28px 20px 48px;}
+h1{font-size:clamp(1.6rem,4.5vw,2.2rem);line-height:1.15;margin:0 0 6px;font-weight:700;letter-spacing:-0.01em;}
+.lead{color:var(--muted);margin:0 0 22px;max-width:60ch;}
+h2{font-size:1.1rem;margin:0 0 12px;}
+
+/* Tabs */
+.tabs{display:flex;gap:0;margin:22px 0 22px;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--field);}
+.tabs button{
+  flex:1 1 0;font:inherit;font-weight:700;font-size:1rem;min-height:52px;padding:10px 12px;
+  border:0;background:transparent;color:var(--muted);cursor:pointer;line-height:1.2;
+}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--surface);}
+.tabs button + button{border-left:1.5px solid var(--line);}
+
+/* Battery gauge */
+.gauge{margin:0 0 24px;}
+.battery{position:relative;display:flex;align-items:stretch;height:96px;}
+.cell{position:relative;flex:1;border:3px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--surface);}
+.cap{width:12px;margin:26px 0;background:var(--ink);border-radius:0 5px 5px 0;}
+.reserve{
+  position:absolute;left:0;top:0;bottom:0;width:6%;
+  background:repeating-linear-gradient(135deg,var(--reserve) 0 4px,transparent 4px 9px);opacity:.55;
+}
+.fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--amber);transition:width .35s ease;}
+.fill::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--reserve-w,8%);background:var(--reserve);opacity:.75;}
+.target{position:absolute;top:0;bottom:0;left:0;width:0;background:var(--ok);opacity:.38;transition:left .35s ease,width .35s ease;}
+.gauge-label{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;font-weight:700;color:var(--ink);white-space:nowrap;
+  text-shadow:0 0 6px var(--surface),0 0 2px var(--surface);font-variant-numeric:tabular-nums;
+}
+.gauge-legend{display:flex;gap:6px 18px;flex-wrap:wrap;margin-top:10px;font-size:.92rem;color:var(--muted);}
+.swatch{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px;}
+
+/* Form */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px;}
+.panel + .panel{margin-top:16px;}
+.field{margin-bottom:20px;}
+.field:last-child{margin-bottom:0;}
+label,.label{display:block;font-weight:700;margin-bottom:6px;}
+.hint{display:block;color:var(--muted);font-size:.9rem;font-weight:400;margin-top:4px;}
+input.num,input[type=time]{
+  font:inherit;font-size:1.15rem;width:100%;max-width:220px;padding:10px 12px;
+  border:1.5px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);
+  font-variant-numeric:tabular-nums;min-height:48px;min-width:0;
+}
+.with-unit{display:flex;align-items:center;gap:10px;}
+.with-unit span{color:var(--muted);font-weight:700;}
+.row{display:flex;gap:16px;flex-wrap:wrap;}
+.row .field{flex:1 1 160px;}
+input[type=range]{width:100%;accent-color:var(--amber);height:44px;margin:0;flex:1 1 auto;min-width:0;}
+.pct-row{display:flex;align-items:center;gap:14px;}
+.pct-row .with-unit{flex:0 0 auto;}
+.seg{display:flex;width:100%;max-width:420px;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:10px;}
+.seg button{
+  font:inherit;font-size:.95rem;padding:8px 10px;border:0;background:var(--field);color:var(--ink);cursor:pointer;
+  flex:1 1 0;min-height:44px;line-height:1.2;
+}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:700;}
+.check{display:flex;gap:10px;align-items:flex-start;font-weight:400;cursor:pointer;}
+.check input{width:22px;height:22px;margin-top:2px;flex:0 0 auto;accent-color:var(--amber);}
+input:focus-visible,button:focus-visible{outline:3px solid var(--ink);outline-offset:2px;}
+button[aria-selected="true"]:focus-visible,.seg button[aria-pressed="true"]:focus-visible{outline-color:var(--amber);}
+.hidden{display:none !important;}
+
+/* Results */
+.results{margin-top:28px;}
+.headline{font-size:clamp(1.25rem,3.6vw,1.6rem);line-height:1.3;margin:0 0 18px;font-weight:700;}
+.figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.fig{background:var(--surface);padding:14px 16px;}
+.fig b{display:block;font-size:1.6rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;}
+.fig small{color:var(--muted);font-size:.9rem;}
+.verdict{margin-top:18px;padding:14px 16px;border-radius:12px;border-left:5px solid var(--ok);background:var(--surface);}
+.verdict.short{border-left-color:var(--reserve);}
+.steps{margin-top:22px;color:var(--muted);font-size:.95rem;}
+.steps p{margin:4px 0;}
+.steps strong{color:var(--ink);}
+.error{color:var(--reserve);font-weight:700;}
+.actions{margin-top:24px;}
+.btn-save{
+  font:inherit;font-weight:700;font-size:1.05rem;width:100%;max-width:420px;min-height:52px;
+  padding:12px 18px;border:0;border-radius:12px;background:var(--amber);color:#1B2838;cursor:pointer;
+}
+.btn-save:disabled{opacity:.5;cursor:not-allowed;}
+.save-msg{margin:10px 0 0;color:var(--muted);font-size:.92rem;min-height:1.2em;}
+.save-msg.err{color:var(--reserve);font-weight:700;}
+.preview{margin-top:16px;}
+.preview img{display:block;width:100%;max-width:420px;height:auto;border:1px solid var(--line);border-radius:12px;}
+.preview p{margin:0 0 8px;font-weight:700;}
+.note{margin-top:28px;color:var(--muted);font-size:.88rem;max-width:60ch;}
+
+@media (max-width:480px){
+  body{font-size:1rem;}
+  main{padding:18px 14px 32px;}
+  .tabs{margin:18px 0;}
+  .tabs button{font-size:.95rem;padding:8px 8px;}
+  .gauge{margin-bottom:20px;}
+  .battery{height:74px;}
+  .cell{border-width:2.5px;border-radius:12px;}
+  .cap{width:9px;margin:21px 0;}
+  .gauge-label{font-size:1.9rem;}
+  .gauge-legend{gap:6px 14px;font-size:.86rem;}
+  .panel{padding:18px 14px;border-radius:14px;}
+  .field{margin-bottom:18px;}
+  .with-unit input.num{max-width:none;flex:1 1 auto;}
+  .with-unit{max-width:100%;}
+  .pct-row .with-unit input.num{width:96px;flex:0 0 auto;}
+  input[type=time]{max-width:none;}
+  .row{gap:12px;}
+  .row .field{flex:1 1 130px;}
+  .results{margin-top:22px;}
+  .headline{margin-bottom:14px;}
+  .figures{grid-template-columns:1fr;border-radius:12px;}
+  .fig{display:flex;flex-direction:row-reverse;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 14px;}
+  .fig b{font-size:1.4rem;text-align:right;}
+  .fig small{flex:0 0 auto;max-width:55%;}
+  .verdict{padding:12px 14px;}
+  .btn-save{max-width:none;}
+  .preview img{max-width:none;}
+  .note{margin-top:22px;}
+}
+@media (max-width:360px){
+  h1{font-size:1.4rem;}
+  main{padding:14px 10px 28px;}
+  .panel{padding:16px 12px;}
+  .tabs button{font-size:.88rem;}
+  .gauge-label{font-size:1.6rem;}
+  .seg button{font-size:.86rem;padding:8px 6px;}
+  .pct-row{flex-wrap:wrap;gap:6px;}
+  .pct-row input[type=range]{flex-basis:100%;}
+  .pct-row .with-unit input.num{width:110px;}
+  .row .field{flex-basis:100%;}
+  .fig b{font-size:1.25rem;}
+}
+@media (max-height:480px) and (orientation:landscape){
+  .battery{height:60px;}
+  .cap{margin:16px 0;}
+  .gauge-label{font-size:1.6rem;}
+}
+/* Idioma */
+.topbar{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 14px;}
+.lang,.pill{display:inline-flex;align-items:center;gap:0;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);padding:3px;}
+.lang svg,.pill svg{width:22px;height:22px;margin:0 6px 0 8px;color:var(--muted);flex:0 0 auto;}
+.lang button,.pill button{font:inherit;font-weight:700;font-size:1rem;min-height:44px;min-width:44px;padding:6px 16px;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;}
+.lang button[aria-pressed="true"],.pill button[aria-pressed="true"]{background:var(--ink);color:var(--surface);}
+
+/* Instalar (solo en la versión instalable) */
+.install{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 18px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:12px;background:var(--surface);}
+.install p{margin:0;flex:1 1 200px;font-size:.95rem;color:var(--muted);}
+.install p strong{color:var(--ink);}
+.btn-install{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border:0;border-radius:10px;background:var(--ink);color:var(--surface);cursor:pointer;}
+.install .close{font:inherit;min-height:44px;min-width:44px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:1.3rem;line-height:1;}
+@media (max-width:480px){
+  .topbar{margin-bottom:12px;}
+  .lang button,.pill button{padding:6px 12px;}
+}
+@media (max-width:400px){ .pill svg{display:none;} .pill{padding-left:3px;} }
+.btn-aa{font:inherit;font-weight:700;font-size:1.05rem;min-height:50px;min-width:50px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer;line-height:1;}
+.btn-aa[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);}
+.offline{margin:-14px 0 22px;color:var(--muted);font-size:.9rem;}
+.presets{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px;}
+.presets-lbl{flex:1 0 100%;color:var(--muted);font-size:.9rem;}
+.presets button{font:inherit;font-size:.95rem;font-weight:700;min-height:44px;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);cursor:pointer;white-space:nowrap;}
+.presets button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink);}
+.more summary{font-weight:700;cursor:pointer;padding:10px 0;border-radius:8px;}
+.more[open] summary{margin-bottom:10px;}
+.more summary:focus-visible{outline:3px solid var(--ink);outline-offset:2px;}
+.tabs button:focus-visible,.seg button:focus-visible{outline-offset:-4px;}
+.headline .soft{color:var(--ink);}
+.fmsg{display:block;font-size:.9rem;line-height:1.35;margin-top:6px;}
+.fmsg:empty{display:none;}
+.fmsg span{display:block;}
+.fmsg span + span{margin-top:4px;}
+.fmsg .info{color:var(--ink);padding-left:10px;border-left:4px solid var(--line);}
+.fmsg .warn{color:var(--ink);padding-left:10px;border-left:4px solid var(--amber);}
+.fmsg .err{color:var(--reserve);font-weight:700;}
+input[aria-invalid="true"]{border-color:var(--reserve);}
+.foot{max-width:720px;margin:0 auto;padding:0 20px 28px;color:var(--muted);font-size:.85rem;}
+.foot p{margin:0;}
+@media (max-width:480px){ .foot{padding:0 14px 24px;} }
+@media (max-width:360px){ .presets button{padding:8px 8px;font-size:.9rem;} .foot{padding:0 10px 20px;} }
+@media (prefers-reduced-motion: reduce){.fill,.target{transition:none;}}
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div class="pill" role="group" id="themeGroup" data-i18n-aria="themeAria">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+      <button type="button" data-theme-set="auto" aria-pressed="true" data-i18n="thAuto"></button>
+      <button type="button" data-theme-set="light" aria-pressed="false" data-i18n="thLight"></button>
+      <button type="button" data-theme-set="dark" aria-pressed="false" data-i18n="thDark"></button>
+    </div>
+    <button type="button" class="btn-aa" id="textBtn" aria-pressed="false" data-i18n-aria="textAria"><span aria-hidden="true">Aa</span></button>
+    <div class="lang" role="group" id="langGroup" aria-label="Idioma / Language">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5z"/></svg>
+      <button type="button" data-lang="es" lang="es" aria-pressed="true">Español</button>
+      <button type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
+    </div>
+  </div>
+
+  <h1 data-i18n="title">Calculadora de Watts</h1>
+  <p class="lead" data-i18n="lead"></p>
+  <p class="offline" data-i18n="offline"></p>
+  <!--pwa-start-->
+  <div class="install hidden" id="installBox">
+    <p id="installText"></p>
+    <button type="button" class="btn-install hidden" id="installBtn" data-i18n="installBtn"></button>
+    <button type="button" class="close" id="installClose" data-i18n-aria="installClose">×</button>
+  </div>
+  <!--pwa-end-->
+
+  <section class="panel" data-i18n-aria="yourBattery">
+    <div class="field">
+      <h2 data-i18n="batTitle"></h2>
+      <div class="seg" role="group" data-i18n-aria="batHow">
+        <button type="button" id="modeKwh" aria-pressed="true" data-i18n="modeKwh"></button>
+        <button type="button" id="modeAh" aria-pressed="false" data-i18n="modeAh"></button>
+      </div>
+      <div id="kwhBox">
+        <div class="with-unit"><input id="cap" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="10" data-i18n-aria="capAria"><span>kWh</span></div>
+        <div class="presets" role="group" aria-labelledby="presetsLbl">
+          <span class="presets-lbl" id="presetsLbl" data-i18n="presetsLabel"></span>
+          <button type="button" data-kwh="5.12"></button>
+          <button type="button" data-kwh="10.24"></button>
+          <button type="button" data-kwh="15"></button>
+        </div>
+        <span class="hint" data-i18n="capHint"></span>
+      </div>
+      <div id="ahBox" class="hidden">
+        <div class="row">
+          <div class="field"><label for="volt" data-i18n="voltAria"></label><div class="with-unit"><input id="volt" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="51.2"><span>V</span></div></div>
+          <div class="field"><label for="ah" data-i18n="ahAria"></label><div class="with-unit"><input id="ah" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="200"><span>Ah</span></div></div>
+        </div>
+        <span class="hint" id="ahResult"></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="tabs" role="tablist" data-i18n-aria="tabsAria">
+    <button type="button" role="tab" id="tab-noche" aria-controls="view-noche" aria-selected="true" data-i18n="tabNight"></button>
+    <button type="button" role="tab" id="tab-carga" aria-controls="view-carga" aria-selected="false" data-i18n="tabCharge"></button>
+  </div>
+
+  <!-- ============ TAB 1: NOCHE ============ -->
+  <section id="view-noche" role="tabpanel" aria-labelledby="tab-noche">
+    <p class="lead" data-i18n-html="nLead"></p>
+    <div class="gauge" aria-hidden="true">
+      <div class="battery">
+        <div class="cell">
+          <div class="fill" id="n-fill"></div>
+          <div class="reserve"></div>
+          <div class="gauge-label" id="n-label">75%</div>
+        </div>
+        <div class="cap"></div>
+      </div>
+      <div class="gauge-legend">
+        <span><span class="swatch" style="background:var(--amber)"></span><span data-i18n="legUsable"></span></span>
+        <span><span class="swatch" style="background:var(--reserve);opacity:.75"></span><span data-i18n-html="legReserve"></span></span>
+      </div>
+    </div>
+
+    <section class="panel" data-i18n-aria="nightData">
+      <div class="field">
+        <label for="n-pctNum" data-i18n="pctNow"></label>
+        <div class="pct-row">
+          <input id="n-pctRange" type="range" min="0" max="100" step="1" value="75" data-i18n-aria="pctAria">
+          <div class="with-unit"><input id="n-pctNum" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="75"><span>%</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="n-watts" data-i18n="houseLoad"></label>
+        <div class="with-unit"><input id="n-watts" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="600"><span>W</span></div>
+        <span class="hint" data-i18n="houseHint"></span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="n-now" data-i18n="timeNow"></label>
+          <input id="n-now" type="time">
+        </div>
+        <div class="field">
+          <label for="n-sunrise" data-i18n="sunrise"></label>
+          <input id="n-sunrise" type="time" value="07:00">
+          <span class="hint" data-i18n="sunriseHint"></span>
+        </div>
+      </div>
+      <details class="field more" id="n-more">
+        <summary data-i18n="moreOpts"></summary>
+        <div class="field">
+          <label class="check"><input id="n-loss" type="checkbox" checked>
+            <span><span data-i18n="loss"></span><span class="hint" data-i18n="lossHint"></span></span>
+          </label>
+        </div>
+        <div class="field">
+          <label class="check"><input id="rsvOn" type="checkbox">
+            <span><span data-i18n="rsvOn"></span><span class="hint" data-i18n="rsvHint"></span></span>
+          </label>
+          <div id="rsvBox" class="hidden" style="margin-top:12px">
+            <label for="rsv" data-i18n="rsvLabel"></label>
+            <div class="with-unit"><input id="rsv" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="6"><span>%</span></div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="results">
+      <p class="headline" id="n-headline" aria-live="polite"></p>
+      <div class="figures">
+        <div class="fig"><b id="n-f1">–</b><small data-i18n="fUsable"></small></div>
+        <div class="fig"><b id="n-f2">–</b><small data-i18n="fDuration"></small></div>
+        <div class="fig"><b id="n-f3">–</b><small data-i18n="fPerPct"></small></div>
+      </div>
+      <div class="verdict" id="n-verdict" aria-live="polite"></div>
+      <div class="steps" id="n-steps"></div>
+      <div class="actions">
+        <button type="button" class="btn-save" id="n-save" data-i18n="save"></button>
+        <p class="save-msg" id="n-msg"></p>
+        <div class="preview" id="n-preview" hidden>
+          <p data-i18n="previewHint"></p>
+          <img id="n-previewImg" data-i18n-alt="nPreviewAlt" alt="">
+        </div>
+      </div>
+    </section>
+    <p class="note" data-i18n="nNote"></p>
+  </section>
+
+  <!-- ============ TAB 2: CARGA CON LA RED ============ -->
+  <section id="view-carga" role="tabpanel" aria-labelledby="tab-carga" class="hidden">
+    <p class="lead" data-i18n="cLead"></p>
+    <div class="gauge" aria-hidden="true">
+      <div class="battery">
+        <div class="cell">
+          <div class="fill" id="c-fill"></div>
+          <div class="target" id="c-target"></div>
+          <div class="gauge-label" id="c-label">30% → 100%</div>
+        </div>
+        <div class="cap"></div>
+      </div>
+      <div class="gauge-legend">
+        <span><span class="swatch" style="background:var(--amber)"></span><span data-i18n="legNow"></span></span>
+        <span><span class="swatch" style="background:var(--ok);opacity:.5"></span><span data-i18n="legToCharge"></span></span>
+      </div>
+    </div>
+
+    <section class="panel" data-i18n-aria="chargeData">
+      <div class="field">
+        <label for="c-pctNum" data-i18n="pctNow"></label>
+        <div class="pct-row">
+          <input id="c-pctRange" type="range" min="0" max="100" step="1" value="30" data-i18n-aria="pctAria">
+          <div class="with-unit"><input id="c-pctNum" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="30"><span>%</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="c-tgtNum" data-i18n="tgt"></label>
+        <div class="pct-row">
+          <input id="c-tgtRange" type="range" min="0" max="100" step="1" value="100" data-i18n-aria="tgtAria">
+          <div class="with-unit"><input id="c-tgtNum" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="100"><span>%</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <span class="label" data-i18n="chgPower"></span>
+        <div class="seg" role="group" data-i18n-aria="chgHow">
+          <button type="button" id="c-modeW" aria-pressed="true" data-i18n="modeW"></button>
+          <button type="button" id="c-modeA" aria-pressed="false" data-i18n="modeA"></button>
+        </div>
+        <div id="c-wBox">
+          <div class="with-unit"><input id="c-watts" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="2500" data-i18n-aria="wattsAria"><span>W</span></div>
+        </div>
+        <div id="c-aBox" class="hidden">
+          <div class="row">
+            <div class="field"><label for="c-amps" data-i18n="ampsAria"></label><div class="with-unit"><input id="c-amps" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="50"><span>A</span></div></div>
+            <div class="field"><label for="c-volt" data-i18n="cvoltAria"></label><div class="with-unit"><input id="c-volt" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num" value="51.2"><span>V</span></div></div>
+          </div>
+          <span class="hint" id="c-aResult"></span>
+        </div>
+        <span class="hint" id="chgHint"></span>
+      </div>
+      <div class="field">
+        <label for="c-now" data-i18n="timeNow"></label>
+        <input id="c-now" type="time">
+      </div>
+    </section>
+
+    <section class="results">
+      <p class="headline" id="c-headline" aria-live="polite"></p>
+      <div class="figures">
+        <div class="fig"><b id="c-f1">–</b><small data-i18n="fChargeTime"></small></div>
+        <div class="fig"><b id="c-f2">–</b><small data-i18n="fToCharge"></small></div>
+        <div class="fig"><b id="c-f3">–</b><small data-i18n="fPerHour"></small></div>
+      </div>
+      <div class="verdict" id="c-verdict" aria-live="polite"></div>
+      <div class="steps" id="c-steps"></div>
+      <div class="actions">
+        <button type="button" class="btn-save" id="c-save" data-i18n="save"></button>
+        <p class="save-msg" id="c-msg"></p>
+        <div class="preview" id="c-preview" hidden>
+          <p data-i18n="previewHint"></p>
+          <img id="c-previewImg" data-i18n-alt="cPreviewAlt" alt="">
+        </div>
+      </div>
+    </section>
+    <p class="note" data-i18n="cNote"></p>
+  </section>
+</main>
+<footer class="foot"><p id="appVer"></p></footer>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+
+  /* ================= TEXTOS / STRINGS ================= */
+  const STR = {
+    es: {
+      title:'Calculadora de Watts',
+      lead:'Calcula cuánto dura la batería de noche o cuánto tarda en cargarse con la corriente de la calle.',
+      langAria:'Idioma', offline:'Funciona sin internet.',
+      themeAria:'Colores de la pantalla', thAuto:'Auto', thLight:'Claro', thDark:'Oscuro', textAria:'Letra grande',
+      version:v=>`Versión ${v} · noviembre 2026`,
+      presetsLabel:'Baterías comunes:',
+      readAs:v=>`Se entendió: ${v}.`, readAsAlt:(v,a,sep)=>`Se entendió: ${v}. Si querías ${a}, escríbelo sin ${sep}.`,
+      sepDot:'punto', sepComma:'coma',
+      rsvBad:'Escribe un número del 0 al 90.', nRsvBad:'Revisa la reserva: debe ser un número del 0 al 90.',
+      weird:'¿Seguro? Es más de lo normal en una casa.', onlyNums:'Solo se pueden escribir números.',
+      numBad:'Escribe un número.', gt0:'Debe ser mayor que 0.', pctBad:'Escribe un número del 0 al 100.',
+      lBelow:(p,r)=>`${p}% no pasa de la reserva del ${r}%: queda 0% útil`,
+      aboutH:d=>`cerca de ${d}`, art:one=>one ? 'la ' : 'las ', moreOpts:'Más opciones', days:n=>n==='1' ? 'cerca de 1 día' : `unos ${n} días`,
+      installText:'<strong>Instala la calculadora</strong> para abrirla como una app, incluso sin internet.',
+      installIOS:'<strong>Instala la calculadora:</strong> toca el botón Compartir y luego “Agregar a pantalla de inicio”.',
+      installBtn:'Instalar', installClose:'Ocultar aviso de instalación',
+      yourBattery:'Tu batería', batTitle:'Tamaño de tu batería', batHow:'Cómo conoces el tamaño',
+      modeKwh:'Sé los kWh', modeAh:'Sé los voltios y Ah', capAria:'Capacidad en kWh',
+      capHint:'Aparece en la etiqueta o el manual de la batería.', voltAria:'Voltios (V)', ahAria:'Amperios hora (Ah)',
+      tabsAria:'Qué quieres calcular', tabNight:'De noche', tabCharge:'Cargando con la red',
+      nLead:'¿Hasta qué hora me alcanza la batería con el consumo que tengo? La batería se apaga sola al llegar al <span class="rv">6</span>% para cuidar su salud, así que ese tramo no se cuenta.',
+      legUsable:'Energía que puedes usar', legReserve:'Reserva del <span class="rv">6</span>% (no se usa)',
+      nightData:'Datos de la noche', pctNow:'Porciento que marca ahora', pctAria:'Porciento de batería',
+      houseLoad:'Consumo de la casa', houseHint:'Míralo en la app o en la pantalla del inversor. Si sube y baja, usa un promedio.',
+      timeNow:'Hora ahora', sunrise:'Hora en que vuelve el sol', sunriseHint:'Cuando los paneles empiezan a cargar.',
+      loss:'Contar las pérdidas del inversor (10%)', lossHint:'Más realista. Desmárcalo para ver la cuenta simple.',
+      rsvOn:'Mi batería usa otra reserva', rsvHint:'Si no lo marcas, se asume 6%. Cámbialo solo si el inversor está configurado para apagar la batería en otro porciento.',
+      rsvLabel:'Porciento de reserva',
+      fUsable:'kWh que puedes usar', fDuration:'de duración', fPerPct:'útil por cada 1%',
+      save:'Descargar reporte como imagen', previewHint:'Mantén presionada la imagen para guardarla o compartirla.',
+      nPreviewAlt:'Reporte del cálculo de la noche',
+      nNote:'Es un aproximado. El consumo cambia durante la noche (el refrigerador arranca y para, el aire acondicionado o la plancha lo suben mucho). La cuenta supone que los paneles no cargan nada hasta la hora en que vuelve el sol.',
+      cLead:'¿Cuánto tiempo tarda en cargarse la batería cuando hay corriente de la calle?',
+      legNow:'Carga que tiene ahora', legToCharge:'Lo que se va a cargar', chargeData:'Datos de la carga',
+      tgt:'Hasta qué porciento quieres cargar', tgtAria:'Porciento objetivo',
+      chgPower:'Potencia de carga de la batería', chgHow:'Cómo conoces la potencia de carga',
+      modeW:'Sé los watts', modeA:'Sé los amperios', wattsAria:'Potencia de carga en watts',
+      ampsAria:'Amperios de carga (A)', cvoltAria:'Voltios de la batería (V)',
+      chgHintW:'Es la potencia de carga desde la red configurada en el inversor.',
+      chgHintA:'Es la corriente de carga desde la red configurada en el inversor (por ejemplo, 50 A en una batería de 51,2 V).',
+      fChargeTime:'de carga', fToCharge:'kWh por cargar', fPerHour:'sube cada hora',
+      cPreviewAlt:'Reporte del cálculo de carga',
+      cNote:'Es un aproximado. Del 90% al 100% el cargador va más despacio, por eso ese tramo se calcula a la mitad de la potencia. Si la corriente de la calle se va, la carga se detiene.',
+      howCalc:'Así se calcula:', reportHow:'Así se calcula', dataUsed:'Datos usados', calcAt:'Calculado el ',
+      ahResult:c=>`Tu batería es de unos ${c} kWh.`,
+      nInvalid:'Revisa los datos: la batería debe ser mayor que 0, el porciento entre 0 y 100, y el consumo un número.',
+      nEmpty:r=>`La batería ya está en la reserva del ${r}%: no queda energía para usar.`,
+      nNoLoad:k=>`Sin consumo, la energía se mantiene: tienes ${k} kWh guardados.`,
+      nUntil:(w,c)=>`Con ${w} W de consumo, la batería dura hasta cerca de ${c}.`,
+      nAlmost:'Queda energía para menos de un minuto.',
+      nFor:(w,d)=>`Con ${w} W de consumo, la batería dura ${d}.`,
+      okDawnT:'Llegas al amanecer.', okJust:c=>`La energía alcanza justo hasta ${c}.`, okDawn:(s,p,c)=>`Te sobrarían unos ${s}; la batería marcaría cerca de ${p}% a ${c}.`,
+      badDawnT:'No llegas al amanecer.', badDawn:(m,c,w)=>`Faltan unos ${m}. Para aguantar hasta ${c}, baja el consumo a ${w} W o menos.`,
+      badDawnLow:m=>`Faltan unos ${m}. Casi no queda energía para usar.`,
+      lReserve:(p,r,u)=>`${p}% − ${r}% de reserva = ${u}% útil`,
+      lCap:(c,u,raw,loss,k)=>`${c} × ${u}% = ${raw}`+(loss?`, y quitando el 10% de pérdidas quedan ${k}`:''),
+      lRun:(e,p,h)=>`${e} ÷ ${p} de consumo = ${h}`,
+      nTitle:'Reporte de batería: de noche', nFile:'reporte-noche',
+      repReserve:r=>`Reserva del ${r}% (no se usa)`,
+      dBattery:'Batería', dLevel:'Porciento ahora', dLoad:'Consumo', dAt:'Hora del cálculo', dSun:'Vuelve el sol',
+      dReserve:'Reserva de la batería', dLoss:'Pérdidas del inversor', lossYes:'Incluidas (10%)', lossNo:'No incluidas',
+      nFoot:r=>`Es un aproximado: el consumo cambia durante la noche. La batería se apaga al ${r}% para cuidar su salud.`,
+      aResult:w=>`Equivale a unos ${w} W de carga.`,
+      cInvalid:'Revisa los datos: la batería debe ser mayor que 0 y los porcientos entre 0 y 100.',
+      cNoPower:'Pon la potencia de carga: debe ser mayor que 0.',
+      cAlready:(p,t)=>`La batería ya está en ${p}%, que es igual o más que el ${t}% que quieres. No hace falta cargar.`,
+      cUntil:(w,t,c)=>`Cargando a ${w} W, la batería llega al ${t}% cerca de ${c}.`,
+      cFor:(w,d,t)=>`Cargando a ${w} W, la batería tarda ${d} en llegar al ${t}%.`,
+      gridT:'Consumo de la red:', grid:k=>`unos ${k} kWh, porque al cargar se pierde cerca del 10%. Esto es lo que se suma a la factura de la luz.`,
+      lAmps:(a,v,w)=>`${a} A × ${v} V = ${w} W de carga`,
+      lDelta:(t,p,d)=>`${t}% − ${p}% = ${d}% por cargar`,
+      lKwh:(c,d,k)=>`${c} × ${d}% = ${k}`,
+      lTime:(e,p,h)=>`${e} ÷ ${p} de carga = ${h}`,
+      lFast:(a,b,e,p,d)=>`De ${a}% a ${b}%: ${e} ÷ ${p} = ${d}`,
+      lSlow:(a,b,e,p,d)=>`De ${a}% a ${b}%, a mitad de potencia: ${e} ÷ ${p} = ${d}`,
+      lTotal:(a,b,d)=>`Total: ${a} + ${b} = ${d}`,
+      cTitle:'Reporte de carga con la red', cFile:'reporte-carga',
+      dTarget:'Cargar hasta', dPower:'Potencia de carga',
+      cFoot:'Es un aproximado: del 90% al 100% el cargador va más despacio, por eso ese tramo se calcula a la mitad de la potencia.',
+      preparing:'Preparando la imagen…', savedAs:n=>`Reporte guardado como ${n}.`, cancelled:'Descarga cancelada.',
+      wait:'Espera un momento y vuelve a intentar.', cantHere:'No se pudo descargar aquí. Guarda la imagen desde la vista previa.',
+      fromPreview:'Guarda la imagen desde la vista previa.', failed:'No se pudo crear la imagen. Revisa los datos e intenta de nuevo.',
+      done:'Listo.', downloaded:n=>`Reporte descargado en Descargas: ${n}.`
+    },
+    en: {
+      title:'Watt Calculator',
+      lead:'Find out how long your battery lasts at night, or how long it takes to charge from the grid.',
+      langAria:'Language', offline:'Works without internet.',
+      themeAria:'Screen colors', thAuto:'Auto', thLight:'Light', thDark:'Dark', textAria:'Large text',
+      version:v=>`Version ${v} · November 2026`,
+      presetsLabel:'Common batteries:',
+      readAs:v=>`Read as: ${v}.`, readAsAlt:(v,a,sep)=>`Read as: ${v}. If you meant ${a}, type it without the ${sep}.`,
+      sepDot:'period', sepComma:'comma',
+      rsvBad:'Enter a number from 0 to 90.', nRsvBad:'Check the reserve: it must be a number from 0 to 90.',
+      weird:'Are you sure? That’s more than usual for a home.', onlyNums:'Only numbers can be typed.',
+      numBad:'Enter a number.', gt0:'It must be greater than 0.', pctBad:'Enter a number from 0 to 100.',
+      lBelow:(p,r)=>`${p}% is not above the ${r}% reserve: 0% usable is left`,
+      aboutH:d=>`about ${d}`, art:()=>'', moreOpts:'More options', days:n=>n==='1' ? 'about 1 day' : `about ${n} days`,
+      installText:'<strong>Install the calculator</strong> to open it like an app, even without internet.',
+      installIOS:'<strong>Install the calculator:</strong> tap the Share button, then “Add to Home Screen”.',
+      installBtn:'Install', installClose:'Hide install notice',
+      yourBattery:'Your battery', batTitle:'Your battery size', batHow:'How you know the size',
+      modeKwh:'I know the kWh', modeAh:'I know the volts and Ah', capAria:'Capacity in kWh',
+      capHint:'It’s on the battery label or in its manual.', voltAria:'Volts (V)', ahAria:'Amp-hours (Ah)',
+      tabsAria:'What do you want to calculate', tabNight:'At night', tabCharge:'Charging from the grid',
+      nLead:'How long will my battery last with my current power use? The battery shuts off on its own at <span class="rv">6</span>% to protect its health, so that last part doesn’t count.',
+      legUsable:'Energy you can use', legReserve:'<span class="rv">6</span>% reserve (not used)',
+      nightData:'Night data', pctNow:'Battery level right now', pctAria:'Battery percentage',
+      houseLoad:'Home power use', houseHint:'Check it in the app or on the inverter screen. If it goes up and down, use an average.',
+      timeNow:'Time now', sunrise:'Time the sun comes back', sunriseHint:'When the panels start charging.',
+      loss:'Include inverter losses (10%)', lossHint:'More realistic. Uncheck it to see the simple math.',
+      rsvOn:'My battery uses a different reserve', rsvHint:'If unchecked, 6% is assumed. Change it only if the inverter is set to shut off the battery at a different level.',
+      rsvLabel:'Reserve percentage',
+      fUsable:'kWh you can use', fDuration:'runtime', fPerPct:'usable per 1%',
+      save:'Download report as image', previewHint:'Press and hold the image to save or share it.',
+      nPreviewAlt:'Night calculation report',
+      nNote:'This is an estimate. Power use changes during the night (the fridge starts and stops; air conditioning or an iron raise it a lot). The math assumes the panels charge nothing until the time the sun comes back.',
+      cLead:'How long does the battery take to charge when grid power is available?',
+      legNow:'Current charge', legToCharge:'Amount to charge', chargeData:'Charging data',
+      tgt:'Charge up to', tgtAria:'Target percentage',
+      chgPower:'Battery charging power', chgHow:'How you know the charging power',
+      modeW:'I know the watts', modeA:'I know the amps', wattsAria:'Charging power in watts',
+      ampsAria:'Charging amps (A)', cvoltAria:'Battery volts (V)',
+      chgHintW:'This is the grid charging power set in the inverter.',
+      chgHintA:'This is the grid charging current set in the inverter (for example, 50 A on a 51.2 V battery).',
+      fChargeTime:'charging time', fToCharge:'kWh to charge', fPerHour:'gained per hour',
+      cPreviewAlt:'Charging calculation report',
+      cNote:'This is an estimate. From 90% to 100% the charger slows down, so that part is calculated at half power. If grid power goes out, charging stops.',
+      howCalc:'How it’s calculated:', reportHow:'How it’s calculated', dataUsed:'Data used', calcAt:'Calculated on ',
+      ahResult:c=>`Your battery is about ${c} kWh.`,
+      nInvalid:'Check the data: the battery must be larger than 0, the level between 0 and 100, and the power use a number.',
+      nEmpty:r=>`The battery is already at the ${r}% reserve: there’s no energy left to use.`,
+      nNoLoad:k=>`With no power use, the energy stays put: you have ${k} kWh stored.`,
+      nUntil:(w,c)=>`At ${w} W of power use, the battery lasts until about ${c}.`,
+      nAlmost:'There’s less than a minute of energy left.',
+      nFor:(w,d)=>`At ${w} W of power use, the battery lasts ${d}.`,
+      okDawnT:'You make it to sunrise.', okJust:c=>`The energy lasts just until ${c}.`, okDawn:(s,p,c)=>`You’d have about ${s} to spare; the battery would show around ${p}% at ${c}.`,
+      badDawnT:'You won’t make it to sunrise.', badDawn:(m,c,w)=>`You’re short about ${m}. To last until ${c}, lower your power use to ${w} W or less.`,
+      badDawnLow:m=>`You’re short about ${m}. There’s almost no energy left to use.`,
+      lReserve:(p,r,u)=>`${p}% − ${r}% reserve = ${u}% usable`,
+      lCap:(c,u,raw,loss,k)=>`${c} × ${u}% = ${raw}`+(loss?`, and after 10% losses that leaves ${k}`:''),
+      lRun:(e,p,h)=>`${e} ÷ ${p} of power use = ${h}`,
+      nTitle:'Battery report: at night', nFile:'battery-night-report',
+      repReserve:r=>`${r}% reserve (not used)`,
+      dBattery:'Battery', dLevel:'Level now', dLoad:'Power use', dAt:'Calculated at', dSun:'Sun comes back',
+      dReserve:'Battery reserve', dLoss:'Inverter losses', lossYes:'Included (10%)', lossNo:'Not included',
+      nFoot:r=>`This is an estimate: power use changes during the night. The battery shuts off at ${r}% to protect its health.`,
+      aResult:w=>`That’s about ${w} W of charging power.`,
+      cInvalid:'Check the data: the battery must be larger than 0 and the levels between 0 and 100.',
+      cNoPower:'Enter the charging power: it must be greater than 0.',
+      cAlready:(p,t)=>`The battery is already at ${p}%, which is equal to or above the ${t}% you want. No charging needed.`,
+      cUntil:(w,t,c)=>`Charging at ${w} W, the battery reaches ${t}% at about ${c}.`,
+      cFor:(w,d,t)=>`Charging at ${w} W, the battery takes ${d} to reach ${t}%.`,
+      gridT:'Grid usage:', grid:k=>`about ${k} kWh, because roughly 10% is lost while charging. This is what gets added to your electricity bill.`,
+      lAmps:(a,v,w)=>`${a} A × ${v} V = ${w} W of charging`,
+      lDelta:(t,p,d)=>`${t}% − ${p}% = ${d}% to charge`,
+      lKwh:(c,d,k)=>`${c} × ${d}% = ${k}`,
+      lTime:(e,p,h)=>`${e} ÷ ${p} of charging = ${h}`,
+      lFast:(a,b,e,p,d)=>`From ${a}% to ${b}%: ${e} ÷ ${p} = ${d}`,
+      lSlow:(a,b,e,p,d)=>`From ${a}% to ${b}%, at half power: ${e} ÷ ${p} = ${d}`,
+      lTotal:(a,b,d)=>`Total: ${a} + ${b} = ${d}`,
+      cTitle:'Grid charging report', cFile:'battery-charging-report',
+      dTarget:'Charge up to', dPower:'Charging power',
+      cFoot:'This is an estimate: from 90% to 100% the charger slows down, so that part is calculated at half power.',
+      preparing:'Preparing the image…', savedAs:n=>`Report saved as ${n}.`, cancelled:'Download cancelled.',
+      wait:'Please wait a moment and try again.', cantHere:'The download didn’t work here. Save the image from the preview.',
+      fromPreview:'Save the image from the preview.', failed:'The image couldn’t be created. Check the data and try again.',
+      done:'Done.', downloaded:n=>`Report downloaded to Downloads: ${n}.`
+    }
+  };
+
+  /* ---------- versión ---------- */
+  const APP_VERSION = "1.3";
+
+  /* ---------- idioma ---------- */
+  let LANG = 'es';
+  try{
+    const saved = localStorage.getItem('calc-bateria-lang');
+    if(saved==='es' || saved==='en') LANG = saved;
+    else {
+      const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'es'];
+      LANG = String(langs[0]||'es').toLowerCase().startsWith('es') ? 'es' : (String(langs[0]).toLowerCase().startsWith('en') ? 'en' : (langs.some(l=>String(l).toLowerCase().startsWith('es')) ? 'es' : 'en'));
+    }
+  }catch(e){}
+  const T = (k, ...a) => { const v = STR[LANG][k]; return typeof v === 'function' ? v(...a) : v; };
+  const LOCALE = () => LANG==='en' ? 'en-US' : 'es';
+  let clockFmt;
+
+  /* ---------- tema (Auto / Claro / Oscuro) y letra grande ---------- */
+  const THEMES = ['auto','light','dark'];
+  let THEME = 'auto', BIG = false;
+  try{
+    const t = localStorage.getItem('calc-bateria-theme'); if(THEMES.includes(t)) THEME = t;
+    BIG = localStorage.getItem('calc-bateria-text')==='lg';
+  }catch(e){}
+  function applyTheme(){
+    const root = document.documentElement;
+    if(THEME==='auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', THEME);
+    document.querySelectorAll('#themeGroup button').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeSet===THEME));
+  }
+  function applyText(){
+    const root = document.documentElement;
+    if(BIG) root.setAttribute('data-text','lg'); else root.removeAttribute('data-text');
+    $('textBtn').setAttribute('aria-pressed', BIG);
+  }
+  document.querySelectorAll('#themeGroup button').forEach(b => b.addEventListener('click', () => {
+    THEME = b.dataset.themeSet; applyTheme();
+    try{ localStorage.setItem('calc-bateria-theme', THEME); }catch(e){}
+  }));
+  $('textBtn').addEventListener('click', () => {
+    BIG = !BIG; applyText();
+    try{ localStorage.setItem('calc-bateria-text', BIG ? 'lg' : 'normal'); }catch(e){}
+  });
+  applyTheme(); applyText();
+
+  /* ---------- números: acepta coma o punto como decimal ---------- */
+  // Devuelve {v, note, alt, sep}. v = NaN si no es un número.
+  // note = true si conviene mostrar cómo se entendió (separador de miles o caso dudoso como "1.200").
+  function validGroups(str, sep){
+    const parts = str.split(sep);
+    return /^\d{1,3}$/.test(parts[0]) && parts.slice(1).every(g => /^\d{3}$/.test(g));
+  }
+  function parseNum(raw){
+    let s = String(raw==null ? '' : raw).trim().replace(/[\s  ']/g, '');
+    const bad = {v:NaN, note:false};
+    if(!s) return bad;
+    let neg = false;
+    if(/^[-−]/.test(s)){ neg = true; s = s.slice(1); }
+    if(!/^[\d.,]+$/.test(s) || !/\d/.test(s)) return bad;
+    const dots = (s.match(/\./g)||[]).length, commas = (s.match(/,/g)||[]).length;
+    let n, note = false, alt = null, sep = null;
+    if(dots && commas){
+      const dec = s.lastIndexOf('.') > s.lastIndexOf(',') ? '.' : ',', grp = dec==='.' ? ',' : '.';
+      const parts = s.split(dec);
+      if(parts.length!==2 || !validGroups(parts[0], grp)) return bad;
+      n = parts[0].split(grp).join('') + '.' + parts[1]; note = true;
+    } else if(dots+commas > 1){
+      sep = dots ? '.' : ',';
+      if(!validGroups(s, sep)) return bad;
+      n = s.split(sep).join(''); note = true;
+    } else if(dots+commas === 1){
+      sep = dots ? '.' : ',';
+      const [ip, fp] = s.split(sep);
+      n = ip + '.' + fp;
+      if(/^[1-9]\d{0,2}$/.test(ip) && /^\d{3}$/.test(fp)){ note = true; alt = (neg?'-':'') + ip + fp; }
+    } else n = s;
+    if(n.startsWith('.')) n = '0'+n;
+    if(n.endsWith('.')) n += '0';
+    const v = parseFloat(n) * (neg ? -1 : 1);
+    return {v, note, alt, sep};
+  }
+  const fmtIn = v => v.toLocaleString(LOCALE(), {useGrouping:false, maximumFractionDigits:6});
+
+  const NUM_IDS = ['cap','volt','ah','n-pctNum','n-watts','rsv','c-pctNum','c-tgtNum','c-watts','c-amps','c-volt'];
+  const UNIT = {}, rejected = {};
+  // Solo deja dígitos, coma y punto (al escribir, pegar o autocompletar).
+  function cleanNum(el, mark){
+    const v = el.value, ok = v.replace(/[^\d.,]/g, '').slice(0, 12);
+    if(ok===v){ delete rejected[el.id]; return; }
+    const pos = el.selectionStart==null ? ok.length : v.slice(0, el.selectionStart).replace(/[^\d.,]/g, '').length;
+    el.value = ok;
+    try{ if(document.activeElement===el) el.setSelectionRange(pos, pos); }catch(e){}
+    if(mark) rejected[el.id] = true;
+  }
+  NUM_IDS.forEach(id => {
+    const el = $(id), wu = el.closest('.with-unit'), host = el.closest('.pct-row') || wu;
+    UNIT[id] = wu.querySelector('span').textContent;
+    const m = document.createElement('span');
+    m.className = 'fmsg'; m.id = id+'-msg';
+    host.insertAdjacentElement('afterend', m);
+    el.setAttribute('aria-describedby', m.id);
+    el.maxLength = 12;
+    // Va antes que los demás eventos, así el cálculo ya recibe el valor limpio.
+    el.addEventListener('input', () => cleanNum(el, true));
+    el.addEventListener('blur', () => { if(rejected[id]){ delete rejected[id]; renderNotes0(id); } });
+  });
+  const withUnit = (v, u) => u==='%' ? v+'%' : v+' '+u;
+  // Cambia "51.2" a "51,2" (o al revés) según el idioma, solo si no hay duda.
+  function relocalizeInputs(){
+    NUM_IDS.forEach(id => {
+      const el = $(id), r = parseNum(el.value);
+      if(/[.,]/.test(el.value) && isFinite(r.v) && !r.note) el.value = fmtIn(r.v);
+    });
+  }
+
+  let P = {}, notes = {};
+  const num = id => P[id].v;
+  const addNote = (id, text, kind) => (notes[id] = notes[id] || []).push({text, kind});
+  // Quita solo el aviso de "solo números" de un campo, sin recalcular
+  function renderNotes0(id){ if(notes[id]){ notes[id] = notes[id].filter(n => n.text!==T('onlyNums')); renderNotes(); } }
+  function renderNotes(){
+    NUM_IDS.forEach(id => {
+      const box = $(id+'-msg'), list = notes[id] || [];
+      box.textContent = '';
+      list.forEach(n => { const sp = document.createElement('span'); sp.className = n.kind; sp.textContent = n.text; box.appendChild(sp); });
+      if(list.some(n => n.kind==='err')) $(id).setAttribute('aria-invalid','true'); else $(id).removeAttribute('aria-invalid');
+    });
+  }
+
+  function applyLang(){
+    document.documentElement.lang = LANG;
+    document.title = T('title');
+    clockFmt = new Intl.DateTimeFormat(LOCALE(), {hour:'numeric', minute:'2-digit', hour12:true});
+    document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = T(el.dataset.i18n));
+    document.querySelectorAll('[data-i18n-html]').forEach(el => el.innerHTML = T(el.dataset.i18nHtml));
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', T(el.dataset.i18nAria)));
+    document.querySelectorAll('[data-i18n-alt]').forEach(el => el.setAttribute('alt', T(el.dataset.i18nAlt)));
+    document.querySelectorAll('#langGroup button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang===LANG));
+    document.querySelectorAll('[data-kwh]').forEach(b => b.textContent = nf(parseFloat(b.dataset.kwh),2)+' kWh');
+    $('appVer').textContent = T('version', APP_VERSION);
+    const it = $('installText'); if(it) it.innerHTML = T(it.dataset.mode==='ios' ? 'installIOS' : 'installText');
+  }
+  document.querySelectorAll('#langGroup button').forEach(b => b.addEventListener('click', () => {
+    LANG = b.dataset.lang;
+    try{ localStorage.setItem('calc-bateria-lang', LANG); }catch(e){}
+    applyLang(); relocalizeInputs(); calcAll();
+  }));
+
+  /* ================= CÁLCULOS ================= */
+  let RESERVE = 6, rsvOk = true; const CHG_EFF = 0.9, SLOW_FROM = 90, WEIRD_KW = 10, WEIRD_KWH = 100;
+  let mode = 'kwh', cMode = 'w';
+  const reports = {n:null, c:null};
+
+  // Sin separador de miles: así lo que se muestra se puede escribir igual en los campos.
+  const nf = (n, d=1) => n.toLocaleString(LOCALE(), {useGrouping:false, minimumFractionDigits:0, maximumFractionDigits:d});
+  const wf = v => nf(v, v<0.01 ? 4 : 2);
+  const p1 = v => nf(v,2);
+  // Energía: en Wh cuando es menos de 0,1 kWh, para que no se quede en "0 kWh"
+  const whf = k => { const wh = k*1000; return nf(wh, wh>=100 ? 0 : wh>=10 ? 1 : 2)+' Wh'; };
+  const fmtE = k => k < 0.1 ? whf(k) : nf(k,2)+' kWh';
+  // Paso a paso: toda la cuenta va en una sola unidad (Wh y W, o kWh y kW), para que cada línea salga de la anterior
+  const eU = (k, small) => small ? whf(k) : nf(k,3)+' kWh';
+  const pU = (kw, small) => small ? wf(kw*1000)+' W' : nf(kw,3)+' kW';
+  const capU = cap => cap < 0.1 ? whf(cap) : nf(cap,3)+' kWh';
+  applyLang();
+  const toMinutes = v => { if(!v) return null; const [h,m] = v.split(':').map(Number); return isFinite(h)&&isFinite(m) ? h*60+m : null; };
+  function clockFrom(min){ const d = new Date(2000,0,1,0,0); d.setMinutes(Math.round(min)); return clockFmt.format(d).replace(/\s/g,' '); }
+  // 24 h o más: se muestra en días.
+  const isLong = h => isFinite(h) && Math.round(h*60) >= 1440;
+  function duration(h){
+    if(!isFinite(h)) return '∞';
+    if(isLong(h)){ const d = h/24; return T('days', nf(d, d<10 ? 1 : 0)); }
+    const total = Math.round(h*60), hh = Math.floor(total/60), mm = total%60;
+    if(hh===0) return mm+' min';
+    return hh+' h'+(mm? ' '+mm+' min':'');
+  }
+  // Horas y minutos tal cual (para el paso a paso, aunque pase de 24 h)
+  function hm(min){ const hh = Math.floor(min/60), mm = min%60; return hh ? nf(hh,0)+' h'+(mm ? ' '+mm+' min' : '') : mm+' min'; }
+  const daysNote = h => isLong(h) ? ' ('+duration(h)+')' : '';
+  // "la 1:00" / "las 8:21" en español; en inglés solo la hora.
+  function clockAt(min){ const m = ((Math.round(min)%1440)+1440)%1440; return T('art', Math.floor(m/60)%12===1) + clockFrom(min); }
+  const durPhrase = h => isLong(h) ? duration(h) : T('aboutH', duration(h));
+  const endDot = t => t.replace(/\.\.$/, '.');
+
+  const SAVE_IDS = ['cap','volt','ah','rsv','n-watts','n-sunrise','c-watts','c-amps','c-volt','c-tgtNum'];
+  try{
+    const s = JSON.parse(localStorage.getItem('calc-bateria-v2')||'null') || JSON.parse(localStorage.getItem('calc-bateria')||'null');
+    if(s){
+      if(s.mode==='kwh' || s.mode==='ah') mode = s.mode;
+      if(s.cMode==='w' || s.cMode==='a') cMode = s.cMode;
+      if(s.sunrise && !s['n-sunrise']) s['n-sunrise'] = s.sunrise;
+      SAVE_IDS.forEach(id => { if(s[id]!=null && s[id]!=='') $(id).value = String(s[id]); });
+      if(typeof s.loss==='boolean') $('n-loss').checked = s.loss;
+      if(typeof s.rsvOn==='boolean') $('rsvOn').checked = s.rsvOn;
+      const tg = parseNum(s['c-tgtNum']).v;
+      if(isFinite(tg)) $('c-tgtRange').value = Math.min(100, Math.max(0, tg));
+    }
+  }catch(e){}
+  NUM_IDS.forEach(id => cleanNum($(id), false));
+  relocalizeInputs();
+  // Las opciones se abren solas si alguna no está como viene de fábrica
+  if($('rsvOn').checked || !$('n-loss').checked) $('n-more').open = true;
+  const lastGood = {};
+  function persist(){
+    try{
+      const o = {mode, cMode, loss:$('n-loss').checked, rsvOn:$('rsvOn').checked};
+      // Un campo vacío, inválido o fuera de rango no se guarda: queda el último valor bueno
+      SAVE_IDS.forEach(id => { if(!P[id] || (isFinite(P[id].v) && !(notes[id]||[]).some(n => n.kind==='err'))) lastGood[id] = $(id).value; if(lastGood[id]!=null) o[id] = lastGood[id]; });
+      localStorage.setItem('calc-bateria-v2', JSON.stringify(o));
+    }catch(e){}
+  }
+
+  // "Hora ahora" se pone sola; si el usuario no la cambió, se actualiza al volver a la app.
+  const nowTouched = {};
+  function setNow(){
+    const now = new Date(), str = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    let changed = false;
+    ['n-now','c-now'].forEach(id => { if(!nowTouched[id] && $(id).value!==str){ $(id).value = str; changed = true; } });
+    return changed;
+  }
+  setNow();
+  ['n-now','c-now'].forEach(id => $(id).addEventListener('input', () => { nowTouched[id] = true; }));
+  // keepSave: al refrescar la hora no se borra la vista previa ni el mensaje del reporte
+  let keepSave = false;
+  document.addEventListener('visibilitychange', () => { if(!document.hidden && setNow()){ keepSave = true; try{ calcAll(); }finally{ keepSave = false; } } });
+
+  function setMode(m){
+    mode = m;
+    $('modeKwh').setAttribute('aria-pressed', m==='kwh');
+    $('modeAh').setAttribute('aria-pressed', m==='ah');
+    $('kwhBox').classList.toggle('hidden', m!=='kwh');
+    $('ahBox').classList.toggle('hidden', m!=='ah');
+    calcAll();
+  }
+  $('modeKwh').onclick = () => setMode('kwh');
+  $('modeAh').onclick = () => setMode('ah');
+  document.querySelectorAll('[data-kwh]').forEach(b => b.addEventListener('click', () => {
+    $('cap').value = fmtIn(parseFloat(b.dataset.kwh)); calcAll();
+  }));
+  function capacity(){
+    if(mode==='kwh') return num('cap');
+    return num('volt')*num('ah')/1000;
+  }
+  function capText(cap){
+    let t = nf(cap,2)+' kWh';
+    if(mode==='ah') t += ' ('+nf(num('volt'),1)+' V × '+nf(num('ah'),1)+' Ah)';
+    return t;
+  }
+
+  function setGauge(prefix, pct, target){
+    const gp = Math.min(100, Math.max(0, isFinite(pct)?pct:0));
+    $(prefix+'-fill').style.width = gp+'%';
+    $(prefix+'-fill').style.setProperty('--reserve-w', prefix==='n' && gp>0 ? Math.min(100, RESERVE/gp*100)+'%' : '0%');
+    if(target !== undefined){
+      const gt = Math.min(100, Math.max(0, isFinite(target)?target:0));
+      $('c-target').style.left = gp+'%';
+      $('c-target').style.width = Math.max(0, gt-gp)+'%';
+      $(prefix+'-label').textContent = p1(gp)+'% → '+p1(gt)+'%';
+    } else {
+      $(prefix+'-label').textContent = p1(gp)+'%';
+    }
+    return gp;
+  }
+  function setVerdict(el, v){
+    el.classList.remove('short'); el.style.display = '';
+    if(!v){ el.style.display = 'none'; return; }
+    el.classList.toggle('short', !v.ok);
+    el.innerHTML = '';
+    const st = document.createElement('strong'); st.textContent = v.title;
+    el.append(st, ' '+v.text);
+  }
+  function setSteps(el, lines){
+    el.innerHTML = '';
+    const h = document.createElement('p'); const st = document.createElement('strong'); st.textContent = T('howCalc'); h.appendChild(st); el.appendChild(h);
+    lines.forEach(t => { const p = document.createElement('p'); p.textContent = t; el.appendChild(p); });
+  }
+  function resetSave(p){ if(keepSave) return; $(p+'-preview').hidden = true; msg(p,''); }
+  function invalid(p, text, soft){
+    $(p+'-headline').innerHTML = '<span class="'+(soft ? 'soft' : 'error')+'"></span>';
+    $(p+'-headline').firstChild.textContent = text;
+    $(p+'-f1').textContent = $(p+'-f2').textContent = $(p+'-f3').textContent = '–';
+    setVerdict($(p+'-verdict'), null); $(p+'-steps').innerHTML = '';
+    reports[p] = null; $(p+'-save').disabled = true;
+  }
+
+  function calcNoche(){
+    const cap = capacity();
+    const pct = num('n-pctNum');
+    const watts = num('n-watts');
+    const loss = $('n-loss').checked;
+    const eff = loss ? 0.9 : 1;
+    const gp = setGauge('n', pct);
+    resetSave('n');
+    if(!rsvOk) return invalid('n', T('nRsvBad'));
+    if(!(cap>0) || !isFinite(cap) || !isFinite(pct) || pct<0 || pct>100 || !(watts>=0) || !isFinite(watts)) return invalid('n', T('nInvalid'));
+
+    const usablePct = Math.max(0, pct-RESERVE);
+    const kwh = cap*usablePct/100*eff;
+    const kw = watts/1000;
+    const hours = kw>0 ? kwh/kw : Infinity;
+    const perPct = cap/100*1000*eff;
+    const f = [nf(kwh, kwh<0.1 ? 4 : 2), usablePct===0 ? '0 min' : duration(hours), nf(perPct, perPct<10 ? 1 : 0)+' Wh'];
+    $('n-f1').textContent = f[0]; $('n-f2').textContent = f[1]; $('n-f3').textContent = f[2];
+
+    const nowMin = toMinutes($('n-now').value), sunMin = toMinutes($('n-sunrise').value);
+    const R = p1(RESERVE), W = wf(watts), mins = Math.round(hours*60);
+    let headline;
+    if(usablePct===0) headline = T('nEmpty', R);
+    else if(kw===0) headline = T('nNoLoad', nf(kwh,2));
+    else if(mins<1) headline = T('nAlmost');
+    else if(nowMin!==null && !isLong(hours)) headline = T('nUntil', W, clockAt(nowMin+hours*60));
+    else headline = T('nFor', W, durPhrase(hours));
+    headline = endDot(headline);
+    $('n-headline').textContent = headline;
+
+    let verdict = null;
+    if(nowMin!==null && sunMin!==null && usablePct>0){
+      let gap = sunMin-nowMin; if(gap<0) gap += 1440;
+      if(gap>0){ // si ya es la hora del sol, no hay noche que cubrir
+        const gapH = gap/60, need = kw*gapH;
+        if(kwh >= need || mins >= gap){ // misma regla que el titular: se compara en minutos enteros
+          const spare = Math.max(0, kwh-need), sparePct = spare/(cap*eff)*100;
+          verdict = {ok:true, title:T('okDawnT'), text:endDot(spare < 0.001 ? T('okJust', clockAt(sunMin)) : T('okDawn', fmtE(spare), Math.round(RESERVE+sparePct), clockAt(sunMin)))};
+        } else {
+          const maxW = kwh/gapH*1000, tip = maxW>=10 ? Math.floor(maxW/10)*10 : Math.floor(maxW);
+          verdict = {ok:false, title:T('badDawnT'), text:endDot(tip>0 ? T('badDawn', fmtE(need-kwh), clockAt(sunMin), nf(tip,0)) : T('badDawnLow', fmtE(need-kwh)))};
+        }
+      }
+    }
+    setVerdict($('n-verdict'), verdict);
+
+    const small = (kw>0 && kw<1) || kwh<0.1;
+    const lines = usablePct===0 ? [T('lBelow', p1(pct), R)]
+      : [T('lReserve', p1(pct), R, p1(usablePct)), T('lCap', capU(cap), p1(usablePct), eU(cap*usablePct/100, small), loss, eU(kwh, small))];
+    if(kw>0 && usablePct>0) lines.push(T('lRun', eU(kwh, small), pU(kw, small), hm(mins))+daysNote(hours));
+    setSteps($('n-steps'), lines);
+
+    reports.n = {
+      title:T('nTitle'), file:T('nFile'),
+      pct:gp, reserve:RESERVE, legend:[['amber',T('legUsable')],['reserve',T('repReserve',R)]],
+      headline, figures:[[f[0],T('fUsable')],[f[1],T('fDuration')],[f[2],T('fPerPct')]],
+      verdict, lines,
+      data:[[T('dBattery'),capText(cap)],[T('dLevel'),p1(pct)+'%'],[T('dLoad'),W+' W'],
+        [T('timeNow'), nowMin!==null ? clockFrom(nowMin) : '—'],[T('dSun'), sunMin!==null ? clockFrom(sunMin) : '—'],
+        [T('dReserve'), R+'%'],[T('dLoss'), loss ? T('lossYes') : T('lossNo')]],
+      foot:T('nFoot', R)
+    };
+    $('n-save').disabled = false;
+  }
+
+  function setCMode(m){
+    cMode = m;
+    $('c-modeW').setAttribute('aria-pressed', m==='w');
+    $('c-modeA').setAttribute('aria-pressed', m==='a');
+    $('c-wBox').classList.toggle('hidden', m!=='w');
+    $('c-aBox').classList.toggle('hidden', m!=='a');
+    calcAll();
+  }
+  $('c-modeW').onclick = () => setCMode('w');
+  $('c-modeA').onclick = () => setCMode('a');
+
+  function chargeWatts(){ return cMode==='w' ? num('c-watts') : num('c-amps')*num('c-volt'); }
+
+  function calcCarga(){
+    const cap = capacity();
+    const pct = num('c-pctNum');
+    const tgt = num('c-tgtNum');
+    const amps = num('c-amps'), cv = num('c-volt');
+    const watts = chargeWatts();
+    const gp = setGauge('c', pct, tgt);
+    resetSave('c');
+    $('c-aResult').textContent = cMode==='a' && watts>0 ? T('aResult', wf(watts)) : '';
+    $('chgHint').textContent = T(cMode==='w' ? 'chgHintW' : 'chgHintA');
+
+    if(!(cap>0) || !isFinite(cap) || !isFinite(pct) || !isFinite(tgt) || pct<0 || pct>100 || tgt<0 || tgt>100) return invalid('c', T('cInvalid'));
+    if(!(watts>0) || !isFinite(watts)) return invalid('c', T('cNoPower'));
+    if(tgt <= pct) return invalid('c', T('cAlready', p1(pct), p1(tgt)), true);
+
+    const deltaPct = tgt-pct;
+    const kwh = cap*deltaPct/100;
+    const kw = watts/1000;
+    // Hasta el 90% a la potencia completa; del 90% al 100% a la mitad.
+    const slowStart = Math.max(pct, SLOW_FROM);
+    const fastPct = Math.max(0, Math.min(tgt, SLOW_FROM)-pct), slowPct = Math.max(0, tgt-slowStart);
+    const fastKwh = cap*fastPct/100, slowKwh = cap*slowPct/100;
+    const fastMin = Math.round(fastKwh/kw*60), slowMin = Math.round(slowKwh/(kw/2)*60);
+    const hours = (fastMin+slowMin)/60;
+    const perHour = Math.min(100, kw/cap*100);
+    const gridKwh = kwh/CHG_EFF;
+    const f = [duration(hours), nf(kwh,2), perHour<0.1 ? '< '+nf(0.1,1)+'%' : '≈ '+nf(perHour, perHour<10 ? 1 : 0)+'%'];
+    $('c-f1').textContent = f[0]; $('c-f2').textContent = f[1]; $('c-f3').textContent = f[2];
+
+    const nowMin = toMinutes($('c-now').value), W = wf(watts);
+    let headline = nowMin!==null && !isLong(hours)
+      ? T('cUntil', W, p1(tgt), clockAt(nowMin+hours*60))
+      : T('cFor', W, durPhrase(hours), p1(tgt));
+    headline = endDot(headline);
+    $('c-headline').textContent = headline;
+
+    const verdict = {ok:true, title:T('gridT'), text:T('grid', nf(gridKwh,2))};
+    setVerdict($('c-verdict'), verdict);
+
+    const lines = [];
+    if(cMode==='a') lines.push(T('lAmps', p1(amps), p1(cv), W));
+    lines.push(T('lDelta', p1(tgt), p1(pct), p1(deltaPct)));
+    const small = kw<1 || kwh<0.1;
+    lines.push(T('lKwh', capU(cap), p1(deltaPct), eU(kwh, small)));
+    if(slowPct>0){
+      const fd = hm(fastMin), sd = hm(slowMin);
+      if(fastPct>0) lines.push(T('lFast', p1(pct), p1(SLOW_FROM), eU(fastKwh, small), pU(kw, small), fd));
+      lines.push(T('lSlow', p1(slowStart), p1(tgt), eU(slowKwh, small), pU(kw/2, small), sd)+(fastPct>0 ? '' : daysNote(hours)));
+      if(fastPct>0) lines.push(T('lTotal', fd, sd, hm(fastMin+slowMin))+daysNote(hours));
+    } else {
+      lines.push(T('lTime', eU(kwh, small), pU(kw, small), hm(fastMin+slowMin))+daysNote(hours));
+    }
+    setSteps($('c-steps'), lines);
+
+    const pw = cMode==='a' ? p1(amps)+' A × '+p1(cv)+' V = '+W+' W' : W+' W';
+    reports.c = {
+      title:T('cTitle'), file:T('cFile'),
+      pct:gp, target:Math.min(100,Math.max(0,tgt)),
+      legend:[['amber',T('legNow')],['ok',T('legToCharge')]],
+      headline, figures:[[f[0],T('fChargeTime')],[f[1],T('fToCharge')],[f[2],T('fPerHour')]],
+      verdict, lines,
+      data:[[T('dBattery'),capText(cap)],[T('dLevel'),p1(pct)+'%'],[T('dTarget'),p1(tgt)+'%'],
+        [T('dPower'),pw],[T('timeNow'), nowMin!==null ? clockFrom(nowMin) : '—']],
+      foot:T('cFoot')
+    };
+    $('c-save').disabled = false;
+  }
+
+  function calcAll(){
+    P = {}; notes = {};
+    NUM_IDS.forEach(id => {
+      const r = P[id] = parseNum($(id).value);
+      if(r.note && isFinite(r.v)){
+        const shown = withUnit(fmtIn(r.v), UNIT[id]);
+        addNote(id, r.alt ? T('readAsAlt', shown, withUnit(r.alt, UNIT[id]), T(r.sep==='.' ? 'sepDot' : 'sepComma')) : T('readAs', shown), 'info');
+      }
+    });
+    NUM_IDS.forEach(id => { if(rejected[id]) addNote(id, T('onlyNums'), 'warn'); });
+    const rsvOn = $('rsvOn').checked;
+    $('rsvBox').classList.toggle('hidden', !rsvOn);
+    rsvOk = true;
+    if(rsvOn){
+      const rv = num('rsv');
+      if(isFinite(rv) && rv>=0 && rv<=90) RESERVE = rv;
+      else { rsvOk = false; RESERVE = 6; addNote('rsv', T('rsvBad'), 'err'); $('n-more').open = true; }
+    } else RESERVE = 6;
+    document.querySelectorAll('.rv').forEach(e => e.textContent = p1(RESERVE));
+    document.querySelectorAll('.reserve').forEach(e => e.style.width = RESERVE+'%');
+    const cap = capacity();
+    if(mode==='ah') $('ahResult').textContent = isFinite(cap) && cap>0 ? T('ahResult', nf(cap,2)) : '';
+    // Avisos de valores raros (no bloquean el cálculo)
+    if(cap > WEIRD_KWH) addNote(mode==='kwh' ? 'cap' : 'ah', T('weird'), 'warn');
+    if(num('n-watts') > WEIRD_KW*1000) addNote('n-watts', T('weird'), 'warn');
+    if(chargeWatts() > WEIRD_KW*1000) addNote(cMode==='w' ? 'c-watts' : 'c-amps', T('weird'), 'warn');
+    // Marca el campo que está mal, para que se vea cuál hay que corregir
+    const need = (id, kind) => {
+      const v = num(id);
+      if(!isFinite(v)) addNote(id, T('numBad'), 'err');
+      else if(kind==='gt0' && !(v>0)) addNote(id, T('gt0'), 'err');
+      else if(kind==='pct' && (v<0 || v>100)) addNote(id, T('pctBad'), 'err');
+    };
+    (mode==='kwh' ? ['cap'] : ['volt','ah']).forEach(id => need(id, 'gt0'));
+    ['n-pctNum','c-pctNum','c-tgtNum'].forEach(id => need(id, 'pct'));
+    need('n-watts', 'num');
+    (cMode==='w' ? ['c-watts'] : ['c-amps','c-volt']).forEach(id => need(id, 'gt0'));
+    document.querySelectorAll('[data-kwh]').forEach(b => b.setAttribute('aria-pressed', mode==='kwh' && cap===parseFloat(b.dataset.kwh)));
+    calcNoche(); calcCarga(); renderNotes(); persist();
+  }
+
+  /* ---------- pestañas (#noche / #carga) ---------- */
+  const VIEWS = ['noche','carga'];
+  function showView(name){
+    if(!VIEWS.includes(name)) name = 'noche';
+    VIEWS.forEach(v => {
+      const on = v===name;
+      $('tab-'+v).setAttribute('aria-selected', on);
+      $('tab-'+v).tabIndex = on ? 0 : -1;
+      $('view-'+v).classList.toggle('hidden', !on);
+    });
+  }
+  // Cambia de pestaña sin llenar el historial (el botón Atrás sale de la app)
+  function go(v){ try{ history.replaceState(null, '', '#'+v); }catch(e){} showView(v); }
+  VIEWS.forEach(v => $('tab-'+v).addEventListener('click', () => {
+    go(v);
+  }));
+  document.querySelector('.tabs').addEventListener('keydown', e => {
+    if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) return;
+    e.preventDefault();
+    const cur = VIEWS.findIndex(v => $('tab-'+v).getAttribute('aria-selected')==='true');
+    const nx = e.key==='Home' ? VIEWS[0] : e.key==='End' ? VIEWS[VIEWS.length-1] : VIEWS[(cur + (e.key==='ArrowRight'?1:VIEWS.length-1)) % VIEWS.length];
+    go(nx); $('tab-'+nx).focus();
+  });
+  window.addEventListener('hashchange', () => showView(location.hash.slice(1)));
+  showView(location.hash.slice(1));
+
+  /* ---------- imagen del reporte ---------- */
+  const C = {bg:'#EDF1F5', card:'#FFFFFF', ink:'#1B2838', muted:'#566476', line:'#CBD4DE', amber:'#E39B2D', reserve:'#C2463B', ok:'#2F7D5B', field:'#F6F8FA'};
+  const FONT = '"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+  function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,y,w,h,r) : ctx.rect(x,y,w,h); }
+  function wrap(ctx, text, x, y, maxW, lh){
+    const words = text.split(' '); let line = '';
+    for(const w of words){
+      const test = line ? line+' '+w : w;
+      if(ctx.measureText(test).width > maxW && line){ ctx.fillText(line, x, y); y += lh; line = w; }
+      else line = test;
+    }
+    if(line){ ctx.fillText(line, x, y); y += lh; }
+    return y;
+  }
+  function measureWrap(ctx, text, maxW, lh){
+    const words = text.split(' '); let line=''; let h = lh;
+    for(const w of words){ const t = line? line+' '+w : w; if(ctx.measureText(t).width > maxW && line){ h += lh; line = w; } else line = t; }
+    return h;
+  }
+
+  function draw(ctx, r, W){
+    const P = 48, X = P+48, IW = W-2*X;
+    ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    let y = P+48;
+    ctx.fillStyle = C.ink; ctx.font = '700 52px '+FONT;
+    y = wrap(ctx, r.title, X, y+48, IW, 60) - 60;
+    ctx.fillStyle = C.muted; ctx.font = '400 30px '+FONT;
+    const stamp = new Intl.DateTimeFormat(LOCALE(), {dateStyle:'long', timeStyle:'short', hour12:true}).format(new Date());
+    y += 52; ctx.fillText(T('calcAt')+stamp, X, y);
+
+    // batería
+    y += 44;
+    const bh = 150, capW = 22, bw = IW-capW, rw = bw*(r.reserve||0)/100;
+    ctx.fillStyle = C.card; rr(ctx,X,y,bw,bh,22); ctx.fill();
+    ctx.save(); rr(ctx,X,y,bw,bh,22); ctx.clip();
+    const fw = bw*r.pct/100;
+    ctx.fillStyle = C.amber; ctx.fillRect(X,y,fw,bh);
+    if(r.target!==undefined){ ctx.globalAlpha=.38; ctx.fillStyle=C.ok; ctx.fillRect(X+fw,y,Math.max(0,bw*r.target/100-fw),bh); ctx.globalAlpha=1; }
+    ctx.globalAlpha = .8; ctx.fillStyle = C.reserve; ctx.fillRect(X,y,Math.min(fw,rw),bh); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.rect(X,y,rw,bh); ctx.clip();
+    ctx.globalAlpha = .45; ctx.strokeStyle = C.reserve; ctx.lineWidth = 4;
+    for(let i=-bh;i<rw;i+=14){ ctx.beginPath(); ctx.moveTo(X+i,y+bh); ctx.lineTo(X+i+bh,y); ctx.stroke(); }
+    ctx.restore(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 7; rr(ctx,X,y,bw,bh,22); ctx.stroke();
+    ctx.fillStyle = C.ink; rr(ctx,X+bw,y+42,capW,bh-84,8); ctx.fill();
+    const lbl = r.target!==undefined ? p1(r.pct)+'% → '+p1(r.target)+'%' : p1(r.pct)+'%';
+    ctx.font = '700 84px '+FONT; ctx.textAlign = 'center';
+    ctx.lineWidth = 10; ctx.strokeStyle = C.card; ctx.lineJoin = 'round';
+    ctx.strokeText(lbl, X+bw/2, y+bh/2+30); ctx.fillText(lbl, X+bw/2, y+bh/2+30);
+    ctx.textAlign = 'left';
+    y += bh;
+
+    // leyenda
+    y += 44; ctx.font = '400 26px '+FONT;
+    let lx = X;
+    r.legend.forEach(([c,t]) => {
+      const w = 36 + ctx.measureText(t).width;
+      if(lx > X && lx + w > X+IW){ lx = X; y += 40; }
+      ctx.globalAlpha = c==='amber' ? 1 : (c==='ok' ? .5 : .8);
+      ctx.fillStyle = C[c]; rr(ctx,lx,y-21,24,24,5); ctx.fill(); ctx.globalAlpha = 1;
+      ctx.fillStyle = C.muted; ctx.fillText(t, lx+36, y);
+      lx += w + 36;
+    });
+
+    // titular
+    y += 70; ctx.fillStyle = C.ink; ctx.font = '700 42px '+FONT;
+    y = wrap(ctx, r.headline, X, y, IW, 54);
+
+    // cifras
+    y += 14;
+    const gap = 16, fwb = (IW-2*gap)/3, fh = 168;
+    r.figures.forEach((f,i)=>{
+      const fx = X+i*(fwb+gap);
+      ctx.fillStyle = C.field; rr(ctx,fx,y,fwb,fh,18); ctx.fill();
+      ctx.strokeStyle = C.line; ctx.lineWidth = 2; rr(ctx,fx,y,fwb,fh,18); ctx.stroke();
+      ctx.fillStyle = C.ink; let size = 56; ctx.font = '700 '+size+'px '+FONT;
+      while(ctx.measureText(f[0]).width > fwb-40 && size>16){ size -= 2; ctx.font = '700 '+size+'px '+FONT; }
+      ctx.fillText(f[0], fx+22, y+82);
+      ctx.fillStyle = C.muted; ctx.font = '400 26px '+FONT;
+      wrap(ctx, f[1], fx+22, y+128, fwb-40, 30);
+    });
+    y += fh;
+
+    // veredicto
+    if(r.verdict){
+      y += 32;
+      ctx.font = '400 32px '+FONT;
+      const vh = measureWrap(ctx, r.verdict.text, IW-60, 44) + 84;
+      ctx.fillStyle = C.field; rr(ctx,X,y,IW,vh,16); ctx.fill();
+      ctx.fillStyle = r.verdict.ok ? C.ok : C.reserve; rr(ctx,X,y,10,vh,[16,0,0,16]); ctx.fill();
+      ctx.fillStyle = C.ink; ctx.font = '700 32px '+FONT;
+      ctx.fillText(r.verdict.title, X+36, y+56);
+      ctx.font = '400 32px '+FONT;
+      wrap(ctx, r.verdict.text, X+36, y+100, IW-60, 44);
+      y += vh;
+    }
+
+    // datos
+    y += 60; ctx.fillStyle = C.ink; ctx.font = '700 34px '+FONT; ctx.fillText(T('dataUsed'), X, y);
+    y += 16;
+    r.data.forEach(([k,v])=>{
+      y += 48;
+      ctx.font = '700 30px '+FONT;
+      let size = 30; while(ctx.measureText(v).width > IW*0.62 && size>20){ size -= 2; ctx.font = '700 '+size+'px '+FONT; }
+      ctx.fillStyle = C.ink; ctx.textAlign = 'right'; ctx.fillText(v, X+IW, y); ctx.textAlign = 'left';
+      ctx.font = '400 30px '+FONT; ctx.fillStyle = C.muted; ctx.fillText(k, X, y);
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X,y+16); ctx.lineTo(X+IW,y+16); ctx.stroke();
+    });
+
+    // cálculo
+    y += 76; ctx.fillStyle = C.ink; ctx.font = '700 34px '+FONT; ctx.fillText(T('reportHow'), X, y);
+    y += 50; ctx.font = '400 30px '+FONT;
+    r.lines.forEach(t => { y = wrap(ctx, t, X, y, IW, 42) + 6; });
+
+    // pie
+    y += 24; ctx.fillStyle = C.muted; ctx.font = '400 24px '+FONT;
+    y = wrap(ctx, r.foot, X, y, IW, 34);
+    return y + 48 + P;
+  }
+
+  async function makeImage(r){
+    try{ await Promise.all([document.fonts.load('700 40px "Atkinson Hyperlegible"'), document.fonts.load('400 30px "Atkinson Hyperlegible"')]); }catch(e){}
+    const W = 1080;
+    const scratch = document.createElement('canvas'); scratch.width = W; scratch.height = 2800;
+    const H = Math.ceil(draw(scratch.getContext('2d'), r, W));
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = C.card; rr(ctx,48,48,W-96,H-96,36); ctx.fill();
+    draw(ctx, r, W);
+    return new Promise(res => cv.toBlob(b => res(b), 'image/png'));
+  }
+  function fileName(base){
+    const d = new Date(), p = v => String(v).padStart(2,'0');
+    return base+'-'+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'-'+p(d.getHours())+p(d.getMinutes())+'.png';
+  }
+  function showPreview(p, blob){
+    const img = $(p+'-previewImg');
+    if(img.dataset.url) URL.revokeObjectURL(img.dataset.url);
+    const url = URL.createObjectURL(blob);
+    img.src = url; img.dataset.url = url;
+    $(p+'-preview').hidden = false;
+  }
+  function msg(p, t, err){ $(p+'-msg').textContent = t; $(p+'-msg').classList.toggle('err', !!err); }
+
+  /* ---------- guardar el reporte ---------- */
+  const UA = navigator.userAgent || '';
+  const isIOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const isMobile = isIOS || /Android|Mobi/i.test(UA);
+  const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  const inClaude = !!(window.claude && typeof window.claude.use === 'function');
+  let downloads = null;
+  if(inClaude){ try{ window.claude.use('downloads').then(d => { downloads = d; }).catch(() => {}); }catch(e){} }
+
+  async function saveBlob(p, blob, name, title){
+    if(inClaude){
+      if(downloads){
+        try{ await downloads.save({filename:name, data:blob}); msg(p, T('savedAs', name)); }
+        catch(e){
+          const code = e && e.code;
+          if(code==='declined') msg(p, T('cancelled'));
+          else if(code==='rate_limited') msg(p, T('wait'), true);
+          else { showPreview(p, blob); msg(p, T('cantHere'), true); }
+        }
+      } else { showPreview(p, blob); msg(p, T('fromPreview')); }
+      return;
+    }
+    // Computadora: ventana para escoger carpeta, empezando en Descargas
+    if(!isMobile && window.showSaveFilePicker){
+      try{
+        const h = await window.showSaveFilePicker({suggestedName:name, startIn:'downloads', types:[{description:'PNG', accept:{'image/png':['.png']}}]});
+        const w = await h.createWritable(); await w.write(blob); await w.close();
+        msg(p, T('savedAs', h.name)); return;
+      }catch(e){ if(e && e.name==='AbortError'){ msg(p, T('cancelled')); return; } }
+    }
+    // iPhone / iPad: menú Compartir
+    const file = new File([blob], name, {type:'image/png'});
+    if(isIOS && navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title}); msg(p, T('done')); return; }
+      catch(e){ if(e && e.name==='AbortError'){ msg(p,''); return; } }
+    }
+    // Android y otros: descarga a Descargas
+    if(!isIOS){
+      try{
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+        msg(p, T('downloaded', name)); return;
+      }catch(e){}
+    }
+    showPreview(p, blob); msg(p, T('previewHint'));
+  }
+
+  ['n','c'].forEach(p => $(p+'-save').addEventListener('click', async () => {
+    const r = reports[p]; if(!r) return;
+    const btn = $(p+'-save');
+    btn.disabled = true; msg(p, T('preparing'));
+    try{
+      const blob = await makeImage(r);
+      if(!blob) throw new Error('render');
+      await saveBlob(p, blob, fileName(r.file), r.title);
+    }catch(e){
+      msg(p, T('failed'), true);
+    }finally{
+      btn.disabled = !reports[p];
+    }
+  }));
+
+  /*@pwa-start*/
+  /* ---------- instalación (solo si la página tiene manifiesto) ---------- */
+  if(document.querySelector('link[rel="manifest"]')){
+    let deferredPrompt = null, dismissed = false;
+    try{ dismissed = localStorage.getItem('calc-bateria-install-oculto')==='1'; }catch(e){}
+    const hide = () => $('installBox').classList.add('hidden');
+    $('installClose').addEventListener('click', () => { hide(); try{ localStorage.setItem('calc-bateria-install-oculto','1'); }catch(e){} });
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault(); deferredPrompt = e;
+      if(isStandalone() || dismissed) return;
+      $('installText').dataset.mode = 'prompt'; $('installText').innerHTML = T('installText');
+      $('installBtn').classList.remove('hidden'); $('installBox').classList.remove('hidden');
+    });
+    $('installBtn').addEventListener('click', async () => {
+      if(!deferredPrompt) return;
+      deferredPrompt.prompt();
+      try{ await deferredPrompt.userChoice; }catch(e){}
+      deferredPrompt = null; hide();
+    });
+    window.addEventListener('appinstalled', hide);
+    if(isIOS && !isStandalone() && !dismissed){
+      $('installText').dataset.mode = 'ios'; $('installText').innerHTML = T('installIOS');
+      $('installBox').classList.remove('hidden');
+    }
+    if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+      window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+    }
+  }
+  /*@pwa-end*/
+
+  /* ---------- eventos ---------- */
+  function linkPct(rangeId, numId){
+    $(rangeId).addEventListener('input', e => { $(numId).value = e.target.value; calcAll(); });
+    $(numId).addEventListener('input', e => { const v = parseNum(e.target.value).v; if(isFinite(v)) $(rangeId).value = Math.min(100,Math.max(0,v)); calcAll(); });
+  }
+  linkPct('n-pctRange','n-pctNum'); linkPct('c-pctRange','c-pctNum'); linkPct('c-tgtRange','c-tgtNum');
+  ['cap','volt','ah','rsv','n-watts','n-now','n-sunrise','n-loss','c-watts','c-amps','c-volt','c-now'].forEach(id => $(id).addEventListener('input', calcAll));
+  $('n-loss').addEventListener('change', calcAll);
+  $('rsvOn').addEventListener('change', calcAll);
+
+  $('c-modeW').setAttribute('aria-pressed', cMode==='w'); $('c-modeA').setAttribute('aria-pressed', cMode==='a');
+  $('c-wBox').classList.toggle('hidden', cMode!=='w'); $('c-aBox').classList.toggle('hidden', cMode!=='a');
+  setMode(mode);
+})();
+</script>
+</body>
+</html>
