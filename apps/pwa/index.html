@@ -248,13 +248,11 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
   <h1 data-i18n="title">Calculadora de Batería</h1>
   <p class="lead" data-i18n="lead"></p>
   <p class="offline" data-i18n="offline"></p>
-  <!--pwa-start-->
   <div class="install hidden" id="installBox">
     <p id="installText"></p>
     <button type="button" class="btn-install hidden" id="installBtn" data-i18n="installBtn"></button>
     <button type="button" class="close" id="installClose" data-i18n-aria="installClose">×</button>
   </div>
-  <!--pwa-end-->
 
   <section class="panel" data-i18n-aria="yourBattery">
     <div class="field">
@@ -1334,7 +1332,6 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     }
   }));
 
-  /*@pwa-start*/
   /* ---------- instalación (solo si la página tiene manifiesto) ---------- */
   if(document.querySelector('link[rel="manifest"]')){
     let deferredPrompt = null, dismissed = false;
@@ -1362,7 +1359,6 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
     }
   }
-  /*@pwa-end*/
 
   /* ---------- eventos ---------- */
   function linkPct(rangeId, numId){

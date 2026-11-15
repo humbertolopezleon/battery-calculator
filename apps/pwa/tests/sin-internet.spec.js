@@ -16,21 +16,7 @@ test('cero peticiones externas', async ({ page, app }) => {
   expect(externas).toEqual([]);
 });
 
-test('archivo único: funciona sin internet y no pide nada más', async ({ page, app, context }, info) => {
-  test.skip(info.project.name !== 'archivo-unico');
-  const pedidas = [];
-  page.on('request', r => { if (!r.url().startsWith('data:')) pedidas.push(r.url()); });
-  await context.setOffline(true);
-  await page.goto(app.url);
-  await page.evaluate(() => document.fonts.ready);
-  expect(await page.evaluate(() => document.fonts.check('700 20px "Atkinson Hyperlegible"'))).toBe(true);
-  expect(readNum(await page.textContent('#n-f1'), 'en')).toBeGreaterThan(0);
-  expect(pedidas).toEqual([app.url]); // solo el propio archivo
-  expect(await page.locator('link[rel=manifest]').count()).toBe(0);
-});
-
-test('instalable: se abre sin internet después de la primera visita', async ({ page, app, context }, info) => {
-  test.skip(info.project.name !== 'instalable');
+test('instalable: se abre sin internet después de la primera visita', async ({ page, app, context }) => {
   await page.goto(app.url);
   await page.evaluate(async () => {
     const reg = await navigator.serviceWorker.ready;
