@@ -1,6 +1,6 @@
 {
-  "name": "Calculadora de Watts · Watt Calculator",
-  "short_name": "Calc. de Watts",
+  "name": "Calculadora de Batería · Battery Calculator",
+  "short_name": "Calc. de Batería",
   "description": "Calcula cuánto dura la batería de noche y cuánto tarda en cargarse con la red. / How long your battery lasts at night and how long it takes to charge from the grid.",
   "lang": "es",
   "id": "./",

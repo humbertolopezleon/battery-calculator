@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Calculadora de Watts · Watt Calculator</title>
-<meta name="description" content="Calculadora de Watts · Watt Calculator">
+<title>Calculadora de Batería · Battery Calculator</title>
+<meta name="description" content="Calculadora de Batería · Battery Calculator">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#1B2838">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Calc. de Watts">
+<meta name="apple-mobile-web-app-title" content="Calc. de Batería">
 <style>
 @font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-400-normal.woff2) format("woff2");}
 @font-face{font-family:"Atkinson Hyperlegible";font-style:normal;font-weight:700;font-display:swap;src:url(fonts/atkinson-hyperlegible-latin-700-normal.woff2) format("woff2");}
@@ -245,7 +245,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
     </div>
   </div>
 
-  <h1 data-i18n="title">Calculadora de Watts</h1>
+  <h1 data-i18n="title">Calculadora de Batería</h1>
   <p class="lead" data-i18n="lead"></p>
   <p class="offline" data-i18n="offline"></p>
   <!--pwa-start-->
@@ -457,7 +457,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
   /* ================= TEXTOS / STRINGS ================= */
   const STR = {
     es: {
-      title:'Calculadora de Watts',
+      title:'Calculadora de Batería',
       lead:'Calcula cuánto dura la batería de noche o cuánto tarda en cargarse con la corriente de la calle.',
       langAria:'Idioma', offline:'Funciona sin internet.',
       themeAria:'Colores de la pantalla', thAuto:'Auto', thLight:'Claro', thDark:'Oscuro', textAria:'Letra grande',
@@ -542,7 +542,7 @@ input[aria-invalid="true"]{border-color:var(--reserve);}
       done:'Listo.', downloaded:n=>`Reporte descargado en Descargas: ${n}.`
     },
     en: {
-      title:'Watt Calculator',
+      title:'Battery Calculator',
       lead:'Find out how long your battery lasts at night, or how long it takes to charge from the grid.',
       langAria:'Language', offline:'Works without internet.',
       themeAria:'Screen colors', thAuto:'Auto', thLight:'Light', thDark:'Dark', textAria:'Large text',

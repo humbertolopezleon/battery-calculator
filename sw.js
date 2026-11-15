@@ -1,6 +1,6 @@
 /* Guarda la app en el dispositivo para que funcione sin internet.
    Al publicar una versión nueva, cambia el número de VERSION. */
-const VERSION = 'watts-v4';
+const VERSION = 'battery-v5';
 const FILES = [
   './',
   './index.html',

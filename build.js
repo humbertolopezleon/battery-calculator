@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
   Genera el archivo único para mandar por WhatsApp:
-    dist/Calculadora-de-Watts.html
+    dist/Battery-Calculator.html
   - Fuentes e ícono incrustados en base64.
   - Sin manifiesto, sin service worker y sin el aviso de instalación.
   - Minificado.
@@ -13,7 +13,7 @@ const { minify } = require('html-minifier-terser');
 
 const ROOT = __dirname;
 const OUT_DIR = path.join(ROOT, 'dist');
-const OUT = path.join(OUT_DIR, 'Calculadora-de-Watts.html');
+const OUT = path.join(OUT_DIR, 'Battery-Calculator.html');
 const MAX_BYTES = 150 * 1024;
 
 const b64 = rel => fs.readFileSync(path.join(ROOT, rel)).toString('base64');

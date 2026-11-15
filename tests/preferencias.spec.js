@@ -7,7 +7,7 @@ test.describe('idioma del dispositivo', () => {
     test('arranca en español', async ({ page, app }) => {
       await app.open();
       await expect(page.locator('html')).toHaveAttribute('lang', 'es');
-      await expect(page.locator('h1')).toHaveText('Calculadora de Watts');
+      await expect(page.locator('h1')).toHaveText('Calculadora de Batería');
     });
   });
   test.describe('en', () => {
@@ -15,7 +15,7 @@ test.describe('idioma del dispositivo', () => {
     test('arranca en inglés', async ({ page, app }) => {
       await app.open();
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-      await expect(page.locator('h1')).toHaveText('Watt Calculator');
+      await expect(page.locator('h1')).toHaveText('Battery Calculator');
     });
   });
 });
@@ -26,14 +26,14 @@ test.describe('se recuerda al recargar', () => {
   test('cambio de idioma', async ({ page, app }) => {
     await app.open();
     await page.click('#langGroup [data-lang="en"]');
-    await expect(page.locator('h1')).toHaveText('Watt Calculator');
+    await expect(page.locator('h1')).toHaveText('Battery Calculator');
     await expect(page.locator('#volt')).toHaveValue('51.2'); // el número cambia al formato del idioma
     await page.reload();
-    await expect(page.locator('h1')).toHaveText('Watt Calculator');
+    await expect(page.locator('h1')).toHaveText('Battery Calculator');
     await expect(page.locator('#langGroup [data-lang="en"]')).toHaveAttribute('aria-pressed', 'true');
     await page.click('#langGroup [data-lang="es"]');
     await page.reload();
-    await expect(page.locator('h1')).toHaveText('Calculadora de Watts');
+    await expect(page.locator('h1')).toHaveText('Calculadora de Batería');
     await expect(page.locator('#volt')).toHaveValue('51,2');
   });
 

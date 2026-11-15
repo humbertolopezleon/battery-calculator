@@ -1,5 +1,5 @@
 {
-  "name": "calculadora-de-watts",
+  "name": "battery-calculator",
   "private": true,
   "version": "1.3.0",
   "scripts": {

@@ -37,7 +37,7 @@ test('instalable: se abre sin internet después de la primera visita', async ({ 
     const keys = await caches.keys();
     return { scope: reg.scope, keys };
   });
-  await expect.poll(() => page.evaluate(async () => (await caches.keys()).includes('watts-v4'))).toBe(true);
+  await expect.poll(() => page.evaluate(async () => (await caches.keys()).includes('battery-v5'))).toBe(true);
   await context.setOffline(true);
   await page.reload();
   await expect(page.locator('#appVer')).toContainText('1.3');

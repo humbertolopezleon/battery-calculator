@@ -1,4 +1,4 @@
-# Calculadora de Watts · Watt Calculator
+# Calculadora de Batería · Battery Calculator
 
 App web instalable (PWA), en español e inglés. Funciona sin internet después de abrirla una vez.
 Installable web app (PWA), in Spanish and English. Works offline after the first visit.
@@ -17,11 +17,11 @@ La app usa el idioma del dispositivo (español si está en español; inglés en 
 The app follows the device language (Spanish for Spanish devices, English otherwise). It can be switched at the top right with the 🌐 Español / English button, and the choice is remembered.
 
 ## Publicar cambios / Updating
-Si cambias `index.html`, sube el número en `sw.js` (`watts-v4` → `v5`) y la constante `APP_VERSION`.
-If you change `index.html`, bump the number in `sw.js` (`watts-v4` → `v5`) and the `APP_VERSION` constant.
+Si cambias `index.html`, sube el número en `sw.js` (`battery-v5` → `v6`) y la constante `APP_VERSION`.
+If you change `index.html`, bump the number in `sw.js` (`battery-v5` → `v6`) and the `APP_VERSION` constant.
 
 ## Archivo único para WhatsApp / Single file
-`npm install` (una vez) y luego `node build.js` → `dist/Calculadora-de-Watts.html` (fuentes e ícono incrustados, sin manifiesto ni service worker, minificado, < 150 KB).
+`npm install` (una vez) y luego `node build.js` → `dist/Battery-Calculator.html` (fuentes e ícono incrustados, sin manifiesto ni service worker, minificado, < 150 KB).
 
 ## Pruebas / Tests
 `npm test` (genera el archivo único y corre Playwright sobre el archivo único y la versión instalable).
