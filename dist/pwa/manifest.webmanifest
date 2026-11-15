@@ -1,0 +1,57 @@
+{
+  "name": "Calculadora de Batería · Battery Calculator",
+  "short_name": "Calc. de Batería",
+  "description": "Calcula cuánto dura la batería de noche y cuánto tarda en cargarse con la red. / How long your battery lasts at night and how long it takes to charge from the grid.",
+  "lang": "es",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#EDF1F5",
+  "theme_color": "#1B2838",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "De noche · At night",
+      "short_name": "Noche",
+      "url": "./#noche",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Cargando con la red · Charging from the grid",
+      "short_name": "Carga",
+      "url": "./#carga",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
