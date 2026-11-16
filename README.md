@@ -1,13 +1,13 @@
 # Battery Calculator · Calculadora de Batería
 
 Calcula **cuánto dura la batería de noche** y **cuánto tarda en cargarse con la red**.
-Español e inglés (según el idioma del teléfono), tema Auto/Claro/Oscuro, botón de letra grande
+Español e inglés (según el idioma del teléfono), tema Auto/Claro/Oscuro y letra grande (en **Ajustes**),
 y reporte descargable como imagen PNG. **Funciona sin internet.**
 
 ## El archivo para WhatsApp
 
 **[`dist/Battery-Calculator.html`](dist/Battery-Calculator.html)** es el archivo que se distribuye.
-Es **un solo archivo** (unos 104 KB) con todo adentro: el código, las fuentes y el ícono van incrustados.
+Es **un solo archivo** (unos 118 KB) con todo adentro: el código, las fuentes y el ícono van incrustados.
 No descarga nada, no usa CDNs, ni librerías, ni cuenta.
 
 **Para quien lo recibe**
@@ -68,9 +68,11 @@ descargar el archivo sin construirlo).
 
 - Cero peticiones externas; sin frameworks ni librerías en ejecución.
 - Español e inglés; todo el texto vive en el objeto `STR` de `src/index.html`.
-- Diseño para celulares desde 320 px, botones de al menos 44 px.
+- Diseño para celulares desde 320 px, botones de al menos 44 px; en computadora (desde 960 px), datos a la izquierda y respuesta a la derecha.
+- En el teléfono, una barra fija abajo resume la respuesta mientras se ajustan los datos.
+- Bordes de campos con contraste de 3:1 y avisos que no dependen solo del color (ícono + fondo).
 - Cálculo: energía útil = capacidad × (porciento − reserva) / 100 × 0,9 si se cuentan las pérdidas (reserva 6 % por defecto); tiempo de carga = kWh por cargar ÷ kW, con el tramo de 90 % a 100 % a la mitad de la potencia.
 
 ## Versión
 
-`1.3` (constante `APP_VERSION` en `src/index.html`).
+`1.4` (constante `APP_VERSION` en `src/index.html`).

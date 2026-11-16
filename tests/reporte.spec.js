@@ -1,5 +1,5 @@
 // Reporte en imagen PNG, en los dos idiomas.
-const { test, expect } = require('./fixtures');
+const { test, expect, setting } = require('./fixtures');
 const fs = require('fs');
 
 function pngSize(buf) {
@@ -24,7 +24,7 @@ for (const [lang, noche, carga, msg] of [
 ]) {
   test(`PNG en ${lang}`, async ({ page, app }) => {
     await app.open();
-    await page.click(`#langGroup [data-lang="${lang}"]`);
+    await setting(page, `#langGroup [data-lang="${lang}"]`);
     const n = await download(page, '#n-save');
     expect(n.name.startsWith(noche) && n.name.endsWith('.png')).toBe(true);
     const sn = pngSize(n.buf);
@@ -42,14 +42,14 @@ for (const [lang, noche, carga, msg] of [
 test('el texto grande no cambia el reporte', async ({ page, app }) => {
   await app.open();
   const a = pngSize((await download(page, '#n-save')).buf);
-  await page.click('#textBtn');
+  await setting(page, '#textBtn');
   const b = pngSize((await download(page, '#n-save')).buf);
   expect(b).toEqual(a);
 });
 
 test('el reporte de carga incluye el tramo a mitad de potencia', async ({ page, app }) => {
   await app.open();
-  await page.click('#langGroup [data-lang="es"]');
+  await setting(page, '#langGroup [data-lang="es"]');
   await page.click('#tab-carga');
   // Las líneas del reporte son las del paso a paso: de 30% a 100% hay 2 líneas más (tramo lento y total)
   await expect(page.locator('#c-steps p')).toHaveCount(6);
