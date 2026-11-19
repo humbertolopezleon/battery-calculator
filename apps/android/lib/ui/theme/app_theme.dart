@@ -78,7 +78,23 @@ ThemeData buildTheme(AppColors c, Brightness b) {
     extensions: [c],
     splashFactory: NoSplash.splashFactory,
     textSelectionTheme: TextSelectionThemeData(cursorColor: c.focus, selectionHandleColor: c.focus),
-    timePickerTheme: TimePickerThemeData(backgroundColor: c.sf),
+    // Botones de diálogos (selector de hora): ámbar de texto, no el ámbar de relleno, que sobre
+    // blanco no llega a 4,5:1.
+    textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: c.ambTx)),
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: c.sf,
+      cancelButtonStyle: TextButton.styleFrom(foregroundColor: c.ambTx),
+      confirmButtonStyle: TextButton.styleFrom(foregroundColor: c.ambTx),
+      // a. m. / p. m.: el elegido con los colores de la hora elegida (sin esto sale el azul de info).
+      dayPeriodColor: WidgetStateColor.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? c.amb : Colors.transparent,
+      ),
+      dayPeriodTextColor: WidgetStateColor.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? c.onAmb : c.tx2,
+      ),
+      dayPeriodBorderSide: BorderSide(color: c.ln),
+      entryModeIconColor: c.tx2,
+    ),
   );
 }
 

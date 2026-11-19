@@ -54,10 +54,10 @@ dev_dependencies:
 flutter:
   generate: true
 
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
-  uses-material-design: false
+  # Fuente Material Icons: la usa el selector de hora de Material (botón para escribir la hora
+  # con el teclado). Sin ella ese botón sale como un cuadro vacío. El release solo guarda los
+  # íconos usados (tree shaking), así que pesa unos pocos KB.
+  uses-material-design: true
   fonts:
     - family: Atkinson
       fonts:
