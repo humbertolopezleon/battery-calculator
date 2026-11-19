@@ -3,13 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'app/app_state.dart';
+import 'app/platform_info.dart';
 import 'app/store.dart';
 import 'l10n/gen/app_localizations.dart';
 import 'ui/screens/root.dart';
 import 'ui/theme/app_colors.dart';
 import 'ui/theme/app_theme.dart';
 
-Future<void> main() async {
+Future<void> main(List<String> args) async {
+  readPlatformArgs(args);
   WidgetsFlutterBinding.ensureInitialized();
   LicenseRegistry.addLicense(() async* {
     final ofl = await rootBundle.loadString('assets/fonts/OFL.txt');

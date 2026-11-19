@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../app/platform_info.dart';
 import '../../domain/calculator.dart' show MsgKind;
 import '../../domain/number_parser.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -261,12 +262,15 @@ class _NumberFieldState extends State<NumberField> {
     final c = context.colors;
     final msgs = [...widget.msgs, if (_filtered) (MsgKind.warn, AppLocalizations.of(context).onlyNums)];
     final hasWarn = widget.warn || _filtered;
+    // Campos estrechos (porciento, 100 dp): menos relleno y sin el ícono de error dentro (el mensaje
+    // de abajo lo trae); si no, con letra grande «100 %» se ve como «|00».
+    final compact = widget.center;
     final field = FieldBox(
       focused: _focus.hasFocus,
       error: widget.showError,
       warn: hasWarn && !widget.showError,
       disabled: !widget.enabled,
-      padding: const EdgeInsets.only(left: 14, right: 14),
+      padding: EdgeInsets.symmetric(horizontal: compact ? 8 : 14),
       child: Row(
         children: [
           Expanded(
@@ -295,14 +299,15 @@ class _NumberFieldState extends State<NumberField> {
               onChanged: widget.onChanged,
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: compact ? 4 : 8),
           ExcludeSemantics(
             child: Text(widget.unit, style: AppText.label.copyWith(fontSize: 17, color: c.tx2)),
           ),
-          if (widget.showError) ...[const SizedBox(width: 6), AppIcon('alertc', size: 18, color: c.bad)],
+          if (widget.showError && !compact) ...[const SizedBox(width: 6), AppIcon('alertc', size: 18, color: c.bad)],
         ],
       ),
     );
+    final sized = compact ? MediaQuery.withClampedTextScaling(maxScaleFactor: 1.3, child: field) : field;
     final semLabel = widget.semanticLabel ?? (widget.label == null ? null : '${widget.label} (${widget.unit})');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -312,9 +317,17 @@ class _NumberFieldState extends State<NumberField> {
           ExcludeSemantics(
             child: FieldLabel(widget.label!, icon: widget.labelIcon, small: widget.smallLabel),
           ),
-        MergeSemantics(
-          child: Semantics(label: semLabel, child: field),
-        ),
+        if (fieldLabelNeedsOwnNode && semLabel != null)
+          // Android ≤ 8.1: el nombre va en un nodo que envuelve al campo, que queda como hijo propio.
+          Semantics(
+            container: true,
+            label: semLabel,
+            child: Semantics(container: true, child: sized),
+          )
+        else
+          MergeSemantics(
+            child: Semantics(label: semLabel, child: sized),
+          ),
         FieldMessages(msgs),
         if (widget.hint != null) Hint(widget.hint!),
       ],
