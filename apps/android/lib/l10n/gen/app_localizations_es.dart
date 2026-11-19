@@ -649,6 +649,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveFailed => 'No se pudo guardar la imagen.';
 
   @override
+  String get saveNoPerm => 'Para guardar, permite el acceso a fotos y archivos en los ajustes del teléfono.';
+
+  @override
   String timeToast(String t) {
     return 'Hora: $t';
   }

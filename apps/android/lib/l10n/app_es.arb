@@ -562,6 +562,7 @@
   },
   "stripTakes": "Tarda ",
   "saveFailed": "No se pudo guardar la imagen.",
+  "saveNoPerm": "Para guardar, permite el acceso a fotos y archivos en los ajustes del teléfono.",
   "timeToast": "Hora: {t}",
   "@timeToast": {
     "placeholders": {

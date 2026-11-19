@@ -73,7 +73,12 @@ class _ShareBodyState extends State<_ShareBody> {
     final l = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
-      if (!await Gal.hasPermission()) await Gal.requestPermission();
+      // Android 7 a 9 piden permiso de almacenamiento (en 10+ no hace falta). Se pide una sola vez:
+      // Gal.putImageBytes lo volvería a pedir por dentro si aún faltara.
+      if (!await Gal.hasPermission() && !await Gal.requestPermission()) {
+        if (mounted) showToast(context, l.saveNoPerm);
+        return;
+      }
       final bytes = await _png();
       final name = widget.data.fileName(l);
       await Gal.putImageBytes(bytes, name: name.replaceAll('.png', ''));

@@ -562,6 +562,7 @@
   },
   "stripTakes": "Takes ",
   "saveFailed": "The image couldn’t be saved.",
+  "saveNoPerm": "To save, allow access to photos and files in your phone’s settings.",
   "timeToast": "Time: {t}",
   "@timeToast": {
     "placeholders": {

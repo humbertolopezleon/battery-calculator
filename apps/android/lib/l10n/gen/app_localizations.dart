@@ -1202,6 +1202,12 @@ abstract class AppLocalizations {
   /// **'No se pudo guardar la imagen.'**
   String get saveFailed;
 
+  /// No description provided for @saveNoPerm.
+  ///
+  /// In es, this message translates to:
+  /// **'Para guardar, permite el acceso a fotos y archivos en los ajustes del teléfono.'**
+  String get saveNoPerm;
+
   /// No description provided for @timeToast.
   ///
   /// In es, this message translates to:
