@@ -18,12 +18,13 @@ void main() {
     final p = parseNumber('25.000', thousands: true, decimalSep: ',');
     expect(p.value, 25000);
     expect(p.readAsThousands, isTrue);
-    expect(p.alt, '25,000');
+    expect(p.alt, '25');
     expect(p.sepIsDot, isTrue);
     final c = parseNumber('1,500', thousands: true, decimalSep: '.');
     expect(c.value, 1500);
-    expect(c.alt, '1.500');
+    expect(c.alt, '1.5');
     expect(c.sepIsDot, isFalse);
+    expect(parseNumber('1.250', thousands: true).alt, '1,25');
     expect(parseNumber('25.000').value, 25);
     expect(parseNumber('25.00', thousands: true).readAsThousands, isFalse);
   });

@@ -560,5 +560,6 @@
       }
     }
   },
-  "stripTakes": "Takes "
+  "stripTakes": "Takes ",
+  "saveFailed": "The image couldn’t be saved."
 }

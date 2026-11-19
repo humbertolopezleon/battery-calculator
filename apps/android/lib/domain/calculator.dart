@@ -114,14 +114,8 @@ class NightInput {
 
 /// Veredicto: ¿llega al amanecer?
 class NightVerdict {
-  const NightVerdict.ok({required this.left, required this.pctAtDawn})
-      : reaches = true,
-        short = 0,
-        maxW = 0;
-  const NightVerdict.bad({required this.short, required this.maxW})
-      : reaches = false,
-        left = 0,
-        pctAtDawn = 0;
+  const NightVerdict.ok({required this.left, required this.pctAtDawn}) : reaches = true, short = 0, maxW = 0;
+  const NightVerdict.bad({required this.short, required this.maxW}) : reaches = false, left = 0, pctAtDawn = 0;
   final bool reaches;
   final double left;
   final int pctAtDawn;
@@ -182,8 +176,7 @@ NightResult nightCalc(NightInput inp) {
   }
   if (pP.empty || !pP.isNumber || pP.value < 0 || pP.value > 100) {
     errs.add(NightField.pct);
-    msgs[NightField.pct]!
-        .add(FieldMsg(MsgKind.err, pP.empty || !pP.isNumber ? MsgCode.numBad : MsgCode.pctBad));
+    msgs[NightField.pct]!.add(FieldMsg(MsgKind.err, pP.empty || !pP.isNumber ? MsgCode.numBad : MsgCode.pctBad));
   }
   if (wP.readAsThousands) msgs[NightField.load]!.add(FieldMsg(MsgKind.info, MsgCode.readAs, parsed: wP));
   if (!wP.empty && (!wP.isNumber || wP.value < 0)) {
@@ -234,8 +227,8 @@ NightResult nightCalc(NightInput inp) {
     ..state = i == 0
         ? NightState.inReserve
         : d == 0
-            ? NightState.noLoad
-            : NightState.ok;
+        ? NightState.noLoad
+        : NightState.ok;
 
   if (r.state == NightState.ok && wm >= 1 && inp.now != null && !isDays(u)) {
     r.endMinutes = inp.now! + 60 * u;

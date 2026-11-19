@@ -16,8 +16,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offline => 'Works without internet';
 
   @override
-  String get intro =>
-      'See how long your battery lasts at night and how long it takes to charge from the grid.';
+  String get intro => 'See how long your battery lasts at night and how long it takes to charge from the grid.';
 
   @override
   String get sizeQ => 'How big is your battery?';
@@ -53,8 +52,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ahHint => 'They’re on the label; for example, 51.2 V and 200 Ah.';
 
   @override
-  String get startHint =>
-      'Pick or type the size to start. It’s saved on your phone and you can change it later.';
+  String get startHint => 'Pick or type the size to start. It’s saved on your phone and you can change it later.';
 
   @override
   String get start => 'Start';
@@ -93,8 +91,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phLoad => 'E.g. 600';
 
   @override
-  String get loadHint =>
-      'Check the inverter or its app. If it goes up and down, use an average.';
+  String get loadHint => 'Check the inverter or its app. If it goes up and down, use an average.';
 
   @override
   String get timeNow => 'Time now';
@@ -199,8 +196,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get powHintW => 'The grid charging power set in your inverter.';
 
   @override
-  String get powHintA =>
-      'The grid charging current set in your inverter; for example, 50 A on a 51.2 V battery.';
+  String get powHintA => 'The grid charging current set in your inverter; for example, 50 A on a 51.2 V battery.';
 
   @override
   String aResult(String x) {
@@ -351,8 +347,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emptyT => 'Home power use is missing';
 
   @override
-  String get emptyX =>
-      'Type it below and you’ll see here how long your battery lasts.';
+  String get emptyX => 'Type it below and you’ll see here how long your battery lasts.';
 
   @override
   String get fixT => 'Something needs fixing';
@@ -394,8 +389,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get gridX =>
-      'About 10% is lost while charging. This is what adds to your power bill.';
+  String get gridX => 'About 10% is lost while charging. This is what adds to your power bill.';
 
   @override
   String get fToCharge => 'to charge';
@@ -479,8 +473,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareT => 'Share the report';
 
   @override
-  String get shareDesc =>
-      'An image with the answer, the data and the steps. Easy to read in a chat.';
+  String get shareDesc => 'An image with the answer, the data and the steps. Easy to read in a chat.';
 
   @override
   String get shareImg => 'Share image';
@@ -489,8 +482,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveImg => 'Save to phone';
 
   @override
-  String get shareHint =>
-      '“Share” opens your phone’s list: pick WhatsApp, Telegram or another app.';
+  String get shareHint => '“Share” opens your phone’s list: pick WhatsApp, Telegram or another app.';
 
   @override
   String saved(String n) {
@@ -591,10 +583,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String days(String d) {
-    String _temp0 = intl.Intl.selectLogic(d, {
-      '1': 'about 1 day',
-      'other': 'about $d days',
-    });
+    String _temp0 = intl.Intl.selectLogic(d, {'1': 'about 1 day', 'other': 'about $d days'});
     return '$_temp0';
   }
 
@@ -653,4 +642,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stripTakes => 'Takes ';
+
+  @override
+  String get saveFailed => 'The image couldn’t be saved.';
 }

@@ -39,58 +39,85 @@ class AppColors extends ThemeExtension<AppColors> {
 
   /// Fondo de la app
   final Color bg;
+
   /// Superficie: tarjetas, campos, hojas
   final Color sf;
+
   /// Superficie 2: cifras, selector
   final Color sf2;
+
   /// Texto principal
   final Color tx;
+
   /// Texto de apoyo
   final Color tx2;
+
   /// Borde de campo (≥3:1)
   final Color ln;
+
   /// Divisor decorativo
   final Color ln2;
+
   /// Energía: relleno, botón principal, pestaña activa
   final Color amb;
+
   /// Energía como texto
   final Color ambTx;
+
   /// Fondo ámbar suave
   final Color ambBg;
+
   /// Texto sobre ámbar
   final Color onAmb;
+
   /// Bien (texto/ícono)
   final Color ok;
+
   /// Fondo de bien
   final Color okBg;
+
   /// Problema / error
   final Color bad;
+
   /// Fondo de problema
   final Color badBg;
+
   /// Información (gasto de la red)
   final Color inf;
+
   /// Fondo de información; halo de foco
   final Color infBg;
+
   /// Aviso (valor raro)
   final Color warn;
+
   /// Fondo de aviso
   final Color warnBg;
+
   /// Reserva (rayado)
   final Color rsv;
+
   /// Anillo de foco
   final Color focus;
+
   /// Barra inferior
   final Color nav;
+
   /// Pestaña / atajo elegido
   final Color sel;
+
   /// Pista de la regla
   final Color track;
+
   /// Deshabilitado
   final Color dis;
+
   /// Fondo deshabilitado
   final Color disBg;
+
   /// Carga (rayado y pista)
   final Color chg;
+
   /// Velo detrás de hojas
   final Color scrim;
 

@@ -87,27 +87,27 @@ class AppState extends ChangeNotifier {
   }
 
   Map<String, Object?> toJson() => {
-        'cap': cap,
-        'batMode': batMode == BatteryMode.voltsAh ? 'ah' : 'kwh',
-        'capTxt': capTxt,
-        'volt': volt,
-        'ahTxt': ahTxt,
-        'tab': tab.name,
-        'nPct': nPct,
-        'nW': nW,
-        'nSun': nSun,
-        'loss': loss,
-        'rsv': rsv,
-        'cPct': cPct,
-        'cTgt': cTgt,
-        'pmode': pmode == PowerMode.amps ? 'a' : 'w',
-        'cW': cW,
-        'cA': cA,
-        'cV': cV,
-        'lang': lang,
-        'theme': theme.name,
-        'big': big,
-      };
+    'cap': cap,
+    'batMode': batMode == BatteryMode.voltsAh ? 'ah' : 'kwh',
+    'capTxt': capTxt,
+    'volt': volt,
+    'ahTxt': ahTxt,
+    'tab': tab.name,
+    'nPct': nPct,
+    'nW': nW,
+    'nSun': nSun,
+    'loss': loss,
+    'rsv': rsv,
+    'cPct': cPct,
+    'cTgt': cTgt,
+    'pmode': pmode == PowerMode.amps ? 'a' : 'w',
+    'cW': cW,
+    'cA': cA,
+    'cV': cV,
+    'lang': lang,
+    'theme': theme.name,
+    'big': big,
+  };
 
   /// Cambia algo, avisa a la UI y guarda.
   void update(void Function(AppState s) change) {

@@ -32,15 +32,17 @@ void main() {
       final inp = c['input'] as Map<String, dynamic>;
       final exp = c['expected_es'] as Map<String, dynamic>;
       test('caso ${i + 1}: ${inp['percentNow']}% · ${inp['loadW']} W · ${inp['timeNow']}→${inp['sunrise']}', () {
-        final r = nightCalc(NightInput(
-          cap: parseNumber(s(inp['capacityKwh'])).value,
-          pctTxt: s(inp['percentNow']),
-          loadTxt: s(inp['loadW']),
-          reserveTxt: s(inp['reservePct']),
-          loss: inp['countInverterLoss'] as bool,
-          now: parseClock(inp['timeNow'] as String?),
-          sun: parseClock(inp['sunrise'] as String?),
-        ));
+        final r = nightCalc(
+          NightInput(
+            cap: parseNumber(s(inp['capacityKwh'])).value,
+            pctTxt: s(inp['percentNow']),
+            loadTxt: s(inp['loadW']),
+            reserveTxt: s(inp['reservePct']),
+            loss: inp['countInverterLoss'] as bool,
+            now: parseClock(inp['timeNow'] as String?),
+            sun: parseClock(inp['sunrise'] as String?),
+          ),
+        );
         final v = presentNight(r, f);
         expect(v.lead, exp['lead'], reason: 'lead');
         expect(v.big, exp['big'], reason: 'big');
@@ -58,16 +60,18 @@ void main() {
       final exp = c['expected_es'] as Map<String, dynamic>;
       test('caso ${i + 1}: ${inp['percentNow']}→${inp['chargeTo']}% · ${inp['powerMode']}', () {
         final mode = inp['powerMode'] == 'a' ? PowerMode.amps : PowerMode.watts;
-        final r = chargeCalc(ChargeInput(
-          cap: parseNumber(s(inp['capacityKwh'])).value,
-          pctTxt: s(inp['percentNow']),
-          targetTxt: s(inp['chargeTo']),
-          mode: mode,
-          wattsTxt: s(inp['watts']),
-          ampsTxt: s(inp['amps']),
-          voltsTxt: s(inp['volts']),
-          now: parseClock(inp['timeNow'] as String?),
-        ));
+        final r = chargeCalc(
+          ChargeInput(
+            cap: parseNumber(s(inp['capacityKwh'])).value,
+            pctTxt: s(inp['percentNow']),
+            targetTxt: s(inp['chargeTo']),
+            mode: mode,
+            wattsTxt: s(inp['watts']),
+            ampsTxt: s(inp['amps']),
+            voltsTxt: s(inp['volts']),
+            now: parseClock(inp['timeNow'] as String?),
+          ),
+        );
         final v = presentCharge(r, f, mode: mode);
         expect(v.lead, exp['lead'], reason: 'lead');
         expect(v.big, exp['big'], reason: 'big');

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
 import 'package:material_ui/material_ui.dart';
 
 import 'app/app_state.dart';
@@ -40,11 +39,7 @@ class BatteryApp extends StatelessWidget {
             onGenerateTitle: (c) => AppLocalizations.of(c).appName,
             locale: Locale(state.effectiveLang(device)),
             supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ],
+            localizationsDelegates: const [AppLocalizations.delegate, ...GlobalMaterialLocalizations.delegates],
             theme: buildTheme(AppColors.light, Brightness.light),
             darkTheme: buildTheme(AppColors.dark, Brightness.dark),
             themeMode: switch (state.theme) {
@@ -57,7 +52,10 @@ class BatteryApp extends StatelessWidget {
               if (!state.big) return child!;
               // Letra grande: ×1,2 sobre la escala del sistema (DESIGN §5).
               final scale = mq.textScaler.scale(100) / 100 * 1.2;
-              return MediaQuery(data: mq.copyWith(textScaler: TextScaler.linear(scale)), child: child!);
+              return MediaQuery(
+                data: mq.copyWith(textScaler: TextScaler.linear(scale)),
+                child: child!,
+              );
             },
             home: const Root(),
           );

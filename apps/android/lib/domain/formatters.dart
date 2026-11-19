@@ -48,7 +48,11 @@ class NumberFormatter {
   /// Wh con 0, 1 o 2 decimales según el tamaño.
   String wh(double kwhValue) {
     final w = kwhValue * 1000;
-    return '${nf(w, w >= 100 ? 0 : w >= 10 ? 1 : 2)} Wh';
+    return '${nf(w, w >= 100
+        ? 0
+        : w >= 10
+        ? 1
+        : 2)} Wh';
   }
 
   /// `q()`: menos de 0,1 kWh en Wh; si no, kWh con 2 decimales.

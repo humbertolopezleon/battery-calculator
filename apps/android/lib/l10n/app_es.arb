@@ -560,5 +560,6 @@
       }
     }
   },
-  "stripTakes": "Tarda "
+  "stripTakes": "Tarda ",
+  "saveFailed": "No se pudo guardar la imagen."
 }

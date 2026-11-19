@@ -93,8 +93,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get phLoad => 'Ej.: 600';
 
   @override
-  String get loadHint =>
-      'Míralo en el inversor o en su app. Si sube y baja, usa un promedio.';
+  String get loadHint => 'Míralo en el inversor o en su app. Si sube y baja, usa un promedio.';
 
   @override
   String get timeNow => 'Hora ahora';
@@ -196,12 +195,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get amps => 'Amperios';
 
   @override
-  String get powHintW =>
-      'Es la potencia de carga desde la red que tiene configurada el inversor.';
+  String get powHintW => 'Es la potencia de carga desde la red que tiene configurada el inversor.';
 
   @override
-  String get powHintA =>
-      'La corriente de carga desde la red del inversor; por ejemplo, 50 A en una batería de 51,2 V.';
+  String get powHintA => 'La corriente de carga desde la red del inversor; por ejemplo, 50 A en una batería de 51,2 V.';
 
   @override
   String aResult(String x) {
@@ -352,8 +349,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get emptyT => 'Falta el consumo de la casa';
 
   @override
-  String get emptyX =>
-      'Escríbelo abajo y aquí verás hasta qué hora te dura la batería.';
+  String get emptyX => 'Escríbelo abajo y aquí verás hasta qué hora te dura la batería.';
 
   @override
   String get fixT => 'Falta corregir un dato';
@@ -395,8 +391,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get gridX =>
-      'Al cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.';
+  String get gridX => 'Al cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.';
 
   @override
   String get fToCharge => 'por cargar';
@@ -480,8 +475,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get shareT => 'Compartir el reporte';
 
   @override
-  String get shareDesc =>
-      'Una imagen con la respuesta, los datos y el paso a paso. Se lee bien en el chat.';
+  String get shareDesc => 'Una imagen con la respuesta, los datos y el paso a paso. Se lee bien en el chat.';
 
   @override
   String get shareImg => 'Compartir imagen';
@@ -490,8 +484,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveImg => 'Guardar en el teléfono';
 
   @override
-  String get shareHint =>
-      '«Compartir» abre la lista del teléfono: elige WhatsApp, Telegram u otra app.';
+  String get shareHint => '«Compartir» abre la lista del teléfono: elige WhatsApp, Telegram u otra app.';
 
   @override
   String saved(String n) {
@@ -592,10 +585,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String days(String d) {
-    String _temp0 = intl.Intl.selectLogic(d, {
-      '1': 'cerca de 1 día',
-      'other': 'unos $d días',
-    });
+    String _temp0 = intl.Intl.selectLogic(d, {'1': 'cerca de 1 día', 'other': 'unos $d días'});
     return '$_temp0';
   }
 
@@ -654,4 +644,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get stripTakes => 'Tarda ';
+
+  @override
+  String get saveFailed => 'No se pudo guardar la imagen.';
 }

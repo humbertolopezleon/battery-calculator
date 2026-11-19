@@ -48,8 +48,8 @@ class StripData {
 /// Utilidades de formato con idioma y reloj.
 class Fmt {
   Fmt(this.l, {required bool use24h})
-      : n = NumberFormatter(l.localeName.startsWith('en') ? 'en' : 'es'),
-        t = TimeFormatter(l.localeName.startsWith('en') ? 'en' : 'es', use24h: use24h);
+    : n = NumberFormatter(l.localeName.startsWith('en') ? 'en' : 'es'),
+      t = TimeFormatter(l.localeName.startsWith('en') ? 'en' : 'es', use24h: use24h);
   final AppLocalizations l;
   final NumberFormatter n;
   final TimeFormatter t;
@@ -59,15 +59,15 @@ class Fmt {
 
   /// Texto de un mensaje de campo.
   String msg(FieldMsg m) => switch (m.code) {
-        MsgCode.numBad => l.numBad,
-        MsgCode.gt0 => l.gt0,
-        MsgCode.pctBad => l.pctBad,
-        MsgCode.tgtBad => l.tgtBad,
-        MsgCode.rsvBad => l.rsvBad,
-        MsgCode.weird => l.weird,
-        MsgCode.ampsResult => l.aResult(n.nf(m.value!, 2)),
-        MsgCode.readAs => _readAs(m),
-      };
+    MsgCode.numBad => l.numBad,
+    MsgCode.gt0 => l.gt0,
+    MsgCode.pctBad => l.pctBad,
+    MsgCode.tgtBad => l.tgtBad,
+    MsgCode.rsvBad => l.rsvBad,
+    MsgCode.weird => l.weird,
+    MsgCode.ampsResult => l.aResult(n.nf(m.value!, 2)),
+    MsgCode.readAs => _readAs(m),
+  };
 
   String _readAs(FieldMsg m) {
     final p = m.parsed!;
@@ -157,13 +157,16 @@ void _nightOk(NightView v, NightResult r, Fmt f) {
     if (verdict.reaches) {
       v.verdictTone = Tone.ok;
       v.verdictTitle = l.okT;
-      v.verdictText =
-          verdict.left < 0.001 ? l.okJust(sunA) : l.okTxt(f.n.q(verdict.left), sunA, '${verdict.pctAtDawn}');
+      v.verdictText = verdict.left < 0.001
+          ? l.okJust(sunA)
+          : l.okTxt(f.n.q(verdict.left), sunA, '${verdict.pctAtDawn}');
     } else {
       v.verdictTone = Tone.bad;
       v.verdictTitle = l.badT;
       final k = verdict.maxW;
-      v.verdictText = k > 0 ? l.badTxt(f.n.q(verdict.short), sunA, f.nf(k.toDouble(), 0)) : l.badLow(f.n.q(verdict.short));
+      v.verdictText = k > 0
+          ? l.badTxt(f.n.q(verdict.short), sunA, f.nf(k.toDouble(), 0))
+          : l.badLow(f.n.q(verdict.short));
       if (k > 0 && k < r.load) {
         v.tryW = k;
         v.tryLabel = l.tryW(f.nf(k.toDouble(), 0));
@@ -175,8 +178,11 @@ void _nightOk(NightView v, NightResult r, Fmt f) {
     final sunI = LegendItem(LegendIcon.sun, l.lSun, sunT);
     final endI = LegendItem(LegendIcon.battery, l.lEnd, endValue);
     v.legend = tr.endBeforeSun ? [now, endI, sunI] : [now, sunI, endI];
-    v.strip = StripData(verdict.reaches ? Tone.ok : Tone.bad, endTxt != null ? '${l.hasta}$endTxt' : v.big!,
-        verdict.reaches ? l.tagOk : l.tagBad);
+    v.strip = StripData(
+      verdict.reaches ? Tone.ok : Tone.bad,
+      endTxt != null ? '${l.hasta}$endTxt' : v.big!,
+      verdict.reaches ? l.tagOk : l.tagBad,
+    );
   } else {
     v.strip = StripData(Tone.neutral, endTxt != null ? '${l.hasta}$endTxt' : v.big!, null);
   }
@@ -200,9 +206,11 @@ List<String> _nightSteps(NightResult r, Fmt f) {
     out.add(l.lReserve(n.nf(r.pct, 2), n.nf(r.reserve, 2), n.nf(r.usefulPct, 2)));
     final capTxt = '${n.nf(cap, 3)} kWh';
     final gross = n.b3(cap * r.usefulPct / 100);
-    out.add(r.lossF < 1
-        ? l.lCapLoss(capTxt, n.nf(r.usefulPct, 2), gross, n.b3(r.usable))
-        : l.lCap(capTxt, n.nf(r.usefulPct, 2), gross));
+    out.add(
+      r.lossF < 1
+          ? l.lCapLoss(capTxt, n.nf(r.usefulPct, 2), gross, n.b3(r.usable))
+          : l.lCap(capTxt, n.nf(r.usefulPct, 2), gross),
+    );
   }
   if (r.loadKw > 0 && r.usefulPct > 0) {
     out.add(l.lRun(n.b3(r.usable), r.loadKw < 1 ? '${n.nf(r.load, 2)} W' : '${n.nf(r.loadKw, 3)} kW', f.dur(r.hours)));
@@ -239,9 +247,13 @@ ChargeView presentCharge(ChargeResult r, Fmt f, {required PowerMode mode, bool p
       v.strip = StripData(Tone.err, l.stripErr, l.tagFix);
     case ChargeState.noPower:
       v.kicker = l.kCharge0;
-      v.card = StateCardData(powerTouched ? Tone.err : Tone.neutral, l.noPowT, l.noPowX,
-          goTo: powerTouched ? (mode == PowerMode.watts ? ChargeField.watts : ChargeField.amps) : null,
-          usePlug: !powerTouched);
+      v.card = StateCardData(
+        powerTouched ? Tone.err : Tone.neutral,
+        l.noPowT,
+        l.noPowX,
+        goTo: powerTouched ? (mode == PowerMode.watts ? ChargeField.watts : ChargeField.amps) : null,
+        usePlug: !powerTouched,
+      );
       v.strip = StripData(powerTouched ? Tone.err : Tone.neutral, l.noPowT, null);
     case ChargeState.already:
       v.card = StateCardData(Tone.ok, l.alreadyT, l.alreadyX(f.nf(r.pct, 2), f.nf(r.target, 2)));

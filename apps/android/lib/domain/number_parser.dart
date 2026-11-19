@@ -42,9 +42,11 @@ ParsedNumber parseNumber(String raw, {bool thousands = false, String decimalSep 
   if (!_onlyNumberChars.hasMatch(s)) return const ParsedNumber.invalid();
   final m = _thousands.firstMatch(s);
   if (m != null && thousands) {
+    // La otra lectura, como número decimal y sin ceros sobrantes (SPEC §5): «25.000» → «25», «1.500» → «1,5».
+    final frac = m[2]!.replaceFirst(RegExp(r'0+$'), '');
     return ParsedNumber.thousands(
       double.parse('${m[1]}${m[2]}'),
-      '${m[1]}$decimalSep${m[2]}',
+      frac.isEmpty ? m[1]! : '${m[1]}$decimalSep$frac',
       sepIsDot: s.contains('.'),
     );
   }

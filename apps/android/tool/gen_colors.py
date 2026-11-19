@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Regenera lib/ui/theme/app_colors.dart desde design/handoff/design/tokens.json.
-Uso (desde apps/android): python3 tool/gen_colors.py"""
+Uso (desde apps/android): python3 tool/gen_colors.py && dart format -l 120 lib/ui/theme"""
 import json, re
 d = json.load(open('../../design/handoff/design/tokens.json'))
 cols = d['color']
