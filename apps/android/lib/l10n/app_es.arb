@@ -1,0 +1,564 @@
+{
+  "@@locale": "es",
+  "appName": "Calculadora de Batería",
+  "offline": "Funciona sin internet",
+  "intro": "Mira hasta qué hora te alcanza la batería de noche y cuánto tarda en cargar con la corriente de la calle.",
+  "sizeQ": "¿De qué tamaño es tu batería?",
+  "batHow": "Cómo conoces el tamaño",
+  "modeKwh": "En kWh",
+  "modeAh": "En voltios y Ah",
+  "common": "Baterías comunes",
+  "otherCap": "U otra capacidad",
+  "capacity": "Capacidad",
+  "capHint": "Aparece en la etiqueta o en el manual de la batería.",
+  "volts": "Voltios",
+  "ah": "Amperios hora",
+  "ahHint": "Están en la etiqueta; por ejemplo, 51,2 V y 200 Ah.",
+  "startHint": "Elige o escribe el tamaño para empezar. Se guarda en el teléfono y puedes cambiarlo después.",
+  "start": "Empezar",
+  "yourBat": "Tu batería",
+  "settings": "Ajustes",
+  "close": "Cerrar",
+  "ok": "Listo",
+  "tabsAria": "Qué quieres calcular",
+  "tabNight": "De noche",
+  "tabCharge": "Cargando con la red",
+  "nightData": "Datos de la noche",
+  "pctNow": "Porciento que marca ahora",
+  "load": "Consumo de la casa",
+  "phLoad": "Ej.: 600",
+  "loadHint": "Míralo en el inversor o en su app. Si sube y baja, usa un promedio.",
+  "timeNow": "Hora ahora",
+  "nowBtn": "Ahora",
+  "sunrise": "Hora en que vuelve el sol",
+  "sunHint": "Cuando los paneles empiezan a cargar.",
+  "more": "Más opciones",
+  "loss": "Contar las pérdidas del inversor (10%)",
+  "lossHint": "Más realista. Apágalo para ver la cuenta simple.",
+  "rsvLabel": "Reserva de la batería",
+  "rsvHint": "La batería se apaga sola al llegar a este porciento. Cámbialo solo si tu inversor usa otro. Puede ser de 0 a 90%.",
+  "rsvReset": "Volver a 6%",
+  "minus": "Bajar 1%",
+  "plus": "Subir 1%",
+  "how": "Cómo se calcula",
+  "howSub": "Paso a paso de la cuenta",
+  "legRsv": "Reserva {r}% (no se usa)",
+  "@legRsv": {
+    "placeholders": {
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "legUse": "Puedes usar {u}%",
+  "@legUse": {
+    "placeholders": {
+      "u": {
+        "type": "String"
+      }
+    }
+  },
+  "nNote": "Es un aproximado. El consumo cambia durante la noche (el refrigerador arranca y para; el aire o la plancha lo suben mucho). Se supone que los paneles no cargan hasta que vuelve el sol.",
+  "share": "Compartir resultado",
+  "chargeData": "Datos de la carga",
+  "batLevel": "Porciento de la batería",
+  "nowShort": "Ahora",
+  "tgt": "Cargar hasta",
+  "legNow": "Tiene ahora",
+  "legToCharge": "Lo que se va a cargar",
+  "power": "Potencia de carga",
+  "powHow": "Cómo conoces la potencia de carga",
+  "modeW": "Sé los watts",
+  "modeA": "Sé los amperios",
+  "powW": "Potencia de carga en watts",
+  "phPow": "Ej.: 2500",
+  "amps": "Amperios",
+  "powHintW": "Es la potencia de carga desde la red que tiene configurada el inversor.",
+  "powHintA": "La corriente de carga desde la red del inversor; por ejemplo, 50 A en una batería de 51,2 V.",
+  "aResult": "Equivale a unos {x} W de carga.",
+  "@aResult": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "cNote": "Es un aproximado. Del 90% al 100% el cargador va más despacio, por eso ese tramo se calcula a la mitad de la potencia. Si se va la corriente, la carga se detiene.",
+  "langHint": "La primera vez se usa el idioma del teléfono.",
+  "themeL": "Colores de la pantalla",
+  "thAuto": "Auto",
+  "thLight": "Claro",
+  "thDark": "Oscuro",
+  "themeHint": "Auto sigue al teléfono.",
+  "bigText": "Letra grande",
+  "bigHint": "Los textos se ven un 20% más grandes.",
+  "resetAll": "Borrar mis datos y empezar de nuevo",
+  "numBad": "Escribe un número.",
+  "gt0": "Debe ser mayor que 0.",
+  "pctBad": "Escribe un número del 0 al 100.",
+  "tgtBad": "«Cargar hasta» debe ser un número del 0 al 100.",
+  "rsvBad": "Escribe un número del 0 al 90.",
+  "weird": "¿Seguro? Es más de lo normal en una casa.",
+  "onlyNums": "Solo se pueden escribir números.",
+  "sepDot": "punto",
+  "sepComma": "coma",
+  "kNight": "De noche · {w} W de consumo",
+  "@kNight": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "kNight0": "De noche",
+  "kCharge": "Cargando con la red · {w} W",
+  "@kCharge": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "kCharge0": "Cargando con la red",
+  "leadUntil": "La batería dura hasta las",
+  "leadUntil1": "La batería dura hasta la",
+  "leadFor": "La batería dura",
+  "almost": "menos de 1 min",
+  "okT": "Llegas al amanecer",
+  "okTxt": "Sobran unos {k}. A {t} marcará cerca de {p}%.",
+  "@okTxt": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "okJust": "La energía alcanza justo hasta {t}.",
+  "@okJust": {
+    "placeholders": {
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "badT": "No llegas al amanecer",
+  "badTxt": "Faltan unos {k}. Para llegar a {t}, baja el consumo a {w} W o menos.",
+  "@badTxt": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      },
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "badLow": "Faltan unos {k}. Casi no queda energía para usar.",
+  "@badLow": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "tryW": "Probar con {w} W",
+  "@tryW": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "lNow": "Ahora",
+  "lSun": "Sale el sol",
+  "lEnd": "Se acaba",
+  "inDays": "en {d}",
+  "@inDays": {
+    "placeholders": {
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "fUsable": "que puedes usar",
+  "fDur": "de duración",
+  "fPer": "útil por cada 1%",
+  "emptyT": "Falta el consumo de la casa",
+  "emptyX": "Escríbelo abajo y aquí verás hasta qué hora te dura la batería.",
+  "fixT": "Falta corregir un dato",
+  "fixPct": "El porciento debe ser un número del 0 al 100.",
+  "fixW": "El consumo debe ser un número.",
+  "fixRsv": "Revisa la reserva: debe ser un número del 0 al 90.",
+  "goField": "Ir al dato",
+  "inRsvT": "Ya está en la reserva",
+  "inRsvX": "La batería ya está en la reserva del {r}%: no queda energía para usar.",
+  "@inRsvX": {
+    "placeholders": {
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "noLoadT": "Sin consumo",
+  "noLoadX": "Sin consumo, la energía se mantiene: tienes {k} kWh guardados.",
+  "@noLoadX": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "cLead": "Tarda en cargar",
+  "gridT": "Gasta de la red unos {k} kWh",
+  "@gridT": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "gridX": "Al cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+  "fToCharge": "por cargar",
+  "fPerHour": "sube cada hora",
+  "lAt": "Llega al {p}%",
+  "@lAt": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "alreadyT": "No hace falta cargar",
+  "alreadyX": "La batería ya está en {a}%, igual o más que el {b}% que quieres.",
+  "@alreadyX": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "noPowT": "Falta la potencia de carga",
+  "noPowX": "Pon la potencia de carga: debe ser mayor que 0.",
+  "fixC": "Los porcientos deben ser de 0 a 100.",
+  "lReserve": "{a}% − {r}% de reserva = {u}% útil",
+  "@lReserve": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "r": {
+        "type": "String"
+      },
+      "u": {
+        "type": "String"
+      }
+    }
+  },
+  "lBelow": "{a}% no pasa de la reserva del {r}%: queda 0% útil",
+  "@lBelow": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "lRun": "{k} ÷ {w} de consumo = {d}",
+  "@lRun": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "w": {
+        "type": "String"
+      },
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "lAmps": "{a} A × {v} V = {w} W de carga",
+  "@lAmps": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "v": {
+        "type": "String"
+      },
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "lDelta": "{b}% − {a}% = {d}% por cargar",
+  "@lDelta": {
+    "placeholders": {
+      "b": {
+        "type": "String"
+      },
+      "a": {
+        "type": "String"
+      },
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "lKwh": "{c} × {d}% = {k}",
+  "@lKwh": {
+    "placeholders": {
+      "c": {
+        "type": "String"
+      },
+      "d": {
+        "type": "String"
+      },
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "lTime": "{k} ÷ {p} de carga = {t}",
+  "@lTime": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lFast": "De {a}% a {b}%: {k} ÷ {p} = {t}",
+  "@lFast": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "k": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lSlow": "De {a}% a {b}%, a mitad de potencia: {k} ÷ {p} = {t}",
+  "@lSlow": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "k": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lTotal": "Total: {a} + {b} = {c}",
+  "@lTotal": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "c": {
+        "type": "String"
+      }
+    }
+  },
+  "shareT": "Compartir el reporte",
+  "shareDesc": "Una imagen con la respuesta, los datos y el paso a paso. Se lee bien en el chat.",
+  "shareImg": "Compartir imagen",
+  "saveImg": "Guardar en el teléfono",
+  "shareHint": "«Compartir» abre la lista del teléfono: elige WhatsApp, Telegram u otra app.",
+  "saved": "Imagen guardada: {n}",
+  "@saved": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "fixFirst": "Corrige los datos para compartir el resultado.",
+  "rTitleN": "Reporte de batería",
+  "rSubN": "De noche",
+  "rSubC": "Cargando con la red",
+  "dataUsed": "Datos usados",
+  "howR": "Así se calcula",
+  "dBat": "Batería",
+  "dLevel": "Porciento ahora",
+  "dLoad": "Consumo",
+  "dAt": "Hora del cálculo",
+  "dSun": "Vuelve el sol",
+  "dRsv": "Reserva de la batería",
+  "dLoss": "Pérdidas del inversor",
+  "lossYes": "Incluidas (10%)",
+  "lossNo": "No incluidas",
+  "dTgt": "Cargar hasta",
+  "dPow": "Potencia de carga",
+  "footN": "Es un aproximado: el consumo cambia durante la noche. La batería se apaga al {r}% para cuidar su salud.",
+  "@footN": {
+    "placeholders": {
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "footC": "Es un aproximado: del 90% al 100% el cargador va más despacio, por eso ese tramo se calcula a la mitad de la potencia.",
+  "fileN": "reporte-noche",
+  "fileC": "reporte-carga",
+  "stripErr": "Falta corregir un dato",
+  "stripEmpty": "Falta el consumo",
+  "hasta": "Hasta ",
+  "tagOk": "Llegas",
+  "tagBad": "No llegas",
+  "tagFix": "Revisa",
+  "enPhrase": "En ",
+  "version": "Versión {v} · Funciona sin internet",
+  "@version": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      }
+    }
+  },
+  "days": "{d, select, 1{cerca de 1 día} other{unos {d} días}}",
+  "@days": {
+    "placeholders": {
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "moreS": "Pérdidas del inversor: {on, select, true{sí} other{no}} · Reserva: {r}%",
+  "@moreS": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      },
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "readAs": "Se entendió: {v}.",
+  "@readAs": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      }
+    }
+  },
+  "readAsAlt": "Se entendió: {v}. Si querías {alt}, escríbelo sin {sep}.",
+  "@readAsAlt": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      },
+      "alt": {
+        "type": "String"
+      },
+      "sep": {
+        "type": "String"
+      }
+    }
+  },
+  "lCap": "{c} × {u}% = {x}",
+  "@lCap": {
+    "placeholders": {
+      "c": {
+        "type": "String"
+      },
+      "u": {
+        "type": "String"
+      },
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "lCapLoss": "{c} × {u}% = {x}; quitando el 10% de pérdidas quedan {y}",
+  "@lCapLoss": {
+    "placeholders": {
+      "c": {
+        "type": "String"
+      },
+      "u": {
+        "type": "String"
+      },
+      "x": {
+        "type": "String"
+      },
+      "y": {
+        "type": "String"
+      }
+    }
+  },
+  "cSub": "Llega al {p}% cerca de {t}",
+  "@cSub": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "batLblPrefix": "Tu batería: ",
+  "ahResultPrefix": "Tu batería es de unos ",
+  "trying": "Probando con {w} W",
+  "@trying": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "appShort": "Batería",
+  "confirmReset": "Toca otra vez para borrar todo",
+  "example": "Ej.: {x}",
+  "@example": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "stripTakes": "Tarda "
+}

@@ -1,0 +1,564 @@
+{
+  "@@locale": "en",
+  "appName": "Battery Calculator",
+  "offline": "Works without internet",
+  "intro": "See how long your battery lasts at night and how long it takes to charge from the grid.",
+  "sizeQ": "How big is your battery?",
+  "batHow": "How you know the size",
+  "modeKwh": "In kWh",
+  "modeAh": "In volts and Ah",
+  "common": "Common batteries",
+  "otherCap": "Or another capacity",
+  "capacity": "Capacity",
+  "capHint": "It’s on the battery label or in its manual.",
+  "volts": "Volts",
+  "ah": "Amp-hours",
+  "ahHint": "They’re on the label; for example, 51.2 V and 200 Ah.",
+  "startHint": "Pick or type the size to start. It’s saved on your phone and you can change it later.",
+  "start": "Start",
+  "yourBat": "Your battery",
+  "settings": "Settings",
+  "close": "Close",
+  "ok": "Done",
+  "tabsAria": "What to calculate",
+  "tabNight": "At night",
+  "tabCharge": "Charging from grid",
+  "nightData": "Night data",
+  "pctNow": "Battery level right now",
+  "load": "Home power use",
+  "phLoad": "E.g. 600",
+  "loadHint": "Check the inverter or its app. If it goes up and down, use an average.",
+  "timeNow": "Time now",
+  "nowBtn": "Now",
+  "sunrise": "Sunrise time",
+  "sunHint": "When the panels start charging.",
+  "more": "More options",
+  "loss": "Count inverter losses (10%)",
+  "lossHint": "More realistic. Turn off for the simple math.",
+  "rsvLabel": "Battery reserve",
+  "rsvHint": "The battery shuts off on its own at this level. Change it only if your inverter uses another one. From 0 to 90%.",
+  "rsvReset": "Back to 6%",
+  "minus": "Down 1%",
+  "plus": "Up 1%",
+  "how": "How it’s calculated",
+  "howSub": "Step by step",
+  "legRsv": "{r}% reserve (not used)",
+  "@legRsv": {
+    "placeholders": {
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "legUse": "You can use {u}%",
+  "@legUse": {
+    "placeholders": {
+      "u": {
+        "type": "String"
+      }
+    }
+  },
+  "nNote": "This is an estimate. Power use changes during the night (the fridge starts and stops; AC or an iron raise it a lot). It assumes the panels don’t charge until sunrise.",
+  "share": "Share result",
+  "chargeData": "Charging data",
+  "batLevel": "Battery level",
+  "nowShort": "Now",
+  "tgt": "Charge to",
+  "legNow": "Charge now",
+  "legToCharge": "To be charged",
+  "power": "Charging power",
+  "powHow": "How you know the charging power",
+  "modeW": "I know the watts",
+  "modeA": "I know the amps",
+  "powW": "Charging power in watts",
+  "phPow": "E.g. 2500",
+  "amps": "Amps",
+  "powHintW": "The grid charging power set in your inverter.",
+  "powHintA": "The grid charging current set in your inverter; for example, 50 A on a 51.2 V battery.",
+  "aResult": "That’s about {x} W of charging.",
+  "@aResult": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "cNote": "This is an estimate. From 90% to 100% the charger slows down, so that part is calculated at half power. If the grid goes out, charging stops.",
+  "langHint": "The first time, the phone’s language is used.",
+  "themeL": "Screen colors",
+  "thAuto": "Auto",
+  "thLight": "Light",
+  "thDark": "Dark",
+  "themeHint": "Auto follows your phone.",
+  "bigText": "Large text",
+  "bigHint": "Text looks 20% bigger.",
+  "resetAll": "Erase my data and start over",
+  "numBad": "Enter a number.",
+  "gt0": "It must be greater than 0.",
+  "pctBad": "Enter a number from 0 to 100.",
+  "tgtBad": "“Charge to” must be a number from 0 to 100.",
+  "rsvBad": "Enter a number from 0 to 90.",
+  "weird": "Are you sure? That’s more than usual for a home.",
+  "onlyNums": "Only numbers can be typed.",
+  "sepDot": "period",
+  "sepComma": "comma",
+  "kNight": "At night · {w} W in use",
+  "@kNight": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "kNight0": "At night",
+  "kCharge": "Charging from the grid · {w} W",
+  "@kCharge": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "kCharge0": "Charging from the grid",
+  "leadUntil": "Your battery lasts until",
+  "leadUntil1": "Your battery lasts until",
+  "leadFor": "Your battery lasts",
+  "almost": "under 1 min",
+  "okT": "You’ll make it to sunrise",
+  "okTxt": "About {k} to spare. At {t} it will show about {p}%.",
+  "@okTxt": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "okJust": "The energy lasts just until {t}.",
+  "@okJust": {
+    "placeholders": {
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "badT": "You won’t make it to sunrise",
+  "badTxt": "About {k} short. To last until {t}, lower your use to {w} W or less.",
+  "@badTxt": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      },
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "badLow": "About {k} short. There’s almost no energy left to use.",
+  "@badLow": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "tryW": "Try {w} W",
+  "@tryW": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "lNow": "Now",
+  "lSun": "Sunrise",
+  "lEnd": "Runs out",
+  "inDays": "in {d}",
+  "@inDays": {
+    "placeholders": {
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "fUsable": "you can use",
+  "fDur": "runtime",
+  "fPer": "usable per 1%",
+  "emptyT": "Home power use is missing",
+  "emptyX": "Type it below and you’ll see here how long your battery lasts.",
+  "fixT": "Something needs fixing",
+  "fixPct": "The level must be a number from 0 to 100.",
+  "fixW": "Power use must be a number.",
+  "fixRsv": "Check the reserve: it must be a number from 0 to 90.",
+  "goField": "Go to it",
+  "inRsvT": "Already at the reserve",
+  "inRsvX": "The battery is already at its {r}% reserve: no energy left to use.",
+  "@inRsvX": {
+    "placeholders": {
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "noLoadT": "No power use",
+  "noLoadX": "With no power use, energy stays: you have {k} kWh stored.",
+  "@noLoadX": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "cLead": "Time to charge",
+  "gridT": "Uses about {k} kWh from the grid",
+  "@gridT": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "gridX": "About 10% is lost while charging. This is what adds to your power bill.",
+  "fToCharge": "to charge",
+  "fPerHour": "added per hour",
+  "lAt": "At {p}%",
+  "@lAt": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "alreadyT": "No need to charge",
+  "alreadyX": "The battery is already at {a}%, equal to or above the {b}% you want.",
+  "@alreadyX": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      }
+    }
+  },
+  "noPowT": "Charging power is missing",
+  "noPowX": "Enter the charging power: it must be greater than 0.",
+  "fixC": "Levels must be from 0 to 100.",
+  "lReserve": "{a}% − {r}% reserve = {u}% usable",
+  "@lReserve": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "r": {
+        "type": "String"
+      },
+      "u": {
+        "type": "String"
+      }
+    }
+  },
+  "lBelow": "{a}% is not above the {r}% reserve: 0% usable is left",
+  "@lBelow": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "lRun": "{k} ÷ {w} in use = {d}",
+  "@lRun": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "w": {
+        "type": "String"
+      },
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "lAmps": "{a} A × {v} V = {w} W of charging",
+  "@lAmps": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "v": {
+        "type": "String"
+      },
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "lDelta": "{b}% − {a}% = {d}% to charge",
+  "@lDelta": {
+    "placeholders": {
+      "b": {
+        "type": "String"
+      },
+      "a": {
+        "type": "String"
+      },
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "lKwh": "{c} × {d}% = {k}",
+  "@lKwh": {
+    "placeholders": {
+      "c": {
+        "type": "String"
+      },
+      "d": {
+        "type": "String"
+      },
+      "k": {
+        "type": "String"
+      }
+    }
+  },
+  "lTime": "{k} ÷ {p} of charging = {t}",
+  "@lTime": {
+    "placeholders": {
+      "k": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lFast": "From {a}% to {b}%: {k} ÷ {p} = {t}",
+  "@lFast": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "k": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lSlow": "From {a}% to {b}%, at half power: {k} ÷ {p} = {t}",
+  "@lSlow": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "k": {
+        "type": "String"
+      },
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lTotal": "Total: {a} + {b} = {c}",
+  "@lTotal": {
+    "placeholders": {
+      "a": {
+        "type": "String"
+      },
+      "b": {
+        "type": "String"
+      },
+      "c": {
+        "type": "String"
+      }
+    }
+  },
+  "shareT": "Share the report",
+  "shareDesc": "An image with the answer, the data and the steps. Easy to read in a chat.",
+  "shareImg": "Share image",
+  "saveImg": "Save to phone",
+  "shareHint": "“Share” opens your phone’s list: pick WhatsApp, Telegram or another app.",
+  "saved": "Image saved: {n}",
+  "@saved": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "fixFirst": "Fix the data to share the result.",
+  "rTitleN": "Battery report",
+  "rSubN": "At night",
+  "rSubC": "Charging from the grid",
+  "dataUsed": "Data used",
+  "howR": "How it’s calculated",
+  "dBat": "Battery",
+  "dLevel": "Level now",
+  "dLoad": "Power use",
+  "dAt": "Time of calculation",
+  "dSun": "Sunrise",
+  "dRsv": "Battery reserve",
+  "dLoss": "Inverter losses",
+  "lossYes": "Included (10%)",
+  "lossNo": "Not included",
+  "dTgt": "Charge to",
+  "dPow": "Charging power",
+  "footN": "This is an estimate: power use changes during the night. The battery shuts off at {r}% to protect its health.",
+  "@footN": {
+    "placeholders": {
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "footC": "This is an estimate: from 90% to 100% the charger slows down, so that part is calculated at half power.",
+  "fileN": "night-report",
+  "fileC": "charging-report",
+  "stripErr": "Something needs fixing",
+  "stripEmpty": "Power use is missing",
+  "hasta": "Until ",
+  "tagOk": "You make it",
+  "tagBad": "Short",
+  "tagFix": "Check",
+  "enPhrase": "In ",
+  "version": "Version {v} · Works without internet",
+  "@version": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      }
+    }
+  },
+  "days": "{d, select, 1{about 1 day} other{about {d} days}}",
+  "@days": {
+    "placeholders": {
+      "d": {
+        "type": "String"
+      }
+    }
+  },
+  "moreS": "Inverter losses: {on, select, true{on} other{off}} · Reserve: {r}%",
+  "@moreS": {
+    "placeholders": {
+      "on": {
+        "type": "String"
+      },
+      "r": {
+        "type": "String"
+      }
+    }
+  },
+  "readAs": "Read as: {v}.",
+  "@readAs": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      }
+    }
+  },
+  "readAsAlt": "Read as: {v}. If you meant {alt}, type it without the {sep}.",
+  "@readAsAlt": {
+    "placeholders": {
+      "v": {
+        "type": "String"
+      },
+      "alt": {
+        "type": "String"
+      },
+      "sep": {
+        "type": "String"
+      }
+    }
+  },
+  "lCap": "{c} × {u}% = {x}",
+  "@lCap": {
+    "placeholders": {
+      "c": {
+        "type": "String"
+      },
+      "u": {
+        "type": "String"
+      },
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "lCapLoss": "{c} × {u}% = {x}; minus 10% losses leaves {y}",
+  "@lCapLoss": {
+    "placeholders": {
+      "c": {
+        "type": "String"
+      },
+      "u": {
+        "type": "String"
+      },
+      "x": {
+        "type": "String"
+      },
+      "y": {
+        "type": "String"
+      }
+    }
+  },
+  "cSub": "Reaches {p}% around {t}",
+  "@cSub": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      },
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "batLblPrefix": "Your battery: ",
+  "ahResultPrefix": "Your battery is about ",
+  "trying": "Trying {w} W",
+  "@trying": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "appShort": "Battery",
+  "confirmReset": "Tap again to erase everything",
+  "example": "E.g. {x}",
+  "@example": {
+    "placeholders": {
+      "x": {
+        "type": "String"
+      }
+    }
+  },
+  "stripTakes": "Takes "
+}
