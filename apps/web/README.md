@@ -54,7 +54,10 @@ y `/*@pwa-start*/…/*@pwa-end*/` (aviso de instalar, registro del service worke
 
 ## Desarrollo
 
+Todos los comandos se corren dentro de `apps/web/`:
+
 ```bash
+cd apps/web
 npm install        # una vez
 npm run build      # genera dist/Battery-Calculator.html y dist/pwa/
 npm test           # construye y corre todas las pruebas (archivo único e instalable)
