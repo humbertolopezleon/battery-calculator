@@ -78,7 +78,9 @@ Future<T?> showAppSheet<T>(
 /// En la pantalla principal es un SnackBar. Dentro de una hoja (ruta modal) el SnackBar quedaría
 /// debajo de la hoja, tapado: ahí va en el Overlay raíz, encima de todo.
 void showToast(BuildContext context, String text) {
-  if (ModalRoute.of(context) is PopupRoute) {
+  final route = ModalRoute.of(context);
+  // Si la hoja ya se está cerrando (no es la ruta actual), el SnackBar de siempre sí se ve.
+  if (route is PopupRoute && route.isCurrent) {
     _showOverlayToast(context, text);
     return;
   }
