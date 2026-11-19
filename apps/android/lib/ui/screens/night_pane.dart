@@ -208,7 +208,7 @@ class NightPane extends StatelessWidget {
                 onNow: () {
                   final n = s.nowClock();
                   s.update((s) => s.nightNow = n);
-                  showToast(context, '${f.lang == 'es' ? 'Hora: ' : 'Time: '}${f.t.format(parseClock(n)!)}');
+                  showToast(context, l.timeToast(f.t.format(parseClock(n)!)));
                 },
               ),
               const SizedBox(height: AppSpace.block),

@@ -561,5 +561,13 @@
     }
   },
   "stripTakes": "Takes ",
-  "saveFailed": "The image couldn’t be saved."
+  "saveFailed": "The image couldn’t be saved.",
+  "timeToast": "Time: {t}",
+  "@timeToast": {
+    "placeholders": {
+      "t": {
+        "type": "String"
+      }
+    }
+  }
 }

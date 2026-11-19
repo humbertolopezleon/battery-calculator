@@ -1201,6 +1201,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo guardar la imagen.'**
   String get saveFailed;
+
+  /// No description provided for @timeToast.
+  ///
+  /// In es, this message translates to:
+  /// **'Hora: {t}'**
+  String timeToast(String t);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -40,6 +40,8 @@ Future<void> pumpApp(
   tester.platformDispatcher.platformBrightnessTestValue = brightness;
   addTearDown(tester.view.reset);
   addTearDown(tester.platformDispatcher.clearAllTestValues);
+  // Desmonta lo anterior: si no, el Navigator conserva las hojas abiertas de un montaje previo.
+  await tester.pumpWidget(const SizedBox.shrink());
   await tester.pumpWidget(BatteryApp(state: state));
   await tester.pumpAndSettle();
 }

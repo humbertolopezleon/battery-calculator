@@ -73,6 +73,7 @@ class _ShareBodyState extends State<_ShareBody> {
     final l = AppLocalizations.of(context);
     setState(() => _busy = true);
     try {
+      if (!await Gal.hasPermission()) await Gal.requestPermission();
       final bytes = await _png();
       final name = widget.data.fileName(l);
       await Gal.putImageBytes(bytes, name: name.replaceAll('.png', ''));

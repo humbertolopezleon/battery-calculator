@@ -645,4 +645,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveFailed => 'The image couldn’t be saved.';
+
+  @override
+  String timeToast(String t) {
+    return 'Time: $t';
+  }
 }

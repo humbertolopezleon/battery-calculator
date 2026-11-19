@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#0D1626</color>
+    <!-- Fondo de la pantalla de inicio (token bg). -->
+    <color name="splash_background">#EEF2F6</color>
+</resources>

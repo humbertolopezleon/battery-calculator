@@ -6,7 +6,7 @@ Este repositorio reúne las versiones de la app y el diseño que comparten.
 ```
 apps/
 ├── web/        La app web (v1.4): el archivo único para WhatsApp y la versión instalable (PWA)
-└── android/    La app nativa para Android, hecha con Flutter (en construcción)
+└── android/    La app nativa para Android, hecha con Flutter
 design/
 └── handoff/    El paquete de diseño: especificación, sistema de diseño, tokens,
                 vectores de prueba, capturas, prototipo, fuentes e ícono
@@ -30,6 +30,12 @@ App Flutter (Flutter 3.50 / Dart 3.14) que sigue el diseño de `design/handoff/`
 Sus pruebas de cálculo leen los casos directamente de
 [`design/handoff/docs/test-vectors.json`](design/handoff/docs/test-vectors.json),
 así las dos apps se comprueban contra los mismos números.
+Cómo compilar, qué APK mandar y cómo crear la firma: [`apps/android/README.md`](apps/android/README.md).
+
+```bash
+cd apps/android
+flutter test       # lógica, pantallas, accesibilidad y desbordes
+```
 
 ## El diseño — `design/handoff/`
 
