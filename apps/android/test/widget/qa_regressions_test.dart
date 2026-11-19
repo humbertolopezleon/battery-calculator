@@ -1,5 +1,6 @@
 // Regresiones de lo que encontró el QA en emuladores (apps/android/QA.md).
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:battery_calculator/app/app_state.dart';
 import 'package:battery_calculator/app/platform_info.dart';
@@ -148,6 +149,34 @@ void main() {
       expect(calls, isNot(contains('putImageBytes')));
       expect(find.textContaining('permite el acceso a fotos y archivos'), findsOneWidget);
       await tester.pumpAndSettle(const Duration(seconds: 5));
+    });
+  });
+
+  group('ícono de Android 7 (PNG, sin adaptativo)', () {
+    test('el manifiesto declara roundIcon y hay versión adaptativa', () {
+      final manifest = File('android/app/src/main/AndroidManifest.xml').readAsStringSync();
+      expect(manifest, contains('android:roundIcon="@mipmap/ic_launcher_round"'));
+      expect(File('android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml').existsSync(), isTrue);
+    });
+
+    testWidgets('los PNG tienen margen transparente (Lint IconLauncherShape)', (tester) async {
+      for (final d in ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi', 'xxxhdpi']) {
+        for (final name in ['ic_launcher', 'ic_launcher_round']) {
+          final bytes = File('android/app/src/main/res/mipmap-$d/$name.png').readAsBytesSync();
+          final data = await tester.runAsync(() async {
+            final codec = await ui.instantiateImageCodec(bytes);
+            final frame = await codec.getNextFrame();
+            final w = frame.image.width;
+            final rgba = await frame.image.toByteData();
+            frame.image.dispose();
+            return (w, rgba!);
+          });
+          final (w, rgba) = data!;
+          int alpha(int x, int y) => rgba.getUint8((y * w + x) * 4 + 3);
+          expect(alpha(0, 0), 0, reason: '$d/$name: esquina');
+          expect(alpha(w ~/ 2, w ~/ 2), 255, reason: '$d/$name: centro');
+        }
+      }
     });
   });
 }
