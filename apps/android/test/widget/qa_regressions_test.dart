@@ -147,7 +147,11 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       expect(calls.where((m) => m == 'requestPermission'), hasLength(1));
       expect(calls, isNot(contains('putImageBytes')));
-      expect(find.textContaining('permite el acceso a fotos y archivos'), findsOneWidget);
+      final toast = find.textContaining('permite el acceso a fotos y archivos');
+      expect(toast, findsOneWidget);
+      // El aviso se ve encima de la hoja (antes el SnackBar quedaba debajo, tapado).
+      final hit = tester.hitTestOnBinding(tester.getCenter(toast));
+      expect(hit.path.any((e) => e.target == tester.renderObject(toast)), isTrue, reason: 'aviso tapado');
       await tester.pumpAndSettle(const Duration(seconds: 5));
     });
   });

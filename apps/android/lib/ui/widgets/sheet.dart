@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 
 import '../../l10n/gen/app_localizations.dart';
@@ -72,7 +74,14 @@ Future<T?> showAppSheet<T>(
 }
 
 /// Aviso breve abajo.
+///
+/// En la pantalla principal es un SnackBar. Dentro de una hoja (ruta modal) el SnackBar quedaría
+/// debajo de la hoja, tapado: ahí va en el Overlay raíz, encima de todo.
 void showToast(BuildContext context, String text) {
+  if (ModalRoute.of(context) is PopupRoute) {
+    _showOverlayToast(context, text);
+    return;
+  }
   final c = context.colors;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
@@ -82,7 +91,51 @@ void showToast(BuildContext context, String text) {
         backgroundColor: c.tx,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        duration: const Duration(milliseconds: 2600),
+        duration: _toastDuration,
       ),
     );
+}
+
+const _toastDuration = Duration(milliseconds: 2600);
+OverlayEntry? _overlayToast;
+Timer? _overlayToastTimer;
+
+void _showOverlayToast(BuildContext context, String text) {
+  final c = context.colors;
+  _overlayToastTimer?.cancel();
+  _overlayToast?.remove();
+  final entry = OverlayEntry(
+    builder: (ctx) {
+      final mq = MediaQuery.of(ctx);
+      return Positioned(
+        left: 16,
+        right: 16,
+        bottom: 16 + mq.padding.bottom + mq.viewInsets.bottom,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: AppSpace.maxContent),
+            child: Semantics(
+              liveRegion: true,
+              container: true,
+              child: Material(
+                color: c.tx,
+                elevation: 6,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  child: Text(text, style: AppText.support.copyWith(color: c.bg)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+  _overlayToast = entry;
+  Overlay.of(context, rootOverlay: true).insert(entry);
+  _overlayToastTimer = Timer(_toastDuration, () {
+    if (_overlayToast == entry) _overlayToast = null;
+    entry.remove();
+  });
 }
