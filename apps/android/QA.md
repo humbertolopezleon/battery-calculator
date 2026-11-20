@@ -170,6 +170,17 @@ y con `uiautomator` en el emulador API 24 con el APK final:
 **No se pudo comprobar con TalkBack real**: falta confirmar que TalkBack enfoca y lee el nodo
 contenedor antes del campo.
 
+### H8 · Alta · Al cambiar el tema desde Ajustes, la hoja quedaba ilegible — resuelto
+
+Encontrado al probar en un teléfono, después de este QA. Al elegir «Oscuro» con la hoja de Ajustes
+abierta, el fondo de la hoja seguía blanco (el color se fijaba al abrirla) mientras el texto ya era
+claro: el título, «Idioma», «Colores de la pantalla», «Letra grande» y «Borrar mis datos» casi no se
+veían. Al pasar de oscuro a claro, al revés. Ahora el fondo se pinta con el tema actual.
+
+Evidencia: [`qa/24_tema_antes.png`](qa/24_tema_antes.png) (la captura ya estaba en este QA y no se
+detectó), [`qa/24_tema_oscuro_despues.png`](qa/24_tema_oscuro_despues.png) y
+[`qa/24_tema_claro_despues.png`](qa/24_tema_claro_despues.png).
+
 ### Observaciones sin cambio
 
 - **Compartir tarda en el emulador:** generar el PNG de 1080 × 2304 px con TCG tardó hasta 16 s;
@@ -217,6 +228,7 @@ contenedor antes del campo.
 | H7, H4 · nombre de los campos en API < 28 y campo de porciento | `4ab803c` |
 | H6 · ícono de Android 7 con margen y `roundIcon` | `3396360` |
 | H5 · avisos visibles encima de la hoja | `a18701f`, `8d13f80`, `3653d06` |
+| H8 · fondo de las hojas al cambiar el tema | `a6c411e` |
 
 Las correcciones tienen pruebas en `test/widget/qa_regressions_test.dart` (15 pruebas; las de cada
 hallazgo fallan con el código anterior, comprobado volviendo a esa versión de los archivos; el
