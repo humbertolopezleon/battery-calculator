@@ -21,11 +21,12 @@ Tokens exactos en `design/tokens.json`. Capturas de cada pantalla en `reference/
 │  [luna] Hasta las 9:08 a. m.         [✓ Llegas]     │
 ├─────────────────────────────────────────────────────┤
 │ Tarjeta de resultado                                │
-│ Tarjeta «Datos de la noche» / «Datos de la carga»   │
+│ Tarjeta «Datos del consumo» / «Datos de la noche» / │
+│  «Datos de la carga»                                │
 │ Nota de aproximación                                │
 │ [ Compartir resultado ]  (botón principal)          │
 ├ Barra inferior (82 dp) ─────────────────────────────┤
-│ [ (luna) De noche ]   [ (enchufe) Cargando con la red ] │
+│ [ (reloj) Duración ] [ (luna) De noche ] [ (enchufe) Cargando con la red ] │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -38,6 +39,13 @@ Tokens exactos en `design/tokens.json`. Capturas de cada pantalla en `reference/
 
 Hay una captura por pantalla en `reference/screens/` (`flujo-claro-*`, `flujo-oscuro-*`, `estados-*`, `peor-caso-*`, `reporte-*` e `ingles-*`).
 
+0. **Duración** (la primera pestaña):
+   - Tarjeta: encabezado «Duración · 600 W de consumo» con el ícono de reloj y el botón de compartir.
+   - «La batería dura» (17 sp, `tx2`), la duración (48 sp, negrita) y debajo «Empezando a las 9:00 p. m., se acaba cerca de las 9:08 a. m.» (17 sp, negrita).
+   - Con hora de fin: veredicto «Alcanza hasta las 2:00 a. m.» (verde) o «No alcanza hasta las 6:00 a. m.» (ladrillo, con «Probar con N W») y la regla, con una bandera en el círculo del marcador en lugar del sol.
+   - Tres cifras: que puedes usar, baja cada hora y útil por cada 1%.
+   - «Datos del consumo»: la batería deslizable con su campo, el consumo, «Desde qué hora» (campo de hora con el botón «Ahora» y la ayuda «Si no la cambias, es la hora actual.»), «Hasta qué hora (opcional)» (campo de hora con ícono de bandera; vacío dice «Sin hora de fin»; con valor lleva al lado un botón X de 48 × 56 dp, «Quitar la hora de fin»), «Más opciones» y «Cómo se calcula».
+   - Los campos de porciento, consumo, pérdidas y reserva son los mismos que en De noche: lo que se cambia en una pestaña se ve en la otra.
 1. **Primera vez** (solo si no hay batería):
    - Arriba, el ícono (56, radio 16), «Calculadora de Batería», el texto «Funciona sin internet» con un ✓ y una línea de introducción.
    - Una tarjeta «¿De qué tamaño es tu batería?» con el selector [En kWh | En voltios y Ah], los tres atajos y el campo «U otra capacidad».
@@ -120,7 +128,7 @@ Estados (§5 de SPEC):
   - Deshabilitado: fondo `disBg`, texto `dis` y borde discontinuo.
 - **Botón secundario:** borde de 2 dp `tx`, transparente; presionado, fondo `sf2`. La versión pequeña mide 48 dp.
 - **Botón de texto:** subrayado; deshabilitado, en `dis` y sin subrayado.
-- **Franja de respuesta:** 56 dp, fondo `sf`, borde inferior `ln2` y una sombra suave. Lleva el ícono del modo, el texto a 18 sp en negrita («Hasta las 9:08 a. m.» / «Tarda 3 h 16 min») y una píldora con el estado (✓ Llegas / ! No llegas / ! Revisa).
+- **Franja de respuesta:** 56 dp, fondo `sf`, borde inferior `ln2` y una sombra suave. Lleva el ícono del modo, el texto a 18 sp en negrita («Dura 12 h 8 min» / «Hasta las 9:08 a. m.» / «Tarda 3 h 16 min») y una píldora con el estado (✓ Alcanza / ! No alcanza / ✓ Llegas / ! No llegas / ! Revisa).
 - **Hoja inferior:** radio superior 28, asa de 40 × 5 dp, velo `scrim` y relleno de 20. Se cierra con la X, tocando fuera o con el botón atrás.
 
 ## 5. Comportamiento

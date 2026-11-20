@@ -1,0 +1,346 @@
+{
+ "_about": "Casos del modo Duración (SPEC §4.5). Idioma es, reloj de 24 h. «strip» es la franja: texto y, si hay veredicto, « · » y la píldora.",
+ "runtime": [
+  {
+   "name": "Sin hora de fin",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "600",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": null
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "12 h 8 min",
+    "sub": "Empezando a las 21:00, se acaba cerca de las 9:08",
+    "card": null,
+    "verdict": null,
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "≈ 6,5%baja cada hora",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 600 W de consumo = 12 h 8 min"
+    ],
+    "strip": "Dura 12 h 8 min"
+   }
+  },
+  {
+   "name": "Alcanza hasta la hora de fin",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "600",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": "02:00"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "12 h 8 min",
+    "sub": "Empezando a las 21:00, se acaba cerca de las 9:08",
+    "card": null,
+    "verdict": "Alcanza hasta las 2:00Sobran unos 4,28 kWh. A las 2:00 marcará cerca de 52%.",
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "≈ 6,5%baja cada hora",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 600 W de consumo = 12 h 8 min"
+    ],
+    "strip": "Dura 12 h 8 min · Alcanza"
+   }
+  },
+  {
+   "name": "No alcanza: Probar con",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "1500",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": "06:00"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "4 h 51 min",
+    "sub": "Empezando a las 21:00, se acaba cerca de la 1:51",
+    "card": null,
+    "verdict": "No alcanza hasta las 6:00Faltan unos 6,22 kWh. Para llegar a las 6:00, baja el consumo a 800 W o menos.Probar con 800 W",
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "≈ 16%baja cada hora",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 1,5 kW de consumo = 4 h 51 min"
+    ],
+    "strip": "Dura 4 h 51 min · No alcanza"
+   }
+  },
+  {
+   "name": "Fin más temprano que el inicio: día siguiente",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 50,
+    "loadW": "300",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "14:00",
+    "endTime": "13:00"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "13 h 31 min",
+    "sub": "Empezando a las 14:00, se acaba cerca de las 3:31",
+    "card": null,
+    "verdict": "No alcanza hasta las 13:00Faltan unos 2,84 kWh. Para llegar a las 13:00, baja el consumo a 170 W o menos.Probar con 170 W",
+    "figures": [
+     "4,06 kWhque puedes usar",
+     "≈ 3,3%baja cada hora",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "50% − 6% de reserva = 44% útil",
+     "10,24 kWh × 44% = 4,506 kWh; quitando el 10% de pérdidas quedan 4,055 kWh",
+     "4,055 kWh ÷ 300 W de consumo = 13 h 31 min"
+    ],
+    "strip": "Dura 13 h 31 min · No alcanza"
+   }
+  },
+  {
+   "name": "Fin igual al inicio: sin veredicto",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "600",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": "21:00"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "12 h 8 min",
+    "sub": "Empezando a las 21:00, se acaba cerca de las 9:08",
+    "card": null,
+    "verdict": null,
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "≈ 6,5%baja cada hora",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 600 W de consumo = 12 h 8 min"
+    ],
+    "strip": "Dura 12 h 8 min"
+   }
+  },
+  {
+   "name": "Alcanza con la hora del inicio a la 1",
+   "input": {
+    "capacityKwh": "5,12",
+    "percentNow": 100,
+    "loadW": "250",
+    "reservePct": "10",
+    "countInverterLoss": false,
+    "startTime": "01:15",
+    "endTime": "06:30"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "18 h 26 min",
+    "sub": "Empezando a la 1:15, se acaba cerca de las 19:41",
+    "card": null,
+    "verdict": "Alcanza hasta las 6:30Sobran unos 3,3 kWh. A las 6:30 marcará cerca de 74%.",
+    "figures": [
+     "4,61 kWhque puedes usar",
+     "≈ 4,9%baja cada hora",
+     "51 Whútil por cada 1%"
+    ],
+    "steps": [
+     "100% − 10% de reserva = 90% útil",
+     "5,12 kWh × 90% = 4,608 kWh",
+     "4,608 kWh ÷ 250 W de consumo = 18 h 26 min"
+    ],
+    "strip": "Dura 18 h 26 min · Alcanza"
+   }
+  },
+  {
+   "name": "Duración de días: sin hora de fin en la línea de abajo",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "10",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": null
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "unos 30 días",
+    "sub": null,
+    "card": null,
+    "verdict": null,
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "≈ 0,1%baja cada hora",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 10 W de consumo = unos 30 días"
+    ],
+    "strip": "Dura unos 30 días"
+   }
+  },
+  {
+   "name": "Menos de 1 min",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "6,5",
+    "loadW": "10000",
+    "reservePct": "6",
+    "countInverterLoss": false,
+    "startTime": "12:00",
+    "endTime": null
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "menos de 1 min",
+    "sub": null,
+    "card": null,
+    "verdict": null,
+    "figures": [
+     "0,0512 kWhque puedes usar",
+     "≈ 98%baja cada hora",
+     "102 Whútil por cada 1%"
+    ],
+    "steps": [
+     "6,5% − 6% de reserva = 0,5% útil",
+     "10,24 kWh × 0,5% = 51,2 Wh",
+     "51,2 Wh ÷ 10 kW de consumo = 0 min"
+    ],
+    "strip": "Dura menos de 1 min"
+   }
+  },
+  {
+   "name": "No alcanza: casi no queda energía",
+   "input": {
+    "capacityKwh": "1",
+    "percentNow": "6,1",
+    "loadW": "100",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": "07:00"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "1 min",
+    "sub": "Empezando a las 21:00, se acaba cerca de las 21:01",
+    "card": null,
+    "verdict": "No alcanza hasta las 7:00Faltan unos 1 kWh. Casi no queda energía para usar.",
+    "figures": [
+     "0,0009 kWhque puedes usar",
+     "≈ 11%baja cada hora",
+     "9 Whútil por cada 1%"
+    ],
+    "steps": [
+     "6,1% − 6% de reserva = 0,1% útil",
+     "1 kWh × 0,1% = 1 Wh; quitando el 10% de pérdidas quedan 0,9 Wh",
+     "0,9 Wh ÷ 100 W de consumo = 1 min"
+    ],
+    "strip": "Dura 1 min · No alcanza"
+   }
+  },
+  {
+   "name": "En la reserva",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 5,
+    "loadW": "600",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": "07:00"
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "sub": null,
+    "card": "Ya está en la reservaLa batería ya está en la reserva del 6%: no queda energía para usar.",
+    "verdict": null,
+    "figures": [],
+    "steps": [
+     "5% no pasa de la reserva del 6%: queda 0% útil"
+    ],
+    "strip": "Ya está en la reserva"
+   }
+  },
+  {
+   "name": "Sin consumo",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "0",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": null
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "sub": null,
+    "card": "Sin consumoSin consumo, la energía se mantiene: tienes 7,28 kWh guardados.",
+    "verdict": null,
+    "figures": [],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh"
+    ],
+    "strip": "Sin consumo"
+   }
+  },
+  {
+   "name": "Falta el consumo",
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "",
+    "reservePct": "6",
+    "countInverterLoss": true,
+    "startTime": "21:00",
+    "endTime": null
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "sub": null,
+    "card": "Falta el consumo de la casaEscríbelo abajo y aquí verás cuánto te dura la batería.",
+    "verdict": null,
+    "figures": [],
+    "steps": [],
+    "strip": "Falta el consumo"
+   }
+  }
+ ]
+}

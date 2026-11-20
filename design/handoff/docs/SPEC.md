@@ -4,10 +4,11 @@ Fuente de verdad del comportamiento. Si algo choca con las imágenes de `referen
 
 ## 1. Qué es
 
-Una app Android para personas que tienen paneles solares, inversor y batería en casa. Responde dos preguntas:
+Una app Android para personas que tienen paneles solares, inversor y batería en casa. Responde tres preguntas:
 
-1. **De noche:** ¿hasta qué hora me alcanza la batería con el consumo que tengo, y llego al amanecer?
-2. **Cargando con la red:** ¿cuánto tarda en cargarse la batería con la corriente de la calle, y cuánta energía de la red gasta?
+1. **Duración:** ¿cuánto me dura la batería con el consumo que tengo, y me alcanza hasta cierta hora?
+2. **De noche:** ¿hasta qué hora me alcanza la batería con el consumo que tengo, y llego al amanecer?
+3. **Cargando con la red:** ¿cuánto tarda en cargarse la batería con la corriente de la calle, y cuánta energía de la red gasta?
 
 Se reparte como APK por WhatsApp y Telegram. Funciona **100% sin internet**: no pide el permiso `INTERNET`, no tiene analítica, cuentas, anuncios ni historial.
 
@@ -16,6 +17,7 @@ Usuarios: gente que no sabe de informática, de cualquier edad. A menudo usan el
 ## 2. Alcance (no añadir nada más)
 
 - **Batería** (se pide una vez y se recuerda): capacidad en kWh, o voltios y Ah. Atajos: 5,12, 10,24 y 15 kWh.
+- **Duración** (la primera pestaña): porciento ahora, consumo (W), desde qué hora (por defecto, la hora actual) y, opcional, hasta qué hora. Comparte con De noche el porciento, el consumo y las opciones avanzadas.
 - **De noche:** porciento ahora, consumo (W), hora ahora y hora en que vuelve el sol. Opciones avanzadas: pérdidas del inversor (10%) y reserva (6% por defecto, de 0 a 90%).
 - **Cargando con la red:** porciento ahora, hasta qué porciento cargar, potencia de carga (en W, o en A × V) y hora ahora.
 - **Reporte:** una imagen PNG vertical de 1080 px de ancho, para compartir o guardar.
@@ -143,7 +145,30 @@ red   = dKwh / 0.9                            // kWh que gasta de la red
   - «Total: a + b = total»
 - Si hay un solo tramo, la línea simple: `dKwh ÷ u de carga = dur`.
 
-### 4.4 Formatos
+### 4.5 Duración
+
+Es la cuenta de De noche (§4.2) sin el amanecer: `now` es la hora de inicio y `sun`, la hora de fin opcional. Entradas: `pct`, `W`, `rsv`, `loss` (los mismos campos que De noche), `start` (minutos; al abrir la app, la hora del teléfono) y `end` (minutos o vacío).
+
+```
+c, d, u, wm   como en §4.2
+perHour = min(100, d / (cap × s) × 100)       // % que baja cada hora
+```
+
+Estados, en este orden: vacío («Falta el consumo de la casa», con el texto «…verás cuánto te dura la batería»), corregir, en la reserva, sin consumo y resultado. Son los de §4.2.
+
+Qué muestra la tarjeta:
+
+- «La batería dura» (17 sp) y, grande, `dur(u)`; si `wm < 1`, «menos de 1 min».
+- Debajo, si `wm ≥ 1` y `wm < 1440`: «Empezando a {la(s)} `start`, se acaba cerca de {la(s)} `start + 60·u`».
+- **Veredicto** (solo si hay `end`, `i > 0` y `d > 0`): igual que en §4.2 con `sun = end`. Si `end` es menor que `start`, es del día siguiente; si es igual, no hay veredicto.
+  - Llega: título «Alcanza hasta {la(s)} `end`»; texto «Sobran unos…» o «La energía alcanza justo hasta…».
+  - No llega: título «No alcanza hasta {la(s)} `end`»; texto «Faltan unos…» y botón «Probar con {k} W» con las mismas reglas.
+- **Regla:** la de la noche, con el marcador del fin (bandera) en lugar del sol. Leyenda: Inicio, Hasta y Se acaba, en el orden en que aparecen.
+- **Cifras:** `c` «que puedes usar», `≈ perHour%` «baja cada hora» (1 decimal si es menor que 10; «< 0,1%» si es menor que 0,1) y `perPct` «útil por cada 1%».
+- **Paso a paso:** el de §4.2.
+- **Franja:** «Dura `dur(u)`», con la píldora «Alcanza» o «No alcanza» solo si hay veredicto.
+
+### 4.6 Formatos
 
 - `dur(h)`:
   - `"∞"` si no es finito.
@@ -179,21 +204,21 @@ Estados de la tarjeta cuando no hay resultado:
 Todo se guarda en el teléfono (`shared_preferences`) en cada cambio:
 
 - La batería.
-- Todos los campos.
+- Todos los campos, incluida la hora de fin de Duración.
 - Las opciones avanzadas.
-- La pestaña activa.
+- La pestaña activa. La primera vez se abre Duración; quien ya tenía una pestaña guardada sigue en ella.
 - El idioma, el tema y la letra grande.
 
-La «hora ahora» **no** se recuerda: al abrir la app, toma la hora actual. Existe una acción «Borrar mis datos y empezar de nuevo» en Ajustes, con confirmación de dos toques dentro de la app.
+La «hora ahora» de De noche y de Carga y la hora de inicio de Duración **no** se recuerdan: al abrir la app, toman la hora actual. Existe una acción «Borrar mis datos y empezar de nuevo» en Ajustes, con confirmación de dos toques dentro de la app.
 
 ## 7. Reporte PNG
 
 Una imagen de 1080 px de ancho, de alto variable (unos 1700–2000 px), **siempre en tema claro**, con este contenido:
 
-1. **Cabecera** azul noche: ícono, «Reporte de batería», el modo (De noche / Cargando con la red), y la fecha y hora.
+1. **Cabecera** azul noche: ícono, «Reporte de batería», el modo (Duración / De noche / Cargando con la red), y la fecha y hora.
 2. **Frase de entrada** y respuesta grande (≈ 156 px de altura de letra).
 3. **Veredicto o aviso** de la red.
-4. **Regla** (de noche).
+4. **Regla** (de noche, y en Duración si hay hora de fin).
 5. **Tres cifras.**
 6. **Datos usados**, en dos columnas, junto a **Así se calcula**.
 7. **Nota de aproximación** y pie con el nombre de la app.
@@ -202,7 +227,7 @@ Implementación sugerida: un widget `ReportCard` de 1080 dp de ancho, renderizad
 
 - **Compartir:** abre la hoja de compartir del sistema (`share_plus`) con el PNG.
 - **Guardar en el teléfono:** guarda en la galería (paquete `gal`, sin pedir permisos en Android 10+).
-- Nombre de archivo: `reporte-noche.png` / `reporte-carga.png` (en inglés: `night-report.png` / `charging-report.png`).
+- Nombre de archivo: `reporte-duracion.png` / `reporte-noche.png` / `reporte-carga.png` (en inglés: `runtime-report.png` / `night-report.png` / `charging-report.png`).
 
 ## 8. Textos
 
@@ -211,9 +236,12 @@ Todos los textos, en español e inglés, están en el objeto `STR` de `reference
 - El español es el idioma de referencia: diseña para que quepa el español.
 - Respeta la redacción salvo errores evidentes.
 - Hay textos que solo existen en el prototipo y sobran en la app: «Prototipo…», «Este navegador no puede…».
+- Los textos de Duración no están en el prototipo: se escribieron directamente en los ARB (español e inglés).
 
 ## 9. Casos de prueba
 
 `docs/test-vectors.json` tiene 12 casos de noche y 8 de carga. Se sacaron ejecutando el prototipo con `es-ES` y horario de 24 h: la entrada y los textos esperados de la tarjeta, cifras y pasos.
 
 Son el contrato de la lógica: los tests unitarios de `CalculatorService` y de los formateadores deben reproducirlos (los valores; los textos, con la misma configuración de idioma y 24 h).
+
+`docs/test-vectors-runtime.json` tiene 12 casos de Duración (§4.5), con la misma configuración. Se generaron con una implementación de referencia independiente de la app, no con el prototipo, que no tiene este modo.
