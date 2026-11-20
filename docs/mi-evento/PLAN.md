@@ -37,7 +37,7 @@ Diseño de referencia de la interfaz: https://claude.ai/artifact/SiHuWyWtBGWTEKv
 |---|---|
 | Desarrollo | Un solo desarrollador, con experiencia en web (TypeScript/React). |
 | Stack | Una base TypeScript/React. Capacitor para la APK, Tauri 2 para Windows, PWA como plan B. |
-| Android | Mínimo recomendado Android 7.0 (API 24), con WebView actualizado (Chrome 60 o superior). |
+| Android | Mínimo recomendado Android 7.0 (API 24), con WebView actualizado (Chrome 61 o superior). |
 | Windows | Windows 10/11 en su mayoría. |
 | Tamaño de evento | Hasta ~500 asistentes. Las personas no se reutilizan entre eventos. |
 | Identificación en comidas | Búsqueda por nombre y número de inscripción. QR en la Fase 3. |
@@ -103,7 +103,7 @@ Con A, cambiar a B más adelante solo toca los adaptadores.
 | Flutter | Comparte código con Windows. | APK más pesada y Dart nuevo para el desarrollador. |
 | React Native | Rendimiento nativo. | No comparte UI con la PC y es débil en Windows. |
 
-**Versión mínima: Android 7.0 (API 24), con 2 GB de RAM.** La condición real es el WebView (Chrome 60 o superior). En Android 7–9 el proveedor de WebView puede ser Chrome si está instalado. La app comprueba la versión al iniciar y avisa si es antigua. Compilar con `build.target` bajo (ES2017 o menos) y probar en 2 o 3 móviles viejos reales en la Fase 0. Si falla, la salida es Kotlin nativo para la APK; por eso `core` debe permanecer puro.
+**Versión mínima: Android 7.0 (API 24), con 2 GB de RAM.** La condición real es el WebView (Chrome 61 o superior: Chrome 60 trae los módulos ES desactivados). En Android 7–9 el proveedor de WebView puede ser Chrome si está instalado. La app comprueba la versión al iniciar y avisa si es antigua. Compilar con `build.target` bajo (ES2017 o menos) y probar en 2 o 3 móviles viejos reales en la Fase 0. Si falla, la salida es Kotlin nativo para la APK; por eso `core` debe permanecer puro.
 
 ### PC: alternativas
 

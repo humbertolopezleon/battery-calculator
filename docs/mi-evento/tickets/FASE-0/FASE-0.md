@@ -35,7 +35,7 @@ Dejar lista la base técnica compartida por la APK y la app de Windows, y despej
 
 ### Spikes (cada uno debe terminar con una conclusión escrita)
 
-1. **WebView en móviles viejos:** probar la APK en 2 o 3 móviles reales con Android 7.0 o superior y poca RAM. Medir arranque, fluidez de la lista de 500 asistentes y la búsqueda. Verificar que se detecta un WebView anterior a Chrome 60 y se avisa al usuario.
+1. **WebView en móviles viejos:** probar la APK en 2 o 3 móviles reales con Android 7.0 o superior y poca RAM. Medir arranque, fluidez de la lista de 500 asistentes y la búsqueda. Verificar que se detecta un WebView anterior a Chrome 61 y se avisa al usuario.
 2. **Tauri en Windows 10/11:** compilar, instalar sin permisos de administrador y abrir SQLite con el archivo de datos visible. Comprobar el comportamiento sin WebView2 (instalador slim frente al completo).
 3. **SQLite en Capacitor:** transacciones, recuperación tras cerrar la app a la fuerza, y mismo esquema que en Tauri.
 4. **Permiso INTERNET:** comprobar si la APK de release funciona sin declarar el permiso INTERNET.
@@ -64,7 +64,7 @@ Dejar lista la base técnica compartida por la APK y la app de Windows, y despej
 
 - Base web TypeScript/React con Capacitor y Tauri 2. PWA como plan B.
 - SQLite nativo por plataforma tras una interfaz `Repository`.
-- Android 7.0 (API 24) como mínimo recomendado, con WebView ≥ Chrome 60.
+- Android 7.0 (API 24) como mínimo recomendado, con WebView ≥ Chrome 61 (Chrome 60 trae los módulos ES desactivados).
 - IDs UUID v7, marcas de tiempo en epoch ms UTC, borrado lógico.
 
 ## Riesgos y preguntas abiertas

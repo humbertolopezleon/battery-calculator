@@ -52,7 +52,7 @@ Que la información no se pierda si falla el dispositivo, que solo la vea quien 
 - [ ] El PIN se pide al abrir y tras inactividad, y un PIN incorrecto no da acceso.
 - [ ] Borrar los datos personales de un evento elimina nombres, teléfonos y observaciones, y conserva las estadísticas agregadas.
 - [ ] El evento de ensayo se puede usar sin afectar a un evento real.
-- [ ] Con WebView anterior a Chrome 60, la app lo avisa al iniciar.
+- [ ] Con WebView anterior a Chrome 61, la app lo avisa al iniciar.
 
 ## Fuera de alcance
 

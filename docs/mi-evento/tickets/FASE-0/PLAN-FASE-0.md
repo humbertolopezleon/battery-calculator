@@ -13,7 +13,7 @@ Crear en `mi-evento/` un monorepo npm que compila la web compartida y las dos c�
 | Hallazgo | Consecuencia |
 |---|---|
 | La raíz del repo es Battery Calculator, con su propio `package.json`, `build.js` y pruebas | El monorepo vive en `mi-evento/` y no toca nada de la raíz. |
-| Capacitor 8.6.2: `minSdkVersion = 24`, WebView mínima por defecto 60 (`android.minWebViewVersion`), suelo 55, Node ≥ 22 | Confirma Android 7.0 y Chrome 60 del plan. Se fija `minWebViewVersion: 60` de forma explícita. |
+| Capacitor 8.6.2: `minSdkVersion = 24`, WebView mínima por defecto 60 (`android.minWebViewVersion`), suelo 55, Node ≥ 22 | Confirma Android 7.0. Vite emite `<script type="module">`, que Chrome 60 trae desactivado y Chrome 61 activa, así que el mínimo del plan sube a Chrome 61 (D14) y se fija `minWebViewVersion: 61` de forma explícita. |
 | `tauri-plugin-sql` 2.6.0 está sobre un pool de conexiones y su código no menciona transacciones | Una transacción entre llamadas JS no queda garantizada en una sola conexión. Se usan comandos Rust propios con `rusqlite`. |
 | Entorno de esta sesión: Node 22.23, Rust 1.97, gcc 13 y `node:sqlite`. No hay Android SDK ni `webkit2gtk` | `core`, `ui`, la web y el crate de SQLite se verifican aquí. La APK, el instalador de Windows y los spikes no. |
 | Atkinson Hyperlegible 400 y 700 ya existen en `src/fonts`. Nunito solo está en `@fontsource/nunito` 5.3.0 | Las cuatro fuentes se copian de `@fontsource` (licencia OFL) para que `ui` sea independiente. |
@@ -28,21 +28,22 @@ Crear en `mi-evento/` un monorepo npm que compila la web compartida y las dos c�
 | D2 | Se añade `apps/web`: una app Vite con React que sirve de banco de pruebas | Ambas cáscaras necesitan un bundle web. Es mínima y sin pantallas de negocio. |
 | D3 | `core` define un puerto `SqlDriver` mínimo (`execute`, `query`, `transaction`, `close`) y una clase `Repository` encima. Los adaptadores solo implementan el puerto | La lógica de columnas base se prueba una vez. Precisa el ticket, que decía «Repository con dos adaptadores». |
 | D4 | Adaptadores de `SqlDriver`: `@capacitor-community/sqlite` 8.1.1, comandos Rust con `rusqlite` en Tauri y `node:sqlite` solo para pruebas | Elección del desarrollador para Tauri. `node:sqlite` evita dependencias nativas en las pruebas. |
-| D5 | SHA-256 con WebCrypto (`crypto.subtle`) | Disponible en Chrome 60 en contextos seguros. El spike 1 lo comprueba. Si falla, se pasa a SHA-256 en JS puro. |
+| D5 | SHA-256 con WebCrypto (`crypto.subtle`) | Disponible en Chrome 61 en contextos seguros. El spike 1 lo comprueba. Si falla, se pasa a SHA-256 en JS puro. |
 | D6 | Claves de provincias y municipios como texto legible (`matanzas`, `matanzas.cardenas`) | Estables, sin depender de códigos oficiales no verificados. |
 | D7 | `tokens.css` es la única fuente de los tokens. Un test comprueba el contraste de los pares de color | El diseño exige contraste. |
 | D8 | El CI firma la APK si existen los secretos de keystore. Si no, sube una APK de depuración etiquetada como tal | La keystore real la crea el desarrollador y nunca se sube al repo. |
 | D9 | La exportación incluye `counts` por tabla además de `sha256` | El plan §9 pide verificar checksum y conteos. |
 | D10 | Spikes: plantilla de informe y guía de medición por spike, con la conclusión pendiente de los datos del desarrollador | Elección del desarrollador. |
-| D11 | Las restricciones UNIQUE del plan se implementan como índices únicos parciales `WHERE deleted_at IS NULL` | Con borrado lógico, un UNIQUE normal bloquearía la reasignación. `registration_number` es la excepción: único incluso entre borrados. |
+| D11 | Las restricciones UNIQUE del plan se implementan como índices únicos parciales `WHERE deleted_at IS NULL`. La excepción de unicidad entre columnas son las parejas, que usan triggers | Con borrado lógico, un UNIQUE normal bloquearía la reasignación. `registration_number` es la excepción: único incluso entre borrados. Un asistente no puede estar en dos parejas vivas ni siquiera cruzando columnas (`a` en una y `b` en otra), y un índice parcial por columna no cubre ese caso (comprobado con `node:sqlite`). |
 | D12 | TypeScript `5.9.3`, no 7.0.2 | La compatibilidad de la versión 7 con Vitest y Vite no se pudo verificar. |
 | D13 | Los adaptadores serializan sus llamadas con un `Mutex` | Una transacción no se mezcla con otra sobre una conexión única. |
+| D14 | WebView mínimo Chrome 61 (no 60) y compilación con `build.target: es2017` | Vite emite `<script type="module">`: Chrome 60 lo trae desactivado y Chrome 61 lo activa ([caniuse](https://caniuse.com/esm)). `uuid` v7 usa `??`, `?.` y `??=` (Chrome 80), que esbuild rebaja a ES2017 al compilar; por eso una prueba comprueba que el bundle final no contiene sintaxis posterior a ES2017. |
 
 ## Cambios por archivo
 
 ### Raíz del monorepo
 
-- `mi-evento/package.json`: `private`, `workspaces: ["packages/*", "apps/*"]`, scripts `typecheck`, `test`, `build`, `e2e`. Node `>=22`.
+- `mi-evento/package.json`: `private`, `workspaces: ["packages/*", "apps/*"]`, scripts `typecheck`, `test`, `build`, `e2e`. `engines.node: "^22.22.2 || ^24.15.0"` (lo que exigen Vite 8.3.8, Vitest 5.1.1 y jsdom 31.0.1).
 - `mi-evento/tsconfig.base.json`: `target: ES2017`, `strict: true`, `module: ESNext`.
 - `mi-evento/README.md`: cómo instalar, probar y compilar.
 - `.gitignore` de la raíz: añadir `mi-evento/**/dist`, `mi-evento/apps/shell-desktop/src-tauri/target` y `mi-evento/apps/shell-desktop/crates/db/target`.
@@ -55,8 +56,8 @@ Versiones: TypeScript `5.9.3`, Vitest `5.1.1`, `uuid` `14.0.3`. `tsconfig` con `
 |---|---|
 | `src/ids.ts` | `newId(): string` con UUID v7 de `uuid`. Nunca usa `crypto.randomUUID()`. |
 | `src/clock.ts` | `interface Clock { now(): number }` y `systemClock`. Marcas de tiempo en epoch ms UTC. |
-| `src/normalize.ts` | `normalizeName(s)`: minúsculas, `normalize('NFD')`, quita `[̀-ͯ]` y colapsa espacios. No usa `\p{…}`, que Chrome 60 no soporta. |
-| `src/platform/webview.ts` | `parseChromeMajor(ua): number \| null` y `isWebViewSupported(ua, min = 60)`. Funciones puras. |
+| `src/normalize.ts` | `normalizeName(s)`: minúsculas, `normalize('NFD')`, quita `[̀-ͯ]` y colapsa espacios. No usa `\p{…}`, que Chrome 61 no soporta. |
+| `src/platform/webview.ts` | `parseChromeMajor(ua): number \| null` y `isWebViewSupported(ua, min = 61)`. Funciones puras. |
 | `src/db/driver.ts` | Puerto `SqlDriver` y `Mutex`. |
 | `src/db/schema.ts` | Metadatos de cada tabla: nombre, columnas, ámbito (`global`, `event`, `device`) y filtro por evento al exportar. Es la lista blanca de nombres. |
 | `src/db/migrations.ts` | `MIGRATIONS` (cada sentencia por separado) y `SCHEMA_VERSION = 1`. |
@@ -98,9 +99,10 @@ class Repository {
 
 **Migración 0001:**
 
-- **Tablas:** `events`, `churches`, `attendees`, `couples`, `attendee_groups` (no `groups`, palabra reservada), `group_members`, `lodgings`, `rooms`, `lodging_assignments`, `teams`, `team_memberships`, `team_moves`, `control_types`, `control_sessions`, `control_records`, `proposals`, más `settings` (clave-valor) y `backup_log`, que son locales del dispositivo y no llevan columnas base. Campos y relaciones según `docs/mi-evento/PLAN.md` §3.
-- **Columnas base** en las 17 tablas sincronizables: `id`, `created_at`, `updated_at`, `deleted_at`, `rev`, `device_id`.
-- **Unicidad con borrado lógico:** índices únicos parciales `WHERE deleted_at IS NULL` en: asignación de hospedaje por (`event_id`, `attendee_id`), pareja por cada miembro, grupo por asistente, membresía de equipo por (`event_id`, `attendee_id`), registro de comida por (`session_id`, `attendee_id`) e iglesia por (`name_norm`, `municipality_code`) cuando no está fusionada. `registration_number` es único por (`event_id`, `registration_number`) incluso entre borrados.
+- **Tablas** (16 sincronizables más 2 locales, 18 en total): `events`, `churches`, `attendees`, `couples`, `attendee_groups` (no `groups`, palabra reservada), `group_members`, `lodgings`, `rooms`, `lodging_assignments`, `teams`, `team_memberships`, `team_moves`, `control_types`, `control_sessions`, `control_records`, `proposals`, más `settings` (clave-valor) y `backup_log`, que son locales del dispositivo y no llevan columnas base. Campos y relaciones según `docs/mi-evento/PLAN.md` §3.
+- **Columnas base** en las 16 tablas sincronizables: `id`, `created_at`, `updated_at`, `deleted_at`, `rev`, `device_id`.
+- **Unicidad con borrado lógico:** índices únicos parciales `WHERE deleted_at IS NULL` en: asignación de hospedaje por (`event_id`, `attendee_id`), grupo por asistente, membresía de equipo por (`event_id`, `attendee_id`), registro de comida por (`session_id`, `attendee_id`) e iglesia por (`name_norm`, `municipality_code`) cuando no está fusionada. `registration_number` es único por (`event_id`, `registration_number`) incluso entre borrados.
+- **Parejas:** `CHECK (attendee_a_id <> attendee_b_id)` y dos triggers, `BEFORE INSERT` y `BEFORE UPDATE OF attendee_a_id, attendee_b_id, deleted_at`, que rechazan con `RAISE(ABORT, 'PAREJA_DUPLICADA')` una pareja viva si alguno de sus dos asistentes ya aparece, en cualquiera de las dos columnas, en otra pareja viva. Así se impide el caso cruzado y la reactivación de una pareja borrada. El mensaje de `RAISE` va entre comillas simples: con comillas dobles SQLite lo toma como nombre de columna.
 - **Lápidas:** las columnas personales de `attendees` admiten NULL solo si `deleted_at IS NOT NULL`, con un CHECK explícito que exige también `IS NOT NULL` en filas vivas.
 - **Otros CHECK:** `age` entre 0 y 120 y `sex` en `M` o `F` en filas vivas, enums como texto con CHECK y claves foráneas activas.
 
@@ -141,7 +143,7 @@ Versiones: React `19.3.1`, `@testing-library/react` `16.3.3`, `jsdom` `31.0.1`.
 App Vite con React, sin pantallas de negocio, `build.target: es2017`. `Harness.tsx` tiene cuatro secciones:
 
 1. **Estilo:** muestra los componentes de `ui`.
-2. **Diagnóstico:** plataforma, versión de WebView con aviso si es menor de 60, y disponibilidad de `crypto.subtle` y de SQLite.
+2. **Diagnóstico:** plataforma, versión de WebView con aviso si es menor de 61, y disponibilidad de `crypto.subtle` y de SQLite.
 3. **Datos:** botones «Ejecutar pruebas de contrato» (con `runDriverContract`), «Cargar 500 asistentes» y «Buscar», que miden el tiempo. Más «Exportar» e «Importar» JSON y «Probar escritura en Documentos» para el spike 5.
 4. **Imagen:** prototipo de la imagen de WhatsApp de 1080×1350 con Canvas 2D, que espera `document.fonts.load()` y se comparte con `@capacitor/share` o se guarda en PC.
 
@@ -151,7 +153,7 @@ App Vite con React, sin pantallas de negocio, `build.target: es2017`. `Harness.t
 
 ### `apps/shell-android`
 
-Capacitor 8.6.2 con `@capacitor/share` 8.0.3 y `@capacitor/filesystem` 8.1.5. En `capacitor.config.ts`: `webDir` apunta al build de `apps/web` y `android.minWebViewVersion: 60`. `minSdkVersion` queda en 24, el valor del template de Capacitor 8.
+Capacitor 8.6.2 con `@capacitor/share` 8.0.3 y `@capacitor/filesystem` 8.1.5. En `capacitor.config.ts`: `webDir` apunta al build de `apps/web` y `android.minWebViewVersion: 61`. `minSdkVersion` queda en 24, el valor del template de Capacitor 8.
 
 El permiso INTERNET se declara en el manifiesto principal por la recarga en vivo en depuración. `android/app/src/release/AndroidManifest.xml` lo quita con `tools:node="remove"`, lo que también elimina el que aporten los plugins. El spike 4 comprueba que la app funciona sin él.
 
@@ -200,7 +202,7 @@ Los nombres se cargan de una fuente oficial. Si no es accesible, se escriben de 
 |---|---|
 | `ids` | `newId()` devuelve un UUID con versión 7 y variante correcta. Tres ids seguidos se ordenan de forma creciente. |
 | `normalize` | `"José Pérez"` → `"jose perez"`. `"  María   LÓPEZ "` → `"maria lopez"`. `"Ñandú"` → `"nandu"`. |
-| `webview` | Un UA con `Chrome/51` da 51. Con `Chrome/60` da 60. Sin Chrome da `null`. `isWebViewSupported` es falso con 59 y verdadero con 60. |
+| `webview` | Un UA con `Chrome/51` da 51. Con `Chrome/61` da 61. Sin Chrome da `null`. `isWebViewSupported` es falso con 60 y verdadero con 61. |
 | `migrate` | Una base vacía queda en `user_version = 1` con todas las tablas. Migrar dos veces no cambia nada. Una base con versión mayor que `SCHEMA_VERSION` se rechaza. |
 | Restricciones | Se aplican las claves foráneas. Un asistente vivo sin sexo se rechaza, y tras `softDelete` el NULL se acepta. Una edad de 121 se rechaza. `registration_number` no se repite ni entre borrados. Una segunda asignación viva del mismo asistente se rechaza, y tras borrar la primera se acepta. Lo mismo para parejas, miembros de grupo, membresías de equipo y registros de comida. |
 | `Repository` | `insert` rellena las columnas base con `rev = 1`. `update` sube `rev` y `updated_at`. Actualizar un registro borrado falla. `softDelete` en `attendees` vacía los datos personales. `getById` excluye los borrados. Un nombre de tabla o columna inválido se rechaza, incluido un intento de inyección. |
@@ -213,7 +215,7 @@ Los nombres se cargan de una fuente oficial. Si no es accesible, se escriben de 
 
 **`crates/db`** (`cargo test`): la apertura activa WAL y claves foráneas. Commit y rollback funcionan. Los parámetros enteros, de texto y NULL se enlazan bien. `query` devuelve filas como mapas. Varios hilos se serializan. Usar una base cerrada devuelve error.
 
-**`apps/web`** (Playwright, sin conexión): la web carga con la red bloqueada, sin peticiones fallidas, sin errores de consola y con las fuentes locales activas.
+**`apps/web`** (Playwright, sin conexión): la web carga con la red bloqueada, sin peticiones fallidas, sin errores de consola y con las fuentes locales activas. Una prueba de Vitest comprueba que el bundle compilado solo contiene sintaxis ES2017.
 
 ## Verificación
 
@@ -224,6 +226,7 @@ npm test -w @mi-evento/core                              # "0 failed"; el númer
 npm test -w @mi-evento/ui                                # "0 failed"
 (cd apps/shell-desktop/crates/db && cargo test)          # "test result: ok. … 0 failed"
 npm run build -w @mi-evento/web                          # genera apps/web/dist sin URLs http(s) externas
+npm test -w @mi-evento/web                               # "0 failed"; el bundle solo contiene sintaxis ES2017
 npm run e2e -w @mi-evento/web                            # "0 failed"
 grep -rnE "from '(react|@capacitor|@tauri)" packages/core/src   # sin salida
 node -e "require('js-yaml').load(require('fs').readFileSync('../.github/workflows/mi-evento.yml','utf8'))"  # código 0
@@ -278,7 +281,7 @@ Pruebas primero en cada paso:
 
 - **Nombres de municipios:** si no hay una fuente oficial accesible, se escriben de memoria. Los conteos se comprueban, los nombres no.
 - **`crypto.subtle` en WebViews antiguos:** lo comprueba el spike 1. Plan B: SHA-256 en JS puro.
-- **API de transacciones de `@capacitor-community/sqlite`:** no se pudo verificar en la sesión. El spike 3 lo comprueba y, si falla, el adaptador usa sentencias `BEGIN` y `COMMIT` explícitas.
+- **Transacciones de `@capacitor-community/sqlite`:** la API existe (`beginTransaction`, `commitTransaction`, `rollbackTransaction`, `isTransactionActive` y `executeTransaction`, comprobadas en las definiciones de la versión 8.1.1). Lo que queda abierto es que una transacción sobre una sola conexión se mantenga de forma fiable entre varias llamadas JS en un dispositivo real. Lo comprueba el spike 3 y, si falla, el adaptador usa sentencias `BEGIN` y `COMMIT` explícitas.
 - **El CI no se puede ejecutar en la sesión:** puede fallar la primera vez en GitHub y requerir ajustes.
 - **`node:sqlite` es experimental en Node 22:** se fija Node 22 en el CI y se aísla en un único adaptador de pruebas.
 - **Dependencia del hardware del desarrollador:** sin móviles viejos y una PC Windows el ticket no se puede cerrar.
@@ -322,7 +325,7 @@ Crea el workspace npm en `mi-evento/` y el paquete `@mi-evento/core` con Vitest 
 ### Implementation Notes
 - **Layer(s):** raíz del monorepo y `packages/core`.
 - **Pattern reference:** ninguno dentro de `mi-evento/`. El repo no tiene convenciones TypeScript previas.
-- **Key decisions:** D1 (workspace en `mi-evento/`), D12 (TypeScript 5.9.3). `workspaces: ["packages/*", "apps/*"]`, Node `>=22`, scripts `typecheck`, `test`, `build` y `e2e`. `core` con `lib: ["ES2017"]` y `src/env.d.ts` que declara solo `crypto.subtle` y `TextEncoder`.
+- **Key decisions:** D1 (workspace en `mi-evento/`), D12 (TypeScript 5.9.3). `workspaces: ["packages/*", "apps/*"]`, scripts `typecheck`, `test`, `build` y `e2e`, y `engines.node: "^22.22.2 || ^24.15.0"`. `core` con `lib: ["ES2017"]` y `src/env.d.ts` que declara solo `crypto.subtle` y `TextEncoder`.
 - **Libraries:** `typescript@5.9.3`, `vitest@5.1.1`.
 
 ### Scope Boundaries
@@ -370,15 +373,15 @@ Cuatro utilidades puras que usan todas las demás tareas: identificadores UUID v
 - **vacío** — GIVEN `""` WHEN `normalizeName` THEN `""`.
 
 ##### `webview`
-- **Chrome 51** — GIVEN un UA con `Chrome/51` WHEN `parseChromeMajor` THEN 51, y `isWebViewSupported(ua, 60)` es falso.
-- **Chrome 60** — GIVEN un UA con `Chrome/60` WHEN `parseChromeMajor` THEN 60, y `isWebViewSupported(ua, 60)` es verdadero.
-- **Chrome 59** — GIVEN un UA con `Chrome/59` WHEN `isWebViewSupported(ua, 60)` THEN falso.
+- **Chrome 51** — GIVEN un UA con `Chrome/51` WHEN `parseChromeMajor` THEN 51, y `isWebViewSupported(ua, 61)` es falso.
+- **Chrome 61** — GIVEN un UA con `Chrome/61` WHEN `parseChromeMajor` THEN 61, y `isWebViewSupported(ua, 61)` es verdadero.
+- **Chrome 60** — GIVEN un UA con `Chrome/60` WHEN `isWebViewSupported(ua, 61)` THEN falso.
 - **sin Chrome** — GIVEN un UA sin `Chrome/` WHEN `parseChromeMajor` THEN `null`.
 
 ### Implementation Notes
 - **Layer(s):** `packages/core`, utilidades puras sin DOM.
 - **Pattern reference:** ninguno previo.
-- **Key decisions:** el plan prohíbe `crypto.randomUUID()` (WebViews antiguos). `normalizeName` usa `normalize('NFD')` y quita `[̀-ͯ]`, sin `\p{…}` (Chrome 60 no lo soporta).
+- **Key decisions:** el plan prohíbe `crypto.randomUUID()` (WebViews antiguos). `normalizeName` usa `normalize('NFD')` y quita `[̀-ͯ]`, sin `\p{…}` (Chrome 61 no lo soporta).
 - **Libraries:** `uuid@14.0.3`, solo `v7`.
 
 ### Scope Boundaries
@@ -455,7 +458,7 @@ Crea el esquema SQL completo del plan §3 con las columnas base y la función qu
 
 ##### `migrate`
 - **base vacía** — GIVEN una base nueva WHEN `migrate` THEN `PRAGMA user_version` es 1.
-- **tablas** — GIVEN la base migrada WHEN se listan las tablas THEN existen las 17 sincronizables más `settings` y `backup_log`.
+- **tablas** — GIVEN la base migrada WHEN se listan las tablas THEN existen las 16 sincronizables más `settings` y `backup_log`, 18 tablas en total.
 - **columnas base** — GIVEN la base migrada WHEN se inspeccionan las columnas THEN cada tabla sincronizable tiene `id`, `created_at`, `updated_at`, `deleted_at`, `rev` y `device_id`, y `settings` y `backup_log` no.
 - **idempotente** — GIVEN la base ya migrada WHEN se migra de nuevo THEN el esquema no cambia.
 - **versión futura** — GIVEN `user_version = 2` WHEN `migrate` THEN lanza error.
@@ -463,7 +466,7 @@ Crea el esquema SQL completo del plan §3 con las columnas base y la función qu
 
 ### Implementation Notes
 - **Layer(s):** `packages/core/src/db`.
-- **Key decisions:** 17 tablas sincronizables según `docs/mi-evento/PLAN.md` §3: `events`, `churches`, `attendees`, `couples`, `attendee_groups` (no `groups`, palabra reservada), `group_members`, `lodgings`, `rooms`, `lodging_assignments`, `teams`, `team_memberships`, `team_moves`, `control_types`, `control_sessions`, `control_records`, `proposals`, más `settings` y `backup_log`. Cada sentencia por separado en `MIGRATIONS`. `SCHEMA_VERSION = 1`. `migrate` activa `foreign_keys` y WAL fuera de transacción. `schema.ts` es la lista blanca de nombres, ámbitos y filtros de exportación.
+- **Key decisions:** 16 tablas sincronizables según `docs/mi-evento/PLAN.md` §3: `events`, `churches`, `attendees`, `couples`, `attendee_groups` (no `groups`, palabra reservada), `group_members`, `lodgings`, `rooms`, `lodging_assignments`, `teams`, `team_memberships`, `team_moves`, `control_types`, `control_sessions`, `control_records`, `proposals`, más `settings` y `backup_log`. Cada sentencia por separado en `MIGRATIONS`. `SCHEMA_VERSION = 1`. `migrate` activa `foreign_keys` y WAL fuera de transacción. `schema.ts` es la lista blanca de nombres, ámbitos y filtros de exportación.
 - **Libraries:** ninguna nueva.
 
 ### Scope Boundaries
@@ -502,9 +505,13 @@ Añade las reglas de integridad del plan: unicidad parcial con borrado lógico, 
 - **lápida válida** — GIVEN un asistente con `deleted_at` y datos personales en NULL WHEN se inserta THEN se acepta.
 - **número de inscripción** — GIVEN un asistente borrado con `registration_number` 7 WHEN se inserta otro con 7 en el mismo evento THEN se rechaza.
 
-##### Unicidad parcial (un caso por tabla)
+##### Unicidad con borrado lógico (un caso por tabla)
 - **asignación de hospedaje** — GIVEN un asistente con una asignación viva WHEN se inserta otra viva en el mismo evento THEN se rechaza; GIVEN la primera borrada THEN se acepta.
-- **pareja** — GIVEN un asistente en una pareja viva WHEN entra en otra (como `a` o como `b`) THEN se rechaza; GIVEN la primera borrada THEN se acepta.
+- **pareja, misma columna** — GIVEN un asistente que es `a` en una pareja viva WHEN entra como `a` en otra pareja THEN se rechaza con `PAREJA_DUPLICADA`.
+- **pareja, caso cruzado** — GIVEN un asistente que es `a` en una pareja viva WHEN entra como `b` en otra, o un `b` entra como `a`, THEN se rechaza con `PAREJA_DUPLICADA`.
+- **pareja, tras borrar** — GIVEN la primera pareja borrada WHEN el asistente entra en otra THEN se acepta.
+- **pareja, reactivar** — GIVEN una pareja borrada cuyo asistente ya está en otra pareja viva WHEN se reactiva (`deleted_at = NULL`) THEN se rechaza con `PAREJA_DUPLICADA`.
+- **pareja consigo mismo** — GIVEN `attendee_a_id` igual a `attendee_b_id` WHEN se inserta THEN se rechaza por el CHECK.
 - **miembro de grupo** — GIVEN un asistente en un grupo vivo WHEN entra en otro THEN se rechaza; GIVEN el primero borrado THEN se acepta.
 - **membresía de equipo** — GIVEN un asistente en un equipo vivo del mismo evento WHEN entra en otro THEN se rechaza; GIVEN el primero borrado THEN se acepta.
 - **registro de comida** — GIVEN un registro vivo de un asistente en una sesión WHEN se inserta otro vivo THEN se rechaza; GIVEN el primero borrado THEN se acepta.
@@ -515,7 +522,7 @@ Añade las reglas de integridad del plan: unicidad parcial con borrado lógico, 
 
 ### Implementation Notes
 - **Layer(s):** `packages/core/src/db/migrations.ts`.
-- **Key decisions:** D11. Los UNIQUE del plan pasan a ser índices únicos parciales `WHERE deleted_at IS NULL`. La excepción es `registration_number`, único por (`event_id`, `registration_number`) incluso entre borrados. Las columnas personales de `attendees` admiten NULL solo si `deleted_at IS NOT NULL`, y en filas vivas exigen `IS NOT NULL` de forma explícita (en SQLite un CHECK con resultado NULL pasa).
+- **Key decisions:** D11. Los UNIQUE del plan pasan a ser índices únicos parciales `WHERE deleted_at IS NULL`, salvo las parejas, que usan dos triggers (`BEFORE INSERT` y `BEFORE UPDATE OF attendee_a_id, attendee_b_id, deleted_at`) y `CHECK (attendee_a_id <> attendee_b_id)`, porque un índice por columna no detecta que alguien sea `a` en una pareja y `b` en otra. El mensaje de `RAISE` va entre comillas simples. La excepción es `registration_number`, único por (`event_id`, `registration_number`) incluso entre borrados. Las columnas personales de `attendees` admiten NULL solo si `deleted_at IS NOT NULL`, y en filas vivas exigen `IS NOT NULL` de forma explícita (en SQLite un CHECK con resultado NULL pasa).
 - **Libraries:** ninguna nueva.
 
 ### Scope Boundaries
@@ -898,6 +905,7 @@ La app web mínima que sirve de banco de pruebas y que empaquetan las dos cásca
 
 #### Test File(s)
 - `apps/web/e2e/offline.spec.ts`
+- `apps/web/tests/bundle-syntax.test.ts` (se ejecuta después de compilar)
 
 #### Test Scenarios
 
@@ -905,6 +913,10 @@ La app web mínima que sirve de banco de pruebas y que empaquetan las dos cásca
 - **sin peticiones fallidas** — GIVEN la web compilada y la red bloqueada WHEN se abre THEN no hay peticiones fallidas.
 - **consola limpia** — GIVEN la misma carga WHEN termina THEN no hay errores de consola.
 - **fuentes locales** — GIVEN la página cargada WHEN se consulta `document.fonts.check('700 16px Nunito')` THEN es verdadero y no hubo peticiones de fuentes a otro origen.
+
+##### Compatibilidad del bundle
+- **solo sintaxis ES2017** — GIVEN `apps/web/dist` recién compilado WHEN se analizan todos sus archivos `.js` con `acorn` (`ecmaVersion: 2017`, `sourceType: 'module'`) THEN ninguno lanza error de sintaxis.
+- **la comprobación detecta sintaxis moderna** — GIVEN un texto con `a ?? b` y otro con `a?.b` WHEN se analizan con la misma función THEN ambos fallan.
 
 ##### Diagnóstico y plataforma
 - **plataforma web** — GIVEN un navegador normal WHEN se abre la sección de diagnóstico THEN muestra plataforma `web`.
@@ -923,8 +935,8 @@ Las siguientes comprobaciones las hace el desarrollador en sus dispositivos y se
 ### Implementation Notes
 - **Layer(s):** `apps/web`, app Vite con React sin pantallas de negocio.
 - **Pattern reference:** `ui` para el estilo y `core` (`runDriverContract`, `Repository`, `exportEvent`, `importEnvelope`, `isWebViewSupported`).
-- **Key decisions:** D2. `build.target: es2017`. `detectPlatform()` devuelve `capacitor`, `tauri` o `web`. `sqlite-capacitor.ts` usa `@capacitor-community/sqlite` 8.1.1; `sqlite-tauri.ts` llama a los comandos del crate `db`. La sección de datos se desactiva en un navegador normal. La imagen de 1080×1350 se dibuja con Canvas 2D tras `document.fonts.load()`.
-- **Libraries:** `vite@8.3.8`, `@vitejs/plugin-react@6.3.0`, `react@19.3.1`, `@playwright/test@1.63.0`, `@capacitor-community/sqlite@8.1.1`, `@capacitor/share@8.0.3`, `@capacitor/filesystem@8.1.5`, `@tauri-apps/api@2.12.5`.
+- **Key decisions:** D2. `build.target: es2017`. `detectPlatform()` devuelve `capacitor`, `tauri` o `web`. `sqlite-capacitor.ts` usa `@capacitor-community/sqlite` 8.1.1; `sqlite-tauri.ts` llama a los comandos del crate `db`. La sección de datos se desactiva en un navegador normal. La imagen de 1080×1350 se dibuja con Canvas 2D tras `document.fonts.load()`. D14: `uuid` v7 usa `??`, `?.` y `??=`, que esbuild rebaja a ES2017 al compilar con `build.target: es2017`; TypeScript no transpila `node_modules`, así que la garantía depende del bundler y la comprueba `bundle-syntax.test.ts`. Si `acorn` rechazara `import.meta` o `import()` en el bundle, se ajusta la configuración del build, no la prueba.
+- **Libraries:** `vite@8.3.8`, `@vitejs/plugin-react@6.3.0`, `react@19.3.1`, `@playwright/test@1.63.0`, `vitest@5.1.1` y `acorn@8.19.0` (ambas solo para la prueba del bundle), `@capacitor-community/sqlite@8.1.1`, `@capacitor/share@8.0.3`, `@capacitor/filesystem@8.1.5`, `@tauri-apps/api@2.12.5`.
 
 ### Scope Boundaries
 - Do NOT crear pantallas de negocio.
@@ -932,7 +944,7 @@ Las siguientes comprobaciones las hace el desarrollador en sus dispositivos y se
 - Only implementar las cuatro secciones del plan, los adaptadores y la prueba sin conexión.
 
 ### Files Expected
-**New files:** `apps/web/{package.json,vite.config.ts,index.html,playwright.config.ts}`, `apps/web/src/{main.tsx,Harness.tsx}`, `apps/web/src/platform/{index,sqlite-capacitor,sqlite-tauri}.ts`, `apps/web/e2e/offline.spec.ts`
+**New files:** `apps/web/{package.json,vite.config.ts,index.html,playwright.config.ts}`, `apps/web/src/{main.tsx,Harness.tsx}`, `apps/web/src/platform/{index,sqlite-capacitor,sqlite-tauri}.ts`, `apps/web/e2e/offline.spec.ts`, `apps/web/tests/bundle-syntax.test.ts`
 **Modified files:** ninguno.
 **Must NOT modify:** archivos de la raíz del repo.
 
@@ -954,7 +966,7 @@ El proyecto Capacitor listo para compilar la APK con el banco de pruebas. No se 
 #### Test Scenarios
 
 ##### Configuración estática
-- **WebView mínima** — GIVEN `capacitor.config.ts` WHEN se lee THEN `android.minWebViewVersion` es 60.
+- **WebView mínima** — GIVEN `capacitor.config.ts` WHEN se lee THEN `android.minWebViewVersion` es 61.
 - **webDir** — GIVEN la configuración WHEN se lee THEN `webDir` apunta al build de `apps/web`.
 - **identificador** — GIVEN la configuración WHEN se lee THEN `appId` es `org.mievento.app` y el nombre es «Mi Evento».
 - **minSdk** — GIVEN `variables.gradle` WHEN se lee THEN `minSdkVersion` es 24.
