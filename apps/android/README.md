@@ -26,6 +26,7 @@ test/
 tool/
   gen_colors.py        regenera los colores desde tokens.json
   check_release.sh     compila el release y comprueba peso e INTERNET
+  gen_legacy_icons.py  íconos PNG de Android 7 (cuadrado redondeado y redondo) desde icon_src/
 ```
 
 ## Pruebas
@@ -100,9 +101,8 @@ Android no deja actualizar una app firmada con otra clave.
   En carga, la regla va después del aviso de la red (SPEC §7 solo pide la regla de noche).
 - **«≈» y «∞».** Atkinson Hyperlegible no los trae. En el teléfono los dibuja la fuente del
   sistema; en las capturas de prueba (sin fuentes del sistema) salen como un cuadro.
-- **Guardar en la galería en Android 7 a 10** pide permiso de almacenamiento, como exige `gal`
-  (`maxSdkVersion` 29). SPEC dice «sin pedir permisos en Android 10+»: en Android 10 sí lo pide.
-  En Android 11 o más nuevo no pide nada.
+- **Guardar en la galería en Android 7 a 9** pide permiso de almacenamiento, como exige `gal`
+  (`maxSdkVersion` 29). En Android 10 o más nuevo no pide nada (comprobado en emulador, ver [QA.md](QA.md)).
 - **Bibliotecas nativas comprimidas** (`useLegacyPackaging`): así el APK baja de 17 MB a 8,2 MB.
   A cambio, ocupa algo más en el teléfono después de instalar.
 - **Contraste.** `textContrastGuideline` se comprueba en De noche y en Primera vez. En Cargando
@@ -110,6 +110,5 @@ Android no deja actualizar una app firmada con otra clave.
   muestras de color y bordes. Ahí el contraste se comprueba con los pares exactos de colores
   (`test/contrast_test.dart`), todos ≥ 4,5:1 en texto y ≥ 3:1 en bordes, en claro y oscuro.
 - **El selector de hora** es el de Material con los colores de la app; no tiene diseño propio.
-- **No se probó en un teléfono ni en un emulador** (este entorno no tiene emulador). TalkBack,
-  el teclado real, la hoja de compartir, guardar en la galería, el ícono y la pantalla de inicio
-  están comprobados con pruebas de widget y con el APK compilado, pero falta verlos en un equipo.
+- **Probado en emuladores de Android 7.0 a 15, no en un teléfono.** El resultado, lo corregido y lo
+  que falta comprobar en un equipo real (TalkBack, rendimiento, WhatsApp/Telegram) está en [QA.md](QA.md).
