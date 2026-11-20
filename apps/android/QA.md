@@ -248,19 +248,49 @@ Todos los hallazgos tienen corrección. Quedan sin verificar:
 
 ## Duración (rama `feat/duracion-bateria`)
 
-La pestaña Duración se probó **solo con pruebas automáticas**: este entorno no tiene Android SDK,
-así que no se compiló el APK ni se probó en emulador.
+Fecha: 20 de noviembre de 2026. Mismo entorno y método que arriba (contenedor sin KVM, emulador con
+TCG), con el APK de release de `tool/check_release.sh`.
 
-- `flutter analyze` sin avisos y `flutter test` en verde (247 pruebas; antes, 188).
-- Los 12 casos de `test-vectors-runtime.json` y los 20 de siempre (De noche no cambió).
-- Sin desbordes a 320, 360 y 411 dp, con y sin letra grande, en claro y oscuro, con y sin hora de
-  fin, y en inglés a 320 dp con letra grande. La barra de tres pestañas cabe.
-- Todo lo táctil mide ≥ 48 dp, incluida la X «Quitar la hora de fin» (48 × 56 dp).
-- La primera vez abre Duración; quien ya tenía una pestaña guardada sigue en ella.
+**APK:** compila; el arm64-v8a pesa **8 235 690 bytes** (antes 8 226 558; +9 KB) y **no pide
+`INTERNET`** (solo `WRITE_EXTERNAL_STORAGE` con `maxSdkVersion` 29). Maven Central respondió
+«429 Too Many Requests» en los dos primeros intentos; compiló al tercero con Gradle sin paralelismo.
 
-Falta en emulador o teléfono: la matriz de versiones de arriba con la barra de tres pestañas,
-TalkBack en Duración (orden de foco, la X y el veredicto), el selector de hora de fin y compartir
-`reporte-duracion.png` por WhatsApp y Telegram.
+**Pruebas automáticas:** `flutter analyze` sin avisos y `flutter test` en verde (247 pruebas; antes,
+188), con los 12 casos de `test-vectors-runtime.json`, desbordes de 320 a 411 dp con letra grande
+y 48 dp.
+
+**En emulador** (sistema en inglés; recorrido con un guion de `adb` + `uiautomator`, y a mano donde
+se indica):
+
+| | 7.0 · 24 | 10 · 29 | 15 · 35 |
+|---|---|---|---|
+| Arranque en frío (TCG) | 7,5 s | 9,9 s | ❔ (no lo midió el guion) |
+| Primera vez → abre en Duración con «12 h 8 min» | ✅ | ✅ | ✅ |
+| Hora de fin vacía; el selector abre en la hora de inicio | ✅ | ✅ | ✅ |
+| Con hora de fin: «Lasts until…», sobrante y % correctos | ✅ | ✅ | ✅ |
+| Más consumo: «Won’t last until…» y «Try N W» | ✅ | ✅ | ✅ (a mano) |
+| «Try» aplica el consumo y De noche lo comparte | ✅ | ✅ | ✅ (a mano) |
+| Cerrar a la fuerza: sigue en Duración, recuerda la hora de fin y el inicio pasa a la hora actual | ✅ | ✅ | ✅ |
+| La X quita la hora de fin | ✅ | ✅ | ✅ |
+| Guardar `runtime-report.png` en `Pictures` (y MediaStore en 29) | ✅ (con permiso) | ✅ | ✅ |
+| «Share image» abre el selector de Android | ❔ | ✅ | ❔ |
+| Español, tema oscuro y letra grande | ❔ | ✅ (a mano) | ❔ |
+| Crashes, ANR o errores de Flutter de la app en `logcat` | ninguno | ninguno | ninguno |
+
+Notas:
+
+- Los ❌ que marcó el guion fueron del guion, no de la app: buscó la X antes de que estuviera en
+  la vista (en 24 y 35 se encontró y funcionó después), y en 35 la tecla Atrás, enviada para cerrar
+  el teclado, sacó la app porque el teclado ya estaba cerrado. Ese paso se repitió a mano.
+- En 35 el `logcat` tiene decenas de ANR, todos de apps del sistema (`com.android.phone`, Google,
+  teclado, launcher) por la carga de TCG. De la calculadora solo aparecen líneas de uso de CPU.
+- En 29 y 35 apareció «System UI isn't responding» del emulador; se tocó «Wait».
+- El reporte guardado en 29 se revisó a ojo: 1080 × 1626 px, «Runtime», sin hora de fin
+  («End time —»), con datos y paso a paso completos.
+- En 29, con la app en español, el selector de hora de Material muestra 24 h aunque el sistema
+  use 12 h. Pasa igual en De noche; no es de Duración.
+
+Falta: TalkBack real, compartir por WhatsApp y Telegram, y un teléfono de verdad.
 
 ## Lo que falta probar en un teléfono real
 
