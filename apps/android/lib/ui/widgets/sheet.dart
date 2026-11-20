@@ -136,8 +136,13 @@ void _showOverlayToast(BuildContext context, String text) {
   );
   _overlayToast = entry;
   Overlay.of(context, rootOverlay: true).insert(entry);
-  _overlayToastTimer = Timer(_toastDuration, () {
-    if (_overlayToast == entry) _overlayToast = null;
-    entry.remove();
+  // El tiempo corre desde que el aviso se dibuja: al volver del diálogo de permiso, Android
+  // entrega la respuesta antes de reanudar la app, y sin esto el aviso podía vencer sin verse.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (_overlayToast != entry) return;
+    _overlayToastTimer = Timer(_toastDuration, () {
+      if (_overlayToast == entry) _overlayToast = null;
+      entry.remove();
+    });
   });
 }
