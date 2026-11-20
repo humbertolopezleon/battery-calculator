@@ -1,0 +1,544 @@
+{
+ "night": [
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "600",
+    "timeNow": "21:00",
+    "sunrise": "07:00",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "9:08",
+    "card": null,
+    "verdict": "Llegas al amanecerSobran unos 1,28 kWh. A las 7:00 marcará cerca de 20%.",
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "12 h 8 minde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 600 W de consumo = 12 h 8 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 45,
+    "loadW": "900",
+    "timeNow": "22:30",
+    "sunrise": "06:45",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "2:30",
+    "card": null,
+    "verdict": "No llegas al amanecerFaltan unos 3,83 kWh. Para llegar a las 6:45, baja el consumo a 430 W o menos.Probar con 430 W",
+    "figures": [
+     "3,59 kWhque puedes usar",
+     "4 hde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "45% − 6% de reserva = 39% útil",
+     "10,24 kWh × 39% = 3,994 kWh; quitando el 10% de pérdidas quedan 3,594 kWh",
+     "3,594 kWh ÷ 900 W de consumo = 4 h"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 45,
+    "loadW": "430",
+    "timeNow": "22:30",
+    "sunrise": "06:45",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "6:52",
+    "card": null,
+    "verdict": "Llegas al amanecerSobran unos 46,7 Wh. A las 6:45 marcará cerca de 7%.",
+    "figures": [
+     "3,59 kWhque puedes usar",
+     "8 h 22 minde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "45% − 6% de reserva = 39% útil",
+     "10,24 kWh × 39% = 3,994 kWh; quitando el 10% de pérdidas quedan 3,594 kWh",
+     "3,594 kWh ÷ 430 W de consumo = 8 h 22 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "15",
+    "percentNow": 100,
+    "loadW": "9",
+    "timeNow": "21:00",
+    "sunrise": "07:00",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "unos 59 días",
+    "card": null,
+    "verdict": "Llegas al amanecerSobran unos 12,6 kWh. A las 7:00 marcará cerca de 99%.",
+    "figures": [
+     "12,69 kWhque puedes usar",
+     "unos 59 díasde duración",
+     "135 Whútil por cada 1%"
+    ],
+    "steps": [
+     "100% − 6% de reserva = 94% útil",
+     "15 kWh × 94% = 14,1 kWh; quitando el 10% de pérdidas quedan 12,69 kWh",
+     "12,69 kWh ÷ 9 W de consumo = unos 59 días"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "25000",
+    "timeNow": "21:00",
+    "sunrise": "07:00",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "21:17",
+    "card": null,
+    "verdict": "No llegas al amanecerFaltan unos 242,72 kWh. Para llegar a las 7:00, baja el consumo a 720 W o menos.Probar con 720 W",
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "17 minde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 25 kW de consumo = 17 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 5,
+    "loadW": "600",
+    "timeNow": "21:00",
+    "sunrise": "07:00",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "card": "Ya está en la reservaLa batería ya está en la reserva del 6%: no queda energía para usar.",
+    "verdict": null,
+    "figures": [],
+    "steps": [
+     "5% no pasa de la reserva del 6%: queda 0% útil"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "0",
+    "timeNow": "21:00",
+    "sunrise": "07:00",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "card": "Sin consumoSin consumo, la energía se mantiene: tienes 7,28 kWh guardados.",
+    "verdict": null,
+    "figures": [],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "5,12",
+    "percentNow": 60,
+    "loadW": "350",
+    "timeNow": "19:30",
+    "sunrise": "06:30",
+    "countInverterLoss": false,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "3:24",
+    "card": null,
+    "verdict": "No llegas al amanecerFaltan unos 1,09 kWh. Para llegar a las 6:30, baja el consumo a 250 W o menos.Probar con 250 W",
+    "figures": [
+     "2,76 kWhque puedes usar",
+     "7 h 54 minde duración",
+     "51 Whútil por cada 1%"
+    ],
+    "steps": [
+     "60% − 6% de reserva = 54% útil",
+     "5,12 kWh × 54% = 2,765 kWh",
+     "2,765 kWh ÷ 350 W de consumo = 7 h 54 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "5,12",
+    "percentNow": 60,
+    "loadW": "350",
+    "timeNow": "19:30",
+    "sunrise": "06:30",
+    "countInverterLoss": true,
+    "reservePct": "20"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "0:46",
+    "card": null,
+    "verdict": "No llegas al amanecerFaltan unos 2,01 kWh. Para llegar a las 6:30, baja el consumo a 160 W o menos.Probar con 160 W",
+    "figures": [
+     "1,84 kWhque puedes usar",
+     "5 h 16 minde duración",
+     "46 Whútil por cada 1%"
+    ],
+    "steps": [
+     "60% − 20% de reserva = 40% útil",
+     "5,12 kWh × 40% = 2,048 kWh; quitando el 10% de pérdidas quedan 1,843 kWh",
+     "1,843 kWh ÷ 350 W de consumo = 5 h 16 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 85,
+    "loadW": "600",
+    "timeNow": null,
+    "sunrise": "07:00",
+    "countInverterLoss": true,
+    "reservePct": "6"
+   },
+   "expected_es": {
+    "lead": "La batería dura",
+    "big": "12 h 8 min",
+    "card": null,
+    "verdict": null,
+    "figures": [
+     "7,28 kWhque puedes usar",
+     "12 h 8 minde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "85% − 6% de reserva = 79% útil",
+     "10,24 kWh × 79% = 8,09 kWh; quitando el 10% de pérdidas quedan 7,281 kWh",
+     "7,281 kWh ÷ 600 W de consumo = 12 h 8 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 100,
+    "loadW": "1500",
+    "timeNow": "23:00",
+    "sunrise": "05:50",
+    "countInverterLoss": true,
+    "reservePct": "0"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "5:09",
+    "card": null,
+    "verdict": "No llegas al amanecerFaltan unos 1,03 kWh. Para llegar a las 5:50, baja el consumo a 1340 W o menos.Probar con 1340 W",
+    "figures": [
+     "9,22 kWhque puedes usar",
+     "6 h 9 minde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "100% − 0% de reserva = 100% útil",
+     "10,24 kWh × 100% = 10,24 kWh; quitando el 10% de pérdidas quedan 9,216 kWh",
+     "9,216 kWh ÷ 1,5 kW de consumo = 6 h 9 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": 30,
+    "loadW": "120",
+    "timeNow": "00:30",
+    "sunrise": "06:00",
+    "countInverterLoss": true,
+    "reservePct": "10"
+   },
+   "expected_es": {
+    "lead": "La batería dura hasta las",
+    "big": "15:52",
+    "card": null,
+    "verdict": "Llegas al amanecerSobran unos 1,18 kWh. A las 6:00 marcará cerca de 23%.",
+    "figures": [
+     "1,84 kWhque puedes usar",
+     "15 h 22 minde duración",
+     "92 Whútil por cada 1%"
+    ],
+    "steps": [
+     "30% − 10% de reserva = 20% útil",
+     "10,24 kWh × 20% = 2,048 kWh; quitando el 10% de pérdidas quedan 1,843 kWh",
+     "1,843 kWh ÷ 120 W de consumo = 15 h 22 min"
+    ]
+   }
+  }
+ ],
+ "charge": [
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "30",
+    "chargeTo": "100",
+    "powerMode": "w",
+    "watts": "2500",
+    "amps": null,
+    "volts": null,
+    "timeNow": "10:15"
+   },
+   "expected_es": {
+    "lead": "Tarda en cargar",
+    "big": "3 h 16 min",
+    "sub": "Llega al 100% cerca de las 13:31",
+    "card": null,
+    "grid": "Gasta de la red unos 7,96 kWhAl cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+    "legend": "Ahora10:15Llega al 90%12:42Llega al 100%13:31",
+    "figures": [
+     "7,17 kWhpor cargar",
+     "≈ 24%sube cada hora"
+    ],
+    "steps": [
+     "100% − 30% = 70% por cargar",
+     "10,24 kWh × 70% = 7,168 kWh",
+     "De 30% a 90%: 6,144 kWh ÷ 2,5 kW = 2 h 27 min",
+     "De 90% a 100%, a mitad de potencia: 1,024 kWh ÷ 1,25 kW = 49 min",
+     "Total: 2 h 27 min + 49 min = 3 h 16 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "30",
+    "chargeTo": "80",
+    "powerMode": "w",
+    "watts": "2500",
+    "amps": null,
+    "volts": null,
+    "timeNow": "10:15"
+   },
+   "expected_es": {
+    "lead": "Tarda en cargar",
+    "big": "2 h 3 min",
+    "sub": "Llega al 80% cerca de las 12:18",
+    "card": null,
+    "grid": "Gasta de la red unos 5,69 kWhAl cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+    "legend": "Ahora10:15Llega al 80%12:18",
+    "figures": [
+     "5,12 kWhpor cargar",
+     "≈ 24%sube cada hora"
+    ],
+    "steps": [
+     "80% − 30% = 50% por cargar",
+     "10,24 kWh × 50% = 5,12 kWh",
+     "5,12 kWh ÷ 2,5 kW de carga = 2 h 3 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "95",
+    "chargeTo": "100",
+    "powerMode": "w",
+    "watts": "2500",
+    "amps": null,
+    "volts": null,
+    "timeNow": "10:15"
+   },
+   "expected_es": {
+    "lead": "Tarda en cargar",
+    "big": "25 min",
+    "sub": "Llega al 100% cerca de las 10:40",
+    "card": null,
+    "grid": "Gasta de la red unos 0,57 kWhAl cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+    "legend": "Ahora10:15Llega al 100%10:40",
+    "figures": [
+     "0,51 kWhpor cargar",
+     "≈ 24%sube cada hora"
+    ],
+    "steps": [
+     "100% − 95% = 5% por cargar",
+     "10,24 kWh × 5% = 0,512 kWh",
+     "De 95% a 100%, a mitad de potencia: 0,512 kWh ÷ 1,25 kW = 25 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "30",
+    "chargeTo": "100",
+    "powerMode": "a",
+    "watts": null,
+    "amps": "50",
+    "volts": "51,2",
+    "timeNow": "10:15"
+   },
+   "expected_es": {
+    "lead": "Tarda en cargar",
+    "big": "3 h 12 min",
+    "sub": "Llega al 100% cerca de las 13:27",
+    "card": null,
+    "grid": "Gasta de la red unos 7,96 kWhAl cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+    "legend": "Ahora10:15Llega al 90%12:39Llega al 100%13:27",
+    "figures": [
+     "7,17 kWhpor cargar",
+     "≈ 25%sube cada hora"
+    ],
+    "steps": [
+     "50 A × 51,2 V = 2560 W de carga",
+     "100% − 30% = 70% por cargar",
+     "10,24 kWh × 70% = 7,168 kWh",
+     "De 30% a 90%: 6,144 kWh ÷ 2,56 kW = 2 h 24 min",
+     "De 90% a 100%, a mitad de potencia: 1,024 kWh ÷ 1,28 kW = 48 min",
+     "Total: 2 h 24 min + 48 min = 3 h 12 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "5,12",
+    "percentNow": "10",
+    "chargeTo": "90",
+    "powerMode": "w",
+    "watts": "1000",
+    "amps": null,
+    "volts": null,
+    "timeNow": "23:40"
+   },
+   "expected_es": {
+    "lead": "Tarda en cargar",
+    "big": "4 h 6 min",
+    "sub": "Llega al 90% cerca de las 3:46",
+    "card": null,
+    "grid": "Gasta de la red unos 4,55 kWhAl cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+    "legend": "Ahora23:40Llega al 90%3:46",
+    "figures": [
+     "4,1 kWhpor cargar",
+     "≈ 20%sube cada hora"
+    ],
+    "steps": [
+     "90% − 10% = 80% por cargar",
+     "5,12 kWh × 80% = 4,096 kWh",
+     "4,096 kWh ÷ 1 kW de carga = 4 h 6 min"
+    ]
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "15",
+    "percentNow": "100",
+    "chargeTo": "80",
+    "powerMode": "w",
+    "watts": "2500",
+    "amps": null,
+    "volts": null,
+    "timeNow": "10:15"
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "sub": null,
+    "card": "No hace falta cargarLa batería ya está en 100%, igual o más que el 80% que quieres.",
+    "grid": null,
+    "legend": null,
+    "figures": [],
+    "steps": []
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "30",
+    "chargeTo": "100",
+    "powerMode": "w",
+    "watts": null,
+    "amps": null,
+    "volts": null,
+    "timeNow": "10:15"
+   },
+   "expected_es": {
+    "lead": null,
+    "big": null,
+    "sub": null,
+    "card": "Falta la potencia de cargaPon la potencia de carga: debe ser mayor que 0.",
+    "grid": null,
+    "legend": null,
+    "figures": [],
+    "steps": []
+   }
+  },
+  {
+   "input": {
+    "capacityKwh": "10,24",
+    "percentNow": "20",
+    "chargeTo": "100",
+    "powerMode": "w",
+    "watts": "300",
+    "amps": null,
+    "volts": null,
+    "timeNow": "08:00"
+   },
+   "expected_es": {
+    "lead": "Tarda en cargar",
+    "big": "unos 1,3 días",
+    "sub": null,
+    "card": null,
+    "grid": "Gasta de la red unos 9,1 kWhAl cargar se pierde cerca del 10%. Es lo que se suma a la factura de la luz.",
+    "legend": "Ahora8:00Llega al 90%7:54Llega al 100%unos 1,3 días",
+    "figures": [
+     "8,19 kWhpor cargar",
+     "≈ 2,9%sube cada hora"
+    ],
+    "steps": [
+     "100% − 20% = 80% por cargar",
+     "10,24 kWh × 80% = 8,192 kWh",
+     "De 20% a 90%: 7,168 kWh ÷ 300 W = 23 h 54 min",
+     "De 90% a 100%, a mitad de potencia: 1,024 kWh ÷ 150 W = 6 h 50 min",
+     "Total: 23 h 54 min + 6 h 50 min = unos 1,3 días"
+    ]
+   }
+  }
+ ]
+}

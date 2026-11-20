@@ -1,78 +1,47 @@
 # Battery Calculator · Calculadora de Batería
 
 Calcula **cuánto dura la batería de noche** y **cuánto tarda en cargarse con la red**.
-Español e inglés (según el idioma del teléfono), tema Auto/Claro/Oscuro y letra grande (en **Ajustes**),
-y reporte descargable como imagen PNG. **Funciona sin internet.**
-
-## El archivo para WhatsApp
-
-**[`dist/Battery-Calculator.html`](dist/Battery-Calculator.html)** es el archivo que se distribuye.
-Es **un solo archivo** (unos 118 KB) con todo adentro: el código, las fuentes y el ícono van incrustados.
-No descarga nada, no usa CDNs, ni librerías, ni cuenta.
-
-**Para quien lo recibe**
-1. Descarga el archivo (en WhatsApp, tócalo y guárdalo).
-2. Ábrelo con el navegador del teléfono (Chrome o Safari). Si el visor del chat no lo muestra bien, usa "Abrir con…" y elige el navegador.
-3. Listo. Los datos que escribes se recuerdan en ese navegador. Para actualizarla, hay que recibir el archivo nuevo.
-
-> Probado con Chromium en computadora, no en iPhone ni Android reales.
-
-### Cómo se garantiza que no dependa de internet
-- El build **falla** si el archivo contiene cualquier dirección `http(s)`, `<link>` externo, `<script src>`, `@import`, `url()` que no sea `data:`, `fetch`/`XMLHttpRequest`, o restos de la versión instalable. Se revisa el archivo final.
-- El build **falla** si pesa 150 KB o más.
-- Una prueba abre el archivo **con la red completamente bloqueada** y comprueba que calcula, cambia idioma y tema, usa las fuentes incrustadas, genera el PNG, no intenta ninguna petición y no da errores de consola.
-
-## La versión instalable (opcional)
-
-[`dist/pwa/`](dist/pwa) es la misma app como carpeta web instalable (PWA). Se publica tal cual en un hosting con **https**
-(por ejemplo, arrastrándola a [app.netlify.com/drop](https://app.netlify.com/drop)).
-
-- **Android (Chrome):** botón **Instalar**, o menú ⋮ → *Instalar aplicación*.
-- **iPhone / iPad (Safari):** Compartir → *Agregar a pantalla de inicio*.
-- **Computadora (Chrome, Edge):** botón **Instalar** o el ícono de la barra de direcciones.
-
-Funciona sin conexión después de la primera visita. El número de versión del service worker cambia solo
-cuando cambia el contenido, así que no hay que subirlo a mano.
-
-## Una sola fuente, sin código duplicado
-
-Todo sale de **`src/index.html`**. `npm run build` genera las dos salidas desde ahí:
+Este repositorio reúne las versiones de la app y el diseño que comparten.
 
 ```
-src/                       ← lo único que se edita
-├── index.html             (la app: HTML + CSS + JS; los bloques solo-instalables están marcados)
-├── manifest.webmanifest   sw.js   fonts/   icons/
-build.js                   ← genera dist/
-dist/                      ← generado, no se edita a mano
-├── Battery-Calculator.html    el archivo único para WhatsApp
-└── pwa/                       la versión instalable
-tests/                     ← Playwright + axe-core; prueban las dos salidas
+apps/
+├── web/        La app web (v1.4): el archivo único para WhatsApp y la versión instalable (PWA)
+└── android/    La app nativa para Android, hecha con Flutter
+design/
+└── handoff/    El paquete de diseño: especificación, sistema de diseño, tokens,
+                vectores de prueba, capturas, prototipo, fuentes e ícono
 ```
 
-El archivo único y la versión instalable difieren solo en lo que marcan `<!--pwa-start-->…<!--pwa-end-->`
-y `/*@pwa-start*/…/*@pwa-end*/` (aviso de instalar, registro del service worker) y en la etiqueta del manifiesto.
+## La app web — `apps/web/`
 
-## Desarrollo
+Un solo `src/index.html` genera las dos salidas. Detalles en [`apps/web/README.md`](apps/web/README.md).
 
 ```bash
-npm install        # una vez
-npm run build      # genera dist/Battery-Calculator.html y dist/pwa/
-npm test           # construye y corre todas las pruebas (archivo único e instalable)
-npm run serve      # prueba la versión instalable en http://127.0.0.1:4173
+cd apps/web
+npm install
+npm test           # construye dist/ y corre las pruebas de Playwright
 ```
 
-Para cambiar algo: edita `src/index.html`, corre `npm test` y sube también `dist/` (viene versionado para poder
-descargar el archivo sin construirlo).
+El archivo para distribuir es [`apps/web/dist/Battery-Calculator.html`](apps/web/dist/Battery-Calculator.html).
 
-## Reglas que se cumplen
+## La app Android — `apps/android/`
 
-- Cero peticiones externas; sin frameworks ni librerías en ejecución.
-- Español e inglés; todo el texto vive en el objeto `STR` de `src/index.html`.
-- Diseño para celulares desde 320 px, botones de al menos 44 px; en computadora (desde 960 px), datos a la izquierda y respuesta a la derecha.
-- En el teléfono, una barra fija abajo resume la respuesta mientras se ajustan los datos.
-- Bordes de campos con contraste de 3:1 y avisos que no dependen solo del color (ícono + fondo).
-- Cálculo: energía útil = capacidad × (porciento − reserva) / 100 × 0,9 si se cuentan las pérdidas (reserva 6 % por defecto); tiempo de carga = kWh por cargar ÷ kW, con el tramo de 90 % a 100 % a la mitad de la potencia.
+App Flutter (Flutter 3.50 / Dart 3.14) que sigue el diseño de `design/handoff/`.
+Sus pruebas de cálculo leen los casos directamente de
+[`design/handoff/docs/test-vectors.json`](design/handoff/docs/test-vectors.json),
+así las dos apps se comprueban contra los mismos números.
+Cómo compilar, qué APK mandar y cómo crear la firma: [`apps/android/README.md`](apps/android/README.md).
 
-## Versión
+```bash
+cd apps/android
+flutter test       # lógica, pantallas, accesibilidad y desbordes
+```
 
-`1.4` (constante `APP_VERSION` en `src/index.html`).
+## El diseño — `design/handoff/`
+
+Es la fuente de verdad para la app Android:
+
+- [`docs/SPEC.md`](design/handoff/docs/SPEC.md) — qué hace la app y cómo calcula
+- [`docs/DESIGN.md`](design/handoff/docs/DESIGN.md) — sistema de diseño y pantallas
+- [`design/tokens.json`](design/handoff/design/tokens.json) — colores, tipografía y espacios
+- [`reference/`](design/handoff/reference) — prototipo HTML y capturas de cada estado
