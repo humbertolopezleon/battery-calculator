@@ -17,53 +17,61 @@ Future<T?> showAppSheet<T>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: c.sf,
+    // El fondo se pinta en el builder, no aquí: este valor se fija al abrir la hoja y, si se
+    // cambia el tema desde Ajustes, la hoja quedaba con el fondo del tema anterior (texto claro
+    // sobre blanco). El velo sí queda fijo, pero es oscuro y translúcido en los dos temas.
+    backgroundColor: Colors.transparent,
+    elevation: 0,
     barrierColor: c.scrim,
     showDragHandle: false,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.sheet))),
     builder: (context) {
       final c = context.colors;
-      return Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-        child: Center(
-          heightFactor: 1,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: AppSpace.maxContent + 40),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(color: c.ln, borderRadius: BorderRadius.circular(3)),
+      return Material(
+        color: c.sf,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.sheet))),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+          child: Center(
+            heightFactor: 1,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: AppSpace.maxContent + 40),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(color: c.ln, borderRadius: BorderRadius.circular(3)),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Semantics(
-                          header: true,
-                          child: Text(
-                            title(AppLocalizations.of(context)),
-                            style: AppText.sheetTitle.copyWith(color: c.tx),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Semantics(
+                            header: true,
+                            child: Text(
+                              title(AppLocalizations.of(context)),
+                              style: AppText.sheetTitle.copyWith(color: c.tx),
+                            ),
                           ),
                         ),
-                      ),
-                      IconBtn(
-                        icon: 'x',
-                        label: AppLocalizations.of(context).close,
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  builder(context),
-                ],
+                        IconBtn(
+                          icon: 'x',
+                          label: AppLocalizations.of(context).close,
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    builder(context),
+                  ],
+                ),
               ),
             ),
           ),

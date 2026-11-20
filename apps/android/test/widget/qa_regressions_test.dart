@@ -183,4 +183,27 @@ void main() {
       }
     });
   });
+
+  group('cambiar el tema con Ajustes abierto', () {
+    for (final (from, to, label) in [
+      (ThemePref.light, AppColors.dark, 'Oscuro'),
+      (ThemePref.dark, AppColors.light, 'Claro'),
+    ]) {
+      testWidgets('el fondo de la hoja sigue al tema ($label)', (tester) async {
+        await pumpApp(tester, stateWithBattery(theme: from));
+        await tester.tap(find.bySemanticsLabel('Ajustes'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(label));
+        await tester.pumpAndSettle();
+        // El fondo de la hoja es el Material que contiene el título.
+        final title = find.text('Ajustes').last;
+        final sheet = tester.widget<Material>(
+          find.ancestor(of: title, matching: find.byType(Material)).first,
+        );
+        expect(sheet.color, to.sf, reason: 'la hoja quedó con el fondo del tema anterior');
+        final style = tester.widget<Text>(title).style!;
+        expect(ratio(style.color!, sheet.color!), greaterThanOrEqualTo(4.5));
+      });
+    }
+  });
 }
