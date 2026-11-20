@@ -181,6 +181,19 @@ Evidencia: [`qa/24_tema_antes.png`](qa/24_tema_antes.png) (la captura ya estaba 
 detectó), [`qa/24_tema_oscuro_despues.png`](qa/24_tema_oscuro_despues.png) y
 [`qa/24_tema_claro_despues.png`](qa/24_tema_claro_despues.png).
 
+### H9 · Media · Con el teclado de Samsung, «14,3» mostraba «Solo se pueden escribir números.» — resuelto
+
+**Dónde:** encontrado en un teléfono Samsung real (no en emulador), en el campo de capacidad de la
+primera vez; afecta a todos los campos numéricos.
+
+**Qué pasaba:** el teclado de Samsung agrega un espacio después de la coma («14,» llega como
+«14, »). La app quitaba el espacio, pero mostraba el aviso «Solo se pueden escribir números.»
+hasta salir del campo, aunque el valor final («14,3») era válido.
+
+**Corrección:** los espacios (incluidos los no separables) se quitan sin avisar; las letras y
+otros símbolos siguen mostrando el aviso. Prueba en `qa_regressions_test.dart` (grupo H9), que falla
+sin la corrección. **Falta verificarlo en el teléfono** con el APK nuevo.
+
 ### Observaciones sin cambio
 
 - **Compartir tarda en el emulador:** generar el PNG de 1080 × 2304 px con TCG tardó hasta 16 s;

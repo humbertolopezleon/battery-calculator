@@ -61,7 +61,8 @@ ParsedNumber parseNumber(String raw, {bool thousands = false, String decimalSep 
 const maxNumberLength = 12;
 
 /// Quita lo que no sea dígito, punto o coma, y recorta a [maxNumberLength].
-/// Devuelve el texto filtrado; si cambió, la UI muestra «Solo se pueden escribir números.».
+/// Devuelve el texto filtrado. Si quitó algo que no es un espacio, la UI muestra
+/// «Solo se pueden escribir números.».
 String filterNumberInput(String s) {
   final n = s.replaceAll(_notAllowed, '');
   return n.length > maxNumberLength ? n.substring(0, maxNumberLength) : n;

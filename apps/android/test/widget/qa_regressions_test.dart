@@ -197,13 +197,67 @@ void main() {
         await tester.pumpAndSettle();
         // El fondo de la hoja es el Material que contiene el título.
         final title = find.text('Ajustes').last;
-        final sheet = tester.widget<Material>(
-          find.ancestor(of: title, matching: find.byType(Material)).first,
-        );
+        final sheet = tester.widget<Material>(find.ancestor(of: title, matching: find.byType(Material)).first);
         expect(sheet.color, to.sf, reason: 'la hoja quedó con el fondo del tema anterior');
         final style = tester.widget<Text>(title).style!;
         expect(ratio(style.color!, sheet.color!), greaterThanOrEqualTo(4.5));
       });
     }
   });
+
+  group('H9: el espacio automático del teclado de Samsung', () {
+    // El teclado de Samsung agrega un espacio después de la coma: «14,» llega como «14, ».
+    // Antes eso mostraba «Solo se pueden escribir números.» aunque el valor fuera válido.
+    testWidgets('«14, » y luego «14,3»: sin aviso y el valor queda 14,3', (tester) async {
+      final s = stateWithBattery()..cap = null;
+      await pumpApp(tester, s);
+      final field = find.byType(TextField).first;
+      await tester.showKeyboard(field);
+      for (final t in ['1', '14', '14,', '14, ', '14,3']) {
+        tester.testTextInput.updateEditingValue(
+          TextEditingValue(
+            text: t,
+            selection: TextSelection.collapsed(offset: t.length),
+          ),
+        );
+        await tester.pump();
+      }
+      await tester.pumpAndSettle();
+      expect(find.text('Solo se pueden escribir números.'), findsNothing);
+      expect(tester.widget<TextField>(field).controller!.text, '14,3');
+      await _unmount(tester);
+    });
+
+    testWidgets('un espacio no separable también se quita sin aviso', (tester) async {
+      final s = stateWithBattery()..cap = null;
+      await pumpApp(tester, s);
+      await tester.showKeyboard(find.byType(TextField).first);
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(text: '10\u00a0', selection: TextSelection.collapsed(offset: 3)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Solo se pueden escribir números.'), findsNothing);
+      expect(tester.widget<TextField>(find.byType(TextField).first).controller!.text, '10');
+      await _unmount(tester);
+    });
+
+    testWidgets('una letra sí muestra el aviso', (tester) async {
+      final s = stateWithBattery()..cap = null;
+      await pumpApp(tester, s);
+      await tester.showKeyboard(find.byType(TextField).first);
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(text: '14a', selection: TextSelection.collapsed(offset: 3)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Solo se pueden escribir números.'), findsOneWidget);
+      expect(tester.widget<TextField>(find.byType(TextField).first).controller!.text, '14');
+      await _unmount(tester);
+    });
+  });
+}
+
+/// Desmonta la app y deja correr los temporizadores que quedan al enfocar un campo.
+Future<void> _unmount(WidgetTester tester) async {
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump(const Duration(seconds: 5));
 }

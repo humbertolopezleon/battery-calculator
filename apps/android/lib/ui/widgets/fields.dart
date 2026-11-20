@@ -161,7 +161,9 @@ class NumberInputFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     final f = filterNumberInput(newValue.text);
     if (f == newValue.text) return newValue;
-    if (newValue.text.replaceAll(RegExp(r'[\d.,]'), '').isNotEmpty) onFiltered();
+    // Los espacios se quitan sin avisar: algunos teclados (el de Samsung, por ejemplo) agregan
+    // uno solo después de la coma o el punto, y la persona no lo escribió.
+    if (newValue.text.replaceAll(RegExp(r'[\d.,\s]'), '').isNotEmpty) onFiltered();
     final off = (newValue.selection.baseOffset - (newValue.text.length - f.length)).clamp(0, f.length);
     return TextEditingValue(
       text: f,
