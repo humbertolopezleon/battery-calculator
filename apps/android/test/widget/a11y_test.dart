@@ -11,14 +11,15 @@ void main() {
     for (final tab in AppTab.values) {
       testWidgets('48 dp y contraste: ${tab.name}, ${theme.name}', (tester) async {
         final handle = tester.ensureSemantics();
-        final s = stateWithBattery(theme: theme)..tab = tab;
+        final s = stateWithBattery(theme: theme, tab: tab)..rTo = '02:00';
         // Pantalla alta: así ningún texto queda medio tapado por la barra inferior al medir el contraste.
         await pumpApp(tester, s, height: 2400, dpr: 3);
         await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
         await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
-        // En Carga, el detector de Flutter toma como «color del texto» el suavizado de letras finas
-        // junto a muestras y bordes (falso positivo, ver README). Ahí el contraste se verifica con
-        // los pares exactos de tokens en contrast_test.dart.
+        // En Carga y en Duración, el detector de Flutter mide algunos textos fuera de su lugar
+        // (en Duración, la ayuda «Si no la cambias…» 56 dp más arriba, sobre el campo de hora) y da
+        // falsos positivos (ver README). Ahí el contraste se verifica con los pares exactos de
+        // tokens en contrast_test.dart; Duración usa los mismos pares que De noche.
         if (tab == AppTab.night) await expectLater(tester, meetsGuideline(textContrastGuideline));
         handle.dispose();
       });

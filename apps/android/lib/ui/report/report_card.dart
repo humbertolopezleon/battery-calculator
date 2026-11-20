@@ -13,10 +13,37 @@ import '../widgets/result.dart';
 const reportLogicalWidth = 360.0;
 const reportPixelRatio = 3.0;
 
+/// Modo del reporte: el de la pestaña desde la que se comparte.
+enum ReportMode { runtime, night, charge }
+
 /// Contenido del reporte: lo que se muestra en la tarjeta, más los datos usados.
 class ReportData {
+  ReportData.runtime(RuntimeView v, AppState s, Fmt f, this.when)
+    : mode = ReportMode.runtime,
+      lead = v.r.load.isFinite
+          ? '${f.lang == 'es' ? 'Con' : 'Using'} ${f.nf(v.r.load, 2)} W, ${_lower(v.lead!)}'
+          : v.lead!,
+      big = v.big!,
+      sub = v.sub,
+      verdict = v.verdictTitle == null ? null : (v.verdictTone!, v.verdictTitle!, v.verdictText!),
+      nightView = null,
+      runtimeView = v,
+      chargeView = null,
+      figures = v.figures,
+      steps = v.steps,
+      data = [
+        (f.l.dBat, '${f.nf(s.cap!, 2)} kWh'),
+        (f.l.dLevel, '${f.nf(v.r.pct, 2)}%'),
+        (f.l.dLoad, '${f.nf(v.r.load, 2)} W'),
+        (f.l.dFrom, v.r.now == null ? '—' : f.t.format(v.r.now!)),
+        (f.l.dTo, v.r.sun == null ? '—' : f.t.format(v.r.sun!)),
+        (f.l.dRsv, '${f.nf(v.r.reserve, 2)}%'),
+        (f.l.dLoss, s.loss ? f.l.lossYes : f.l.lossNo),
+      ],
+      foot = f.l.footR(f.nf(v.r.reserve, 2));
+
   ReportData.night(NightView v, AppState s, Fmt f, this.when)
-    : night = true,
+    : mode = ReportMode.night,
       lead = v.r.load.isFinite
           ? '${f.lang == 'es' ? 'Con' : 'Using'} ${f.nf(v.r.load, 2)} W, ${_lower(v.lead!)}'
           : v.lead!,
@@ -24,6 +51,7 @@ class ReportData {
       sub = null,
       verdict = v.verdictTitle == null ? null : (v.verdictTone!, v.verdictTitle!, v.verdictText!),
       nightView = v,
+      runtimeView = null,
       chargeView = null,
       figures = v.figures,
       steps = v.steps,
@@ -39,12 +67,13 @@ class ReportData {
       foot = f.l.footN(f.nf(v.r.reserve, 2));
 
   ReportData.charge(ChargeView v, AppState s, Fmt f, this.when)
-    : night = false,
+    : mode = ReportMode.charge,
       lead = v.lead!,
       big = v.big!,
       sub = v.sub,
       verdict = (Tone.info, v.gridTitle!, v.gridText!),
       nightView = null,
+      runtimeView = null,
       chargeView = v,
       figures = v.figures,
       steps = v.steps,
@@ -59,11 +88,12 @@ class ReportData {
 
   static String _lower(String s) => s.isEmpty ? s : s[0].toLowerCase() + s.substring(1);
 
-  final bool night;
+  final ReportMode mode;
   final String lead, big;
   final String? sub;
   final (Tone, String, String)? verdict;
   final NightView? nightView;
+  final RuntimeView? runtimeView;
   final ChargeView? chargeView;
   final List<Figure> figures;
   final List<String> steps;
@@ -71,7 +101,19 @@ class ReportData {
   final String foot;
   final DateTime when;
 
-  String fileName(AppLocalizations l) => '${night ? l.fileN : l.fileC}.png';
+  String fileName(AppLocalizations l) =>
+      '${switch (mode) {
+        ReportMode.runtime => l.fileR,
+        ReportMode.night => l.fileN,
+        ReportMode.charge => l.fileC,
+      }}.png';
+
+  /// El modo, como subtítulo de la cabecera.
+  String modeName(AppLocalizations l) => switch (mode) {
+    ReportMode.runtime => l.rSubR,
+    ReportMode.night => l.rSubN,
+    ReportMode.charge => l.rSubC,
+  };
 }
 
 /// La imagen del reporte, siempre en tema claro y sin depender de la letra del teléfono.
@@ -120,7 +162,7 @@ class ReportCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(l.rTitleN, style: st(50 / 3, bold: true, color: const Color(0xFFF2F5F9))),
-                            Text(data.night ? l.rSubN : l.rSubC, style: st(34 / 3, color: const Color(0xFFF6BC5E))),
+                            Text(data.modeName(l), style: st(34 / 3, color: const Color(0xFFF6BC5E))),
                           ],
                         ),
                       ),
@@ -164,6 +206,16 @@ class ReportCard extends StatelessWidget {
                         NightTrack(g: data.nightView!.r.track!, reaches: data.nightView!.r.verdict!.reaches),
                         const SizedBox(height: 6),
                         Legend(data.nightView!.legend!),
+                      ],
+                      if (data.runtimeView?.r.track != null) ...[
+                        const SizedBox(height: 14),
+                        NightTrack(
+                          g: data.runtimeView!.r.track!,
+                          reaches: data.runtimeView!.r.verdict!.reaches,
+                          markerIcon: 'flag',
+                        ),
+                        const SizedBox(height: 6),
+                        Legend(data.runtimeView!.legend!),
                       ],
                       if (data.chargeView?.legend != null) ...[
                         const SizedBox(height: 14),

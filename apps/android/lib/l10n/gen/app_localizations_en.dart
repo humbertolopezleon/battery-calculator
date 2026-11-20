@@ -16,7 +16,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get offline => 'Works without internet';
 
   @override
-  String get intro => 'See how long your battery lasts at night and how long it takes to charge from the grid.';
+  String get intro =>
+      'See how long your battery lasts, whether it makes it to sunrise and how long it takes to charge from the grid.';
 
   @override
   String get sizeQ => 'How big is your battery?';
@@ -652,5 +653,94 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String timeToast(String t) {
     return 'Time: $t';
+  }
+
+  @override
+  String get tabRuntime => 'Runtime';
+
+  @override
+  String kRuntime(String w) {
+    return 'Runtime · $w W in use';
+  }
+
+  @override
+  String get kRuntime0 => 'Runtime';
+
+  @override
+  String get runtimeData => 'Power use data';
+
+  @override
+  String get rtEmptyX => 'Type it below and you’ll see here how long your battery lasts.';
+
+  @override
+  String rtSub(String t1, String t2) {
+    return 'Starting at $t1, it runs out around $t2';
+  }
+
+  @override
+  String get fromTime => 'Start time';
+
+  @override
+  String get fromHint => 'If you don’t change it, it’s the current time.';
+
+  @override
+  String get toTime => 'End time (optional)';
+
+  @override
+  String get toHint => 'Set it to see if your battery lasts until then.';
+
+  @override
+  String get toEmpty => 'No end time';
+
+  @override
+  String get toClear => 'Remove end time';
+
+  @override
+  String rtOkT(String t) {
+    return 'Lasts until $t';
+  }
+
+  @override
+  String rtBadT(String t) {
+    return 'Won’t last until $t';
+  }
+
+  @override
+  String get lStart => 'Start';
+
+  @override
+  String get lUntil => 'Until';
+
+  @override
+  String get fPerHourDown => 'used per hour';
+
+  @override
+  String get stripLasts => 'Lasts ';
+
+  @override
+  String get tagReach => 'Lasts';
+
+  @override
+  String get tagShort => 'Short';
+
+  @override
+  String get rNote =>
+      'This is an estimate. Power use changes with what’s turned on (the fridge starts and stops; AC or an iron raise it a lot). It assumes the panels don’t charge in the meantime.';
+
+  @override
+  String get rSubR => 'Runtime';
+
+  @override
+  String get fileR => 'runtime-report';
+
+  @override
+  String get dFrom => 'Start time';
+
+  @override
+  String get dTo => 'End time';
+
+  @override
+  String footR(String r) {
+    return 'This is an estimate: power use changes with what’s turned on. The battery shuts off at $r% to protect its health.';
   }
 }

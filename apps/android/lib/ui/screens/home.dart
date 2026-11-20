@@ -14,6 +14,7 @@ import 'charge_pane.dart';
 import 'common.dart';
 import 'home_ctl.dart';
 import 'night_pane.dart';
+import 'runtime_pane.dart';
 import 'sheets.dart';
 
 /// Pantalla principal: barra superior, franja de respuesta, pestaña activa y barra inferior.
@@ -39,7 +40,11 @@ class _HomeState extends State<Home> {
   /// ¿La tarjeta de resultado se ve todavía debajo de la franja?
   void _checkResult() {
     final s = AppScope.read(context);
-    final key = s.tab == AppTab.night ? _ctl.nightResultKey : _ctl.chargeResultKey;
+    final key = switch (s.tab) {
+      AppTab.runtime => _ctl.runtimeResultKey,
+      AppTab.night => _ctl.nightResultKey,
+      AppTab.charge => _ctl.chargeResultKey,
+    };
     final box = key.currentContext?.findRenderObject() as RenderBox?;
     final vp = _viewportKey.currentContext?.findRenderObject() as RenderBox?;
     if (box == null || vp == null || !box.attached) return;
@@ -67,26 +72,32 @@ class _HomeState extends State<Home> {
     return ListenableBuilder(
       listenable: _ctl,
       builder: (context, _) {
-        final night = s.tab == AppTab.night;
-        final nv = night ? computeNight(s, fmt) : null;
-        final cv = night ? null : computeCharge(s, fmt, _ctl);
-        final strip = night ? nv!.strip : cv!.strip;
+        final tab = s.tab;
+        final rv = tab == AppTab.runtime ? computeRuntime(s, fmt) : null;
+        final nv = tab == AppTab.night ? computeNight(s, fmt) : null;
+        final cv = tab == AppTab.charge ? computeCharge(s, fmt, _ctl) : null;
+        final strip = rv?.strip ?? nv?.strip ?? cv!.strip;
 
         void share() {
-          final shareable = night ? nv!.shareable : cv!.shareable;
+          final shareable = rv?.shareable ?? nv?.shareable ?? cv!.shareable;
           if (!shareable) {
             showToast(context, l.fixFirst);
             return;
           }
-          final data = night
-              ? ReportData.night(nv!, s, fmt, DateTime.now())
-              : ReportData.charge(cv!, s, fmt, DateTime.now());
+          final now = DateTime.now();
+          final data = rv != null
+              ? ReportData.runtime(rv, s, fmt, now)
+              : nv != null
+              ? ReportData.night(nv, s, fmt, now)
+              : ReportData.charge(cv!, s, fmt, now);
           openShareSheet(context, data, fmt);
         }
 
-        final pane = night
-            ? NightPane(view: nv!, fmt: fmt, ctl: _ctl, onShare: share)
-            : ChargePane(view: cv!, fmt: fmt, ctl: _ctl, onShare: share);
+        final Widget pane = switch (tab) {
+          AppTab.runtime => RuntimePane(view: rv!, fmt: fmt, ctl: _ctl, onShare: share),
+          AppTab.night => NightPane(view: nv!, fmt: fmt, ctl: _ctl, onShare: share),
+          AppTab.charge => ChargePane(view: cv!, fmt: fmt, ctl: _ctl, onShare: share),
+        };
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) _checkResult();
@@ -123,7 +134,7 @@ class _HomeState extends State<Home> {
                           left: 0,
                           right: 0,
                           top: 0,
-                          child: AnswerStrip(data: strip, modeIcon: night ? 'moon' : 'plug'),
+                          child: AnswerStrip(data: strip, modeIcon: tabIcon(tab)),
                         ),
                     ],
                   ),
@@ -277,10 +288,23 @@ class _Tabs extends StatelessWidget {
           top: false,
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: AppHeight.bottomNav),
-            child: Row(children: [item(AppTab.night, 'moon', l.tabNight), item(AppTab.charge, 'plug', l.tabCharge)]),
+            child: Row(
+              children: [
+                item(AppTab.runtime, tabIcon(AppTab.runtime), l.tabRuntime),
+                item(AppTab.night, tabIcon(AppTab.night), l.tabNight),
+                item(AppTab.charge, tabIcon(AppTab.charge), l.tabCharge),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+/// Ícono de cada modo: en la barra, el encabezado de la tarjeta y la franja.
+String tabIcon(AppTab t) => switch (t) {
+  AppTab.runtime => 'clock',
+  AppTab.night => 'moon',
+  AppTab.charge => 'plug',
+};

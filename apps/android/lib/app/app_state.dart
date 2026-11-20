@@ -4,16 +4,18 @@ import '../domain/calculator.dart';
 import '../domain/formatters.dart';
 import 'store.dart';
 
-enum AppTab { night, charge }
+/// En el orden de la barra inferior: Duración es la primera (SPEC §4.5).
+enum AppTab { runtime, night, charge }
 
 enum ThemePref { auto, light, dark }
 
-/// Estado de la app. Se guarda en cada cambio (SPEC §6), salvo la «hora ahora».
+/// Estado de la app. Se guarda en cada cambio (SPEC §6), salvo la «hora ahora» y la hora de inicio de Duración.
 class AppState extends ChangeNotifier {
   AppState(this._store, {DateTime Function()? clock}) : _clock = clock ?? DateTime.now {
     final n = _nowClock();
     nightNow = n;
     chargeNow = n;
+    rFrom = n;
   }
 
   final Store _store;
@@ -26,8 +28,15 @@ class AppState extends ChangeNotifier {
   String volt = '51,2';
   String ahTxt = '';
 
-  // Pestaña
-  AppTab tab = AppTab.night;
+  // Pestaña. La primera vez, Duración; después, la última usada.
+  AppTab tab = AppTab.runtime;
+
+  // Duración. Comparte con De noche el porciento, el consumo, las pérdidas y la reserva.
+  /// Hora de inicio («HH:mm»). No se guarda: al abrir, la hora actual.
+  String rFrom = '';
+
+  /// Hora de fin («HH:mm»), o vacía si no hay.
+  String rTo = '';
 
   // De noche
   String nPct = '85';
@@ -68,7 +77,8 @@ class AppState extends ChangeNotifier {
     capTxt = g('capTxt') ?? capTxt;
     volt = g('volt') ?? volt;
     ahTxt = g('ahTxt') ?? ahTxt;
-    tab = g<String>('tab') == 'charge' ? AppTab.charge : AppTab.night;
+    tab = AppTab.values.asNameMap()[g<String>('tab')] ?? AppTab.runtime;
+    rTo = g('rTo') ?? rTo;
     nPct = g('nPct') ?? nPct;
     nW = g('nW') ?? nW;
     nSun = g('nSun') ?? nSun;
@@ -93,6 +103,7 @@ class AppState extends ChangeNotifier {
     'volt': volt,
     'ahTxt': ahTxt,
     'tab': tab.name,
+    'rTo': rTo,
     'nPct': nPct,
     'nW': nW,
     'nSun': nSun,
@@ -129,6 +140,8 @@ class AppState extends ChangeNotifier {
     volt = fresh.volt;
     ahTxt = fresh.ahTxt;
     tab = fresh.tab;
+    rFrom = fresh.rFrom;
+    rTo = fresh.rTo;
     nPct = fresh.nPct;
     nW = fresh.nW;
     nightNow = fresh.nightNow;

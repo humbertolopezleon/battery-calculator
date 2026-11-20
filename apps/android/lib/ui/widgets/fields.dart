@@ -347,15 +347,27 @@ class TimeField extends StatelessWidget {
     this.nowLabel,
     this.onNow,
     this.hint,
+    this.onClear,
+    this.clearLabel,
+    this.initialPick,
   });
   final String label, icon, text;
+
+  /// null: el campo está vacío y [text] se muestra como texto de ejemplo, en `tx2`.
   final int? minutes;
   final ValueChanged<int> onChanged;
   final String? nowLabel, hint;
   final VoidCallback? onNow;
 
+  /// Botón X (48 × 56 dp) para vaciar el campo; solo se muestra si hay hora.
+  final VoidCallback? onClear;
+  final String? clearLabel;
+
+  /// Hora con la que abre el selector si el campo está vacío.
+  final int? initialPick;
+
   Future<void> _pick(BuildContext context) async {
-    final m = minutes ?? 0;
+    final m = minutes ?? initialPick ?? 0;
     final t = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
@@ -378,7 +390,12 @@ class TimeField extends StatelessWidget {
             AppIcon(icon, size: 22, color: c.tx),
             const SizedBox(width: 10),
             Expanded(
-              child: Text(text, style: AppText.fieldValue.copyWith(color: c.tx)),
+              child: Text(
+                text,
+                style: minutes == null && onClear != null
+                    ? AppText.body.copyWith(fontSize: 18, color: c.tx2)
+                    : AppText.fieldValue.copyWith(color: c.tx),
+              ),
             ),
           ],
         ),
@@ -388,7 +405,7 @@ class TimeField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        ExcludeSemantics(child: FieldLabel(label, icon: icon == 'clock' ? 'clock' : 'sunrise')),
+        ExcludeSemantics(child: FieldLabel(label, icon: icon)),
         Row(
           children: [
             Expanded(child: box),
@@ -409,6 +426,24 @@ class TimeField extends StatelessWidget {
                     ),
                     child: Text(nowLabel!, style: AppText.label.copyWith(color: c.tx)),
                   ),
+                ),
+              ),
+            ],
+            if (onClear != null && minutes != null) ...[
+              const SizedBox(width: 4),
+              Tap(
+                onTap: onClear,
+                semanticLabel: clearLabel,
+                builder: (context, pressed, focused) => Container(
+                  width: 48,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: pressed ? c.sf2 : null,
+                    borderRadius: BorderRadius.circular(AppRadius.field),
+                    border: focused ? Border.all(color: c.focus, width: 2.5) : null,
+                  ),
+                  child: AppIcon('x', color: c.tx, stroke: 2.5),
                 ),
               ),
             ],

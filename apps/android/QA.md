@@ -246,6 +246,22 @@ Todos los hallazgos tienen corrección. Quedan sin verificar:
   reciente probada es Android 15 (API 35). `targetSdk` 36 se revisó solo de forma estática.
 - **Rendimiento.** Con emulación por software los tiempos no dicen nada de un teléfono.
 
+## Duración (rama `feat/duracion-bateria`)
+
+La pestaña Duración se probó **solo con pruebas automáticas**: este entorno no tiene Android SDK,
+así que no se compiló el APK ni se probó en emulador.
+
+- `flutter analyze` sin avisos y `flutter test` en verde (247 pruebas; antes, 188).
+- Los 12 casos de `test-vectors-runtime.json` y los 20 de siempre (De noche no cambió).
+- Sin desbordes a 320, 360 y 411 dp, con y sin letra grande, en claro y oscuro, con y sin hora de
+  fin, y en inglés a 320 dp con letra grande. La barra de tres pestañas cabe.
+- Todo lo táctil mide ≥ 48 dp, incluida la X «Quitar la hora de fin» (48 × 56 dp).
+- La primera vez abre Duración; quien ya tenía una pestaña guardada sigue en ella.
+
+Falta en emulador o teléfono: la matriz de versiones de arriba con la barra de tres pestañas,
+TalkBack en Duración (orden de foco, la X y el veredicto), el selector de hora de fin y compartir
+`reporte-duracion.png` por WhatsApp y Telegram.
+
 ## Lo que falta probar en un teléfono real
 
 1. **TalkBack** en Android 7 u 8 (H7) y en uno reciente: nombre de cada campo, la batería

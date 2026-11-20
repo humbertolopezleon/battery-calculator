@@ -156,6 +156,9 @@ class NightResult {
 
   /// Minutos (desde la medianoche) en que se acaba, si se muestra la hora de fin.
   double? endMinutes;
+
+  /// % de la batería que baja cada hora (SPEC §4.5), como mucho 100.
+  double get perHour => cap * lossF > 0 ? math.min(100.0, loadKw / (cap * lossF) * 100) : 0;
 }
 
 NightResult nightCalc(NightInput inp) {
@@ -258,6 +261,44 @@ NightResult nightCalc(NightInput inp) {
   }
   return r;
 }
+
+// =====================================================================
+// Duración (SPEC §4.5)
+// =====================================================================
+
+class RuntimeInput {
+  const RuntimeInput({
+    required this.cap,
+    required this.pctTxt,
+    required this.loadTxt,
+    required this.reserveTxt,
+    required this.loss,
+    required this.start,
+    required this.end,
+    this.decimalSep = ',',
+  });
+  final double cap;
+  final String pctTxt, loadTxt, reserveTxt;
+  final bool loss;
+
+  /// Minutos desde la medianoche. [end] es opcional: sin él no hay veredicto.
+  final int? start, end;
+  final String decimalSep;
+}
+
+/// La cuenta de De noche sin el amanecer: la hora de inicio hace de «ahora» y la de fin, de «sol».
+NightResult runtimeCalc(RuntimeInput inp) => nightCalc(
+  NightInput(
+    cap: inp.cap,
+    pctTxt: inp.pctTxt,
+    loadTxt: inp.loadTxt,
+    reserveTxt: inp.reserveTxt,
+    loss: inp.loss,
+    now: inp.start,
+    sun: inp.end,
+    decimalSep: inp.decimalSep,
+  ),
+);
 
 // =====================================================================
 // Cargando con la red (SPEC §4.3)

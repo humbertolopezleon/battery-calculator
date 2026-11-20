@@ -25,6 +25,29 @@ void main() {
           await scrollThrough(tester);
         });
 
+        testWidgets('Duración sin desbordes: $name', (tester) async {
+          final s = stateWithBattery(big: big, theme: theme, tab: AppTab.runtime);
+          await pumpApp(tester, s, width: width);
+          await scrollThrough(tester);
+          await tester.tap(find.text('Más opciones'));
+          await tester.pumpAndSettle();
+          await scrollThrough(tester);
+          await tester.tap(find.text('Cómo se calcula'));
+          await tester.pumpAndSettle();
+          await scrollThrough(tester);
+        });
+
+        testWidgets('Duración, no alcanza con hora de fin: $name', (tester) async {
+          final s = stateWithBattery(big: big, theme: theme, tab: AppTab.runtime)
+            ..nW = '1500'
+            ..rTo = '06:00';
+          await pumpApp(tester, s, width: width);
+          expect(find.text('No alcanza hasta las 6:00\u00a0a.\u00a0m.'), findsOneWidget);
+          expect(find.text('Probar con 800 W'), findsOneWidget);
+          await scrollThrough(tester);
+          expect(find.bySemanticsLabel('Quitar la hora de fin'), findsOneWidget);
+        });
+
         testWidgets('No llega, con «Probar con»: $name', (tester) async {
           final s = stateWithBattery(big: big, theme: theme)
             ..nPct = '45'
@@ -68,6 +91,14 @@ void main() {
       ..nightNow = '22:30'
       ..nSun = '06:45';
     await pumpApp(tester, s, width: 320);
+    await scrollThrough(tester);
+    s.update(
+      (s) => s
+        ..tab = AppTab.runtime
+        ..rTo = '06:45',
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Try 360 W'), findsOneWidget);
     await scrollThrough(tester);
     s.update((s) => s.tab = AppTab.charge);
     await tester.pumpAndSettle();

@@ -18,10 +18,12 @@ lib/
   l10n/                app_es.arb, app_en.arb (desde el objeto STR del prototipo) y gen/
   ui/theme/            AppColors (generado desde tokens.json), AppText, espacios y radios
   ui/widgets/          componentes de DESIGN §4 e íconos (CustomPainter, sin flutter_svg)
-  ui/screens/          primera vez, De noche, Cargando con la red, hojas, catálogo (solo debug)
+  ui/screens/          primera vez, Duración, De noche, Cargando con la red, hojas, catálogo (solo debug);
+                       consumption_fields.dart: los campos que comparten Duración y De noche
   ui/report/           ReportCard de 1080 px y la hoja «Compartir el reporte»
 test/
   vectors_test.dart    los 20 casos de ../../design/handoff/docs/test-vectors.json, leídos de ahí
+  runtime_vectors_test.dart  los 12 casos de Duración de ../../design/handoff/docs/test-vectors-runtime.json
   widget/              flujos, desbordes (320/360/411 dp, letra grande), accesibilidad, capturas
 tool/
   gen_colors.py        regenera los colores desde tokens.json
@@ -106,9 +108,17 @@ Android no deja actualizar una app firmada con otra clave.
 - **Bibliotecas nativas comprimidas** (`useLegacyPackaging`): así el APK baja de 17 MB a 8,2 MB.
   A cambio, ocupa algo más en el teléfono después de instalar.
 - **Contraste.** `textContrastGuideline` se comprueba en De noche y en Primera vez. En Cargando
-  con la red da falsos positivos: toma como color del texto el suavizado de letras finas junto a
-  muestras de color y bordes. Ahí el contraste se comprueba con los pares exactos de colores
-  (`test/contrast_test.dart`), todos ≥ 4,5:1 en texto y ≥ 3:1 en bordes, en claro y oscuro.
+  con la red y en Duración da falsos positivos: toma como color del texto el suavizado de letras
+  finas junto a muestras de color y bordes, y en Duración mide la ayuda «Si no la cambias…» 56 dp
+  más arriba de donde se dibuja, sobre el campo de hora. Ahí el contraste se comprueba con los pares
+  exactos de colores (`test/contrast_test.dart`), todos ≥ 4,5:1 en texto y ≥ 3:1 en bordes, en claro
+  y oscuro. Duración no usa pares nuevos: son los de De noche.
 - **El selector de hora** es el de Material con los colores de la app; no tiene diseño propio.
+- **Duración** no está en el prototipo ni en las capturas de referencia. Su diseño está en SPEC §4.5
+  y DESIGN §3 (pantalla 0); sus casos de prueba se sacaron de una implementación de referencia aparte,
+  no de la app. Los textos se escribieron directamente en los ARB.
+- **Hora partida a 320 dp con letra grande.** En los campos de hora con el botón «Ahora» («Hora
+  ahora» en De noche y «Desde qué hora» en Duración), «10:30 p. m.» se parte en dos líneas. No se
+  corta ni se desborda; ya pasaba antes de Duración.
 - **Probado en emuladores de Android 7.0 a 15, no en un teléfono.** El resultado, lo corregido y lo
   que falta comprobar en un equipo real (TalkBack, rendimiento, WhatsApp/Telegram) está en [QA.md](QA.md).

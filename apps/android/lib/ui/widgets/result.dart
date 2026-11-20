@@ -231,6 +231,8 @@ String _legendIcon(LegendIcon i) => switch (i) {
   LegendIcon.moon => 'moon',
   LegendIcon.sun => 'sun',
   LegendIcon.battery => 'battery',
+  LegendIcon.clock => 'clock',
+  LegendIcon.flag => 'flag',
   LegendIcon.none => '',
 };
 
@@ -302,10 +304,12 @@ class Legend extends StatelessWidget {
 }
 
 /// Regla de la noche: relleno ámbar, marcador de fin (o flecha si son días), sol y tramo que falta.
+/// En Duración, el círculo lleva la bandera de la hora de fin en lugar del sol ([markerIcon]).
 class NightTrack extends StatelessWidget {
-  const NightTrack({super.key, required this.g, required this.reaches});
+  const NightTrack({super.key, required this.g, required this.reaches, this.markerIcon = 'sun'});
   final NightTrackGeometry g;
   final bool reaches;
+  final String markerIcon;
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
@@ -378,7 +382,7 @@ class NightTrack extends StatelessWidget {
                       border: Border.all(color: c.tx, width: 2.5),
                     ),
                     alignment: Alignment.center,
-                    child: AppIcon('sun', size: 20, color: c.tx),
+                    child: AppIcon(markerIcon, size: 20, color: c.tx),
                   ),
                 ),
               ],

@@ -26,8 +26,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(s.cap, 10.24);
     expect(store.data!['cap'], 10.24);
-    expect(find.text('La batería dura hasta las'), findsOneWidget);
-    expect(find.text('Llegas al amanecer'), findsOneWidget);
+    // La primera vez abre Duración (SPEC §6).
+    expect(s.tab, AppTab.runtime);
+    expect(find.text('La batería dura'), findsOneWidget);
+    expect(find.text('12 h 8 min'), findsWidgets);
   });
 
   testWidgets('en voltios y Ah muestra la capacidad calculada', (tester) async {

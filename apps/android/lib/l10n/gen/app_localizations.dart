@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @intro.
   ///
   /// In es, this message translates to:
-  /// **'Mira hasta qué hora te alcanza la batería de noche y cuánto tarda en cargar con la corriente de la calle.'**
+  /// **'Mira cuánto te dura la batería, si llegas al amanecer y cuánto tarda en cargar con la corriente de la calle.'**
   String get intro;
 
   /// No description provided for @sizeQ.
@@ -1213,6 +1213,162 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Hora: {t}'**
   String timeToast(String t);
+
+  /// No description provided for @tabRuntime.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get tabRuntime;
+
+  /// No description provided for @kRuntime.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración · {w} W de consumo'**
+  String kRuntime(String w);
+
+  /// No description provided for @kRuntime0.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get kRuntime0;
+
+  /// No description provided for @runtimeData.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos del consumo'**
+  String get runtimeData;
+
+  /// No description provided for @rtEmptyX.
+  ///
+  /// In es, this message translates to:
+  /// **'Escríbelo abajo y aquí verás cuánto te dura la batería.'**
+  String get rtEmptyX;
+
+  /// No description provided for @rtSub.
+  ///
+  /// In es, this message translates to:
+  /// **'Empezando a {t1}, se acaba cerca de {t2}'**
+  String rtSub(String t1, String t2);
+
+  /// No description provided for @fromTime.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde qué hora'**
+  String get fromTime;
+
+  /// No description provided for @fromHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Si no la cambias, es la hora actual.'**
+  String get fromHint;
+
+  /// No description provided for @toTime.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta qué hora (opcional)'**
+  String get toTime;
+
+  /// No description provided for @toHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ponla para saber si la batería te alcanza hasta esa hora.'**
+  String get toHint;
+
+  /// No description provided for @toEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin hora de fin'**
+  String get toEmpty;
+
+  /// No description provided for @toClear.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar la hora de fin'**
+  String get toClear;
+
+  /// No description provided for @rtOkT.
+  ///
+  /// In es, this message translates to:
+  /// **'Alcanza hasta {t}'**
+  String rtOkT(String t);
+
+  /// No description provided for @rtBadT.
+  ///
+  /// In es, this message translates to:
+  /// **'No alcanza hasta {t}'**
+  String rtBadT(String t);
+
+  /// No description provided for @lStart.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get lStart;
+
+  /// No description provided for @lUntil.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta'**
+  String get lUntil;
+
+  /// No description provided for @fPerHourDown.
+  ///
+  /// In es, this message translates to:
+  /// **'baja cada hora'**
+  String get fPerHourDown;
+
+  /// No description provided for @stripLasts.
+  ///
+  /// In es, this message translates to:
+  /// **'Dura '**
+  String get stripLasts;
+
+  /// No description provided for @tagReach.
+  ///
+  /// In es, this message translates to:
+  /// **'Alcanza'**
+  String get tagReach;
+
+  /// No description provided for @tagShort.
+  ///
+  /// In es, this message translates to:
+  /// **'No alcanza'**
+  String get tagShort;
+
+  /// No description provided for @rNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Es un aproximado. El consumo cambia según lo que esté encendido (el refrigerador arranca y para; el aire o la plancha lo suben mucho). Se supone que los paneles no cargan mientras tanto.'**
+  String get rNote;
+
+  /// No description provided for @rSubR.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get rSubR;
+
+  /// No description provided for @fileR.
+  ///
+  /// In es, this message translates to:
+  /// **'reporte-duracion'**
+  String get fileR;
+
+  /// No description provided for @dFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde'**
+  String get dFrom;
+
+  /// No description provided for @dTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta'**
+  String get dTo;
+
+  /// No description provided for @footR.
+  ///
+  /// In es, this message translates to:
+  /// **'Es un aproximado: el consumo cambia según lo que esté encendido. La batería se apaga al {r}% para cuidar su salud.'**
+  String footR(String r);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

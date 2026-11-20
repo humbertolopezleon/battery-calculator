@@ -17,7 +17,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get intro =>
-      'Mira hasta qué hora te alcanza la batería de noche y cuánto tarda en cargar con la corriente de la calle.';
+      'Mira cuánto te dura la batería, si llegas al amanecer y cuánto tarda en cargar con la corriente de la calle.';
 
   @override
   String get sizeQ => '¿De qué tamaño es tu batería?';
@@ -654,5 +654,94 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String timeToast(String t) {
     return 'Hora: $t';
+  }
+
+  @override
+  String get tabRuntime => 'Duración';
+
+  @override
+  String kRuntime(String w) {
+    return 'Duración · $w W de consumo';
+  }
+
+  @override
+  String get kRuntime0 => 'Duración';
+
+  @override
+  String get runtimeData => 'Datos del consumo';
+
+  @override
+  String get rtEmptyX => 'Escríbelo abajo y aquí verás cuánto te dura la batería.';
+
+  @override
+  String rtSub(String t1, String t2) {
+    return 'Empezando a $t1, se acaba cerca de $t2';
+  }
+
+  @override
+  String get fromTime => 'Desde qué hora';
+
+  @override
+  String get fromHint => 'Si no la cambias, es la hora actual.';
+
+  @override
+  String get toTime => 'Hasta qué hora (opcional)';
+
+  @override
+  String get toHint => 'Ponla para saber si la batería te alcanza hasta esa hora.';
+
+  @override
+  String get toEmpty => 'Sin hora de fin';
+
+  @override
+  String get toClear => 'Quitar la hora de fin';
+
+  @override
+  String rtOkT(String t) {
+    return 'Alcanza hasta $t';
+  }
+
+  @override
+  String rtBadT(String t) {
+    return 'No alcanza hasta $t';
+  }
+
+  @override
+  String get lStart => 'Inicio';
+
+  @override
+  String get lUntil => 'Hasta';
+
+  @override
+  String get fPerHourDown => 'baja cada hora';
+
+  @override
+  String get stripLasts => 'Dura ';
+
+  @override
+  String get tagReach => 'Alcanza';
+
+  @override
+  String get tagShort => 'No alcanza';
+
+  @override
+  String get rNote =>
+      'Es un aproximado. El consumo cambia según lo que esté encendido (el refrigerador arranca y para; el aire o la plancha lo suben mucho). Se supone que los paneles no cargan mientras tanto.';
+
+  @override
+  String get rSubR => 'Duración';
+
+  @override
+  String get fileR => 'reporte-duracion';
+
+  @override
+  String get dFrom => 'Desde';
+
+  @override
+  String get dTo => 'Hasta';
+
+  @override
+  String footR(String r) {
+    return 'Es un aproximado: el consumo cambia según lo que esté encendido. La batería se apaga al $r% para cuidar su salud.';
   }
 }

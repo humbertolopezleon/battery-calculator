@@ -53,6 +53,7 @@ const Map<String, List<IconShape>> appIcons = {
   'minus': [IconShape.path('M5 12h14')],
   'plus': [IconShape.path('M12 5v14M5 12h14')],
   'x': [IconShape.path('M6 6l12 12M18 6L6 18')],
+  'flag': [IconShape.path('M5 21V4M5 4h11l-2 4 2 4H5')],
   'download': [IconShape.path('M12 4v11M7 10l5 5 5-5M5 20h14')],
   'globe': [IconShape.circle(12, 12, 9), IconShape.path('M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18')],
   'contrast': [IconShape.circle(12, 12, 9), IconShape.path('M12 3a9 9 0 0 1 0 18z', fill: true)],

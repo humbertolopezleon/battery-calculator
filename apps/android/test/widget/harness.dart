@@ -12,8 +12,16 @@ import 'package:material_ui/material_ui.dart';
 DateTime fixedClock() => DateTime(2026, 11, 19, 21, 0);
 
 /// Estado con batería de 10,24 kWh y los valores por defecto.
-AppState stateWithBattery({String lang = 'es', ThemePref theme = ThemePref.light, bool big = false, Store? store}) {
+/// [tab] es De noche porque la mayoría de las pruebas son de esa pestaña; la app abre en Duración.
+AppState stateWithBattery({
+  String lang = 'es',
+  ThemePref theme = ThemePref.light,
+  bool big = false,
+  Store? store,
+  AppTab tab = AppTab.night,
+}) {
   final s = AppState(store ?? MemoryStore(), clock: fixedClock)
+    ..tab = tab
     ..cap = 10.24
     ..capTxt = '10,24'
     ..lang = lang

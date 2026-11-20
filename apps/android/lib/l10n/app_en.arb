@@ -2,7 +2,7 @@
   "@@locale": "en",
   "appName": "Battery Calculator",
   "offline": "Works without internet",
-  "intro": "See how long your battery lasts at night and how long it takes to charge from the grid.",
+  "intro": "See how long your battery lasts, whether it makes it to sunrise and how long it takes to charge from the grid.",
   "sizeQ": "How big is your battery?",
   "batHow": "How you know the size",
   "modeKwh": "In kWh",
@@ -570,5 +570,31 @@
         "type": "String"
       }
     }
-  }
+  },
+  "tabRuntime": "Runtime",
+  "kRuntime": "Runtime · {w} W in use",
+  "kRuntime0": "Runtime",
+  "runtimeData": "Power use data",
+  "rtEmptyX": "Type it below and you’ll see here how long your battery lasts.",
+  "rtSub": "Starting at {t1}, it runs out around {t2}",
+  "fromTime": "Start time",
+  "fromHint": "If you don’t change it, it’s the current time.",
+  "toTime": "End time (optional)",
+  "toHint": "Set it to see if your battery lasts until then.",
+  "toEmpty": "No end time",
+  "toClear": "Remove end time",
+  "rtOkT": "Lasts until {t}",
+  "rtBadT": "Won’t last until {t}",
+  "lStart": "Start",
+  "lUntil": "Until",
+  "fPerHourDown": "used per hour",
+  "stripLasts": "Lasts ",
+  "tagReach": "Lasts",
+  "tagShort": "Short",
+  "rNote": "This is an estimate. Power use changes with what’s turned on (the fridge starts and stops; AC or an iron raise it a lot). It assumes the panels don’t charge in the meantime.",
+  "rSubR": "Runtime",
+  "fileR": "runtime-report",
+  "dFrom": "Start time",
+  "dTo": "End time",
+  "footR": "This is an estimate: power use changes with what’s turned on. The battery shuts off at {r}% to protect its health."
 }

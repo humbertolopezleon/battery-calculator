@@ -2,7 +2,7 @@
   "@@locale": "es",
   "appName": "Calculadora de Batería",
   "offline": "Funciona sin internet",
-  "intro": "Mira hasta qué hora te alcanza la batería de noche y cuánto tarda en cargar con la corriente de la calle.",
+  "intro": "Mira cuánto te dura la batería, si llegas al amanecer y cuánto tarda en cargar con la corriente de la calle.",
   "sizeQ": "¿De qué tamaño es tu batería?",
   "batHow": "Cómo conoces el tamaño",
   "modeKwh": "En kWh",
@@ -567,6 +567,70 @@
   "@timeToast": {
     "placeholders": {
       "t": {
+        "type": "String"
+      }
+    }
+  },
+  "tabRuntime": "Duración",
+  "kRuntime": "Duración · {w} W de consumo",
+  "@kRuntime": {
+    "placeholders": {
+      "w": {
+        "type": "String"
+      }
+    }
+  },
+  "kRuntime0": "Duración",
+  "runtimeData": "Datos del consumo",
+  "rtEmptyX": "Escríbelo abajo y aquí verás cuánto te dura la batería.",
+  "rtSub": "Empezando a {t1}, se acaba cerca de {t2}",
+  "@rtSub": {
+    "placeholders": {
+      "t1": {
+        "type": "String"
+      },
+      "t2": {
+        "type": "String"
+      }
+    }
+  },
+  "fromTime": "Desde qué hora",
+  "fromHint": "Si no la cambias, es la hora actual.",
+  "toTime": "Hasta qué hora (opcional)",
+  "toHint": "Ponla para saber si la batería te alcanza hasta esa hora.",
+  "toEmpty": "Sin hora de fin",
+  "toClear": "Quitar la hora de fin",
+  "rtOkT": "Alcanza hasta {t}",
+  "@rtOkT": {
+    "placeholders": {
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "rtBadT": "No alcanza hasta {t}",
+  "@rtBadT": {
+    "placeholders": {
+      "t": {
+        "type": "String"
+      }
+    }
+  },
+  "lStart": "Inicio",
+  "lUntil": "Hasta",
+  "fPerHourDown": "baja cada hora",
+  "stripLasts": "Dura ",
+  "tagReach": "Alcanza",
+  "tagShort": "No alcanza",
+  "rNote": "Es un aproximado. El consumo cambia según lo que esté encendido (el refrigerador arranca y para; el aire o la plancha lo suben mucho). Se supone que los paneles no cargan mientras tanto.",
+  "rSubR": "Duración",
+  "fileR": "reporte-duracion",
+  "dFrom": "Desde",
+  "dTo": "Hasta",
+  "footR": "Es un aproximado: el consumo cambia según lo que esté encendido. La batería se apaga al {r}% para cuidar su salud.",
+  "@footR": {
+    "placeholders": {
+      "r": {
         "type": "String"
       }
     }

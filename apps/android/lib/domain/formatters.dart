@@ -1,4 +1,4 @@
-/// Formatos de números, duraciones y horas (SPEC §4.4).
+/// Formatos de números, duraciones y horas (SPEC §4.6).
 library;
 
 /// Formatea números según el idioma: separador decimal propio y sin separador de miles.

@@ -193,6 +193,7 @@ void main() {
     for (final tab in AppTab.values) {
       final s = stateWithBattery(theme: ThemePref.dark)
         ..tab = tab
+        ..rTo = '02:00'
         ..pmode = PowerMode.watts
         ..chargeNow = '10:15';
       await pumpApp(tester, s);
@@ -206,10 +207,63 @@ void main() {
         final ro = tester.renderObject<RenderRepaintBoundary>(boundary);
         final image = await ro.toImage(pixelRatio: reportPixelRatio);
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-        File('screenshots/reporte-04-la-imagen-png-${tab == AppTab.night ? 'noche' : 'carga'}.png')
-            .writeAsBytesSync(bytes!.buffer.asUint8List());
+        File(
+          'screenshots/reporte-04-la-imagen-png-${switch (tab) {
+            AppTab.runtime => 'duracion',
+            AppTab.night => 'noche',
+            AppTab.charge => 'carga',
+          }}.png',
+        ).writeAsBytesSync(bytes!.buffer.asUint8List());
         image.dispose();
       });
     }
+  });
+
+  for (final (mode, theme) in [('claro', ThemePref.light), ('oscuro', ThemePref.dark)]) {
+    testWidgets('duración $mode', (tester) async {
+      // 01 Sin hora de fin: lo que se ve al abrir.
+      final s = stateWithBattery(theme: theme, tab: AppTab.runtime);
+      await pumpApp(tester, s);
+      await saveScreenshot(tester, 'duracion-$mode-01-sin-hora-de-fin');
+
+      // 02 El rango de horas, más abajo.
+      await tester.ensureVisible(find.text('Hasta qué hora (opcional)'));
+      await tester.pumpAndSettle();
+      await saveScreenshot(tester, 'duracion-$mode-02-rango-de-horas');
+
+      // 03 Con hora de fin: alcanza.
+      s.update((s) => s.rTo = '02:00');
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 3000));
+      await tester.pumpAndSettle();
+      await saveScreenshot(tester, 'duracion-$mode-03-alcanza');
+
+      // 04 Con hora de fin: no alcanza.
+      s.update(
+        (s) => s
+          ..nW = '1500'
+          ..rTo = '06:00',
+      );
+      await tester.pumpAndSettle();
+      await saveScreenshot(tester, 'duracion-$mode-04-no-alcanza');
+    });
+  }
+
+  testWidgets('duración: inglés, peor caso y vacío', (tester) async {
+    final en = stateWithBattery(lang: 'en', theme: ThemePref.dark, tab: AppTab.runtime)
+      ..nW = '1500'
+      ..rTo = '06:00';
+    await pumpApp(tester, en);
+    await saveScreenshot(tester, 'duracion-ingles-01-runtime');
+
+    final big = stateWithBattery(big: true, tab: AppTab.runtime)
+      ..nW = '1500'
+      ..rTo = '06:00';
+    await pumpApp(tester, big, width: 320, height: 2300);
+    await saveScreenshot(tester, 'duracion-peor-caso-01-todo-a-la-vista');
+    await pumpApp(tester, stateWithBattery(big: true, tab: AppTab.runtime), width: 320);
+    await saveScreenshot(tester, 'duracion-peor-caso-02-lo-que-se-ve-al-abrir');
+
+    await pumpApp(tester, stateWithBattery(tab: AppTab.runtime)..nW = '');
+    await saveScreenshot(tester, 'duracion-estados-01-vacio');
   });
 }

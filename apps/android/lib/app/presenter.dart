@@ -9,7 +9,7 @@ import '../l10n/gen/app_localizations.dart';
 enum Tone { ok, bad, err, info, warn, neutral }
 
 /// Ícono de la leyenda de una regla.
-enum LegendIcon { none, moon, sun, battery }
+enum LegendIcon { none, moon, sun, battery, clock, flag }
 
 class LegendItem {
   const LegendItem(this.icon, this.label, this.value);
@@ -216,6 +216,109 @@ List<String> _nightSteps(NightResult r, Fmt f) {
     out.add(l.lRun(n.b3(r.usable), r.loadKw < 1 ? '${n.nf(r.load, 2)} W' : '${n.nf(r.loadKw, 3)} kW', f.dur(r.hours)));
   }
   return out;
+}
+
+// =====================================================================
+// Duración (SPEC §4.5)
+// =====================================================================
+
+class RuntimeView {
+  RuntimeView._(this.r);
+  final NightResult r;
+  late String kicker;
+  StateCardData? card;
+  String? lead, big, sub;
+  Tone? verdictTone;
+  String? verdictTitle, verdictText;
+  int? tryW;
+  String? tryLabel;
+  List<LegendItem>? legend;
+  List<Figure> figures = const [];
+  List<String> steps = const [];
+  late StripData strip;
+
+  bool get shareable => r.state == NightState.ok;
+  bool? get reaches => r.verdict?.reaches;
+  String? get verdictFlat => verdictTitle == null ? null : '$verdictTitle$verdictText${tryLabel ?? ''}';
+}
+
+RuntimeView presentRuntime(NightResult r, Fmt f) {
+  final l = f.l;
+  final v = RuntimeView._(r);
+  v.kicker = r.load >= 0 && r.load.isFinite ? l.kRuntime(f.nf(r.load, 2)) : l.kRuntime0;
+  switch (r.state) {
+    case NightState.empty:
+      v.kicker = l.kRuntime0;
+      v.card = StateCardData(Tone.neutral, l.emptyT, l.rtEmptyX, useBolt: true);
+      v.strip = StripData(Tone.neutral, l.stripEmpty, null);
+    case NightState.fix:
+      final text = switch (r.fixField!) {
+        NightField.pct => l.fixPct,
+        NightField.load => l.fixW,
+        NightField.reserve => l.fixRsv,
+      };
+      v.card = StateCardData(Tone.err, l.fixT, text, goTo: r.fixField);
+      v.strip = StripData(Tone.err, l.stripErr, l.tagFix);
+    case NightState.inReserve:
+      v.card = StateCardData(Tone.bad, l.inRsvT, l.inRsvX(f.nf(r.reserve, 2)));
+      v.strip = StripData(Tone.bad, l.inRsvT, null);
+    case NightState.noLoad:
+      v.card = StateCardData(Tone.ok, l.noLoadT, l.noLoadX(f.nf(r.usable, 2)));
+      v.strip = StripData(Tone.ok, l.noLoadT, null);
+    case NightState.ok:
+      _runtimeOk(v, r, f);
+  }
+  v.steps = _nightSteps(r, f);
+  return v;
+}
+
+void _runtimeOk(RuntimeView v, NightResult r, Fmt f) {
+  final l = f.l;
+  final wm = r.durationMin;
+  v.lead = l.leadFor;
+  v.big = wm < 1 ? l.almost : f.dur(r.hours);
+  final em = r.endMinutes;
+  if (em != null) v.sub = l.rtSub(f.t.withArticle(r.now!), f.t.withArticle(em));
+  final verdict = r.verdict;
+  if (verdict != null) {
+    final endA = f.t.withArticle(r.sun!);
+    if (verdict.reaches) {
+      v.verdictTone = Tone.ok;
+      v.verdictTitle = l.rtOkT(endA);
+      v.verdictText = verdict.left < 0.001
+          ? l.okJust(endA)
+          : l.okTxt(f.n.q(verdict.left), endA, '${verdict.pctAtDawn}');
+    } else {
+      v.verdictTone = Tone.bad;
+      v.verdictTitle = l.rtBadT(endA);
+      final k = verdict.maxW;
+      v.verdictText = k > 0
+          ? l.badTxt(f.n.q(verdict.short), endA, f.nf(k.toDouble(), 0))
+          : l.badLow(f.n.q(verdict.short));
+      if (k > 0 && k < r.load) {
+        v.tryW = k;
+        v.tryLabel = l.tryW(f.nf(k.toDouble(), 0));
+      }
+    }
+    final tr = r.track!;
+    final endValue = tr.days ? l.inDays(f.dur(r.hours)) : (em != null ? f.t.format(em) : f.dur(r.hours));
+    final start = LegendItem(LegendIcon.clock, l.lStart, f.t.format(r.now!));
+    final until = LegendItem(LegendIcon.flag, l.lUntil, f.t.format(r.sun!));
+    final endI = LegendItem(LegendIcon.battery, l.lEnd, endValue);
+    v.legend = tr.endBeforeSun ? [start, endI, until] : [start, until, endI];
+  }
+  v.strip = StripData(
+    verdict == null ? Tone.neutral : (verdict.reaches ? Tone.ok : Tone.bad),
+    '${l.stripLasts}${v.big}',
+    verdict == null ? null : (verdict.reaches ? l.tagReach : l.tagShort),
+  );
+  final hp = r.perPct * 1000;
+  final y = r.perHour;
+  v.figures = [
+    Figure(r.usable < 0.1 ? '${f.nf(r.usable, 4)} kWh' : f.n.kwh(r.usable), l.fUsable),
+    Figure(y < 0.1 ? '< ${f.nf(0.1, 1)}%' : '≈ ${f.nf(y, y < 10 ? 1 : 0)}%', l.fPerHourDown),
+    Figure('${f.nf(hp, hp < 10 ? 1 : 0)} Wh', l.fPer),
+  ];
 }
 
 // =====================================================================

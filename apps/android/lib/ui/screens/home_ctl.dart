@@ -4,12 +4,13 @@ import 'package:material_ui/material_ui.dart';
 class HomeCtl extends ChangeNotifier {
   /// Campos de los que ya se salió (sus errores se muestran).
   final touched = <String>{};
-  bool moreOpen = false, nightHowOpen = false, chargeHowOpen = false;
+  bool moreOpen = false, runtimeHowOpen = false, nightHowOpen = false, chargeHowOpen = false;
 
   final _focus = <String, FocusNode>{};
   final _keys = <String, GlobalKey>{};
 
   /// La tarjeta de resultado de cada pestaña (para saber si se ve).
+  final runtimeResultKey = GlobalKey(debugLabel: 'runtimeResult');
   final nightResultKey = GlobalKey(debugLabel: 'nightResult');
   final chargeResultKey = GlobalKey(debugLabel: 'chargeResult');
 
